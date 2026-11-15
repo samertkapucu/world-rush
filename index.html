@@ -559,7 +559,8 @@ rank.addEventListener('keydown',e=>{
 
 // TikTok LIVE event protocol. Local tests and LIVE events are always distinguished.
 const liveFans=new Map(),seenGiftIds=new Set(),giftTotals=Object.create(null);
-let connectedToLive=false,liveSocket=null,liveReconnect=0;
+let connectedToLive=false,tiktokStreamOnline=false,liveSocket=null,liveReconnect=0;
+const pendingByCountry=Object.create(null);
 function giftTier(points){
  if(points<10)return {boost:.65,label:'SPARK',sound:'rose'};
  if(points<100)return {boost:1.2,label:'PULSE',sound:'rose'};
@@ -593,7 +594,7 @@ function applyGift(msg){
  const comeback=gap>=12&&order[0].i!==i;
  const countFactor=Math.min(2,1+Math.log2(quantity)/4),boost=tier.boost*countFactor*(comeback?1.25:1);
  if(source==='live')giftTotals[team]=(giftTotals[team]||0)+Math.round(points*quantity);
- if(roundState!=='racing'){flash(nick+' · '+team+' · NEXT RACE STARTS SOON');return}
+ if(roundState!=='racing'){pendingByCountry[team]=Math.min(10,(pendingByCountry[team]||0)+boost);flash(nick+' · '+team+' · BOOST SAVED FOR NEXT RACE');return}
  car.boost=Math.min(10,car.boost+boost);car.burst=performance.now()+2100;
  if(tier.cinematic){
   spotlightIndex=i;spotlightUntil=performance.now()+3300;
@@ -605,23 +606,24 @@ function applyGift(msg){
 function updateBridgeStatus(){
  const node=document.getElementById('liveStatus');if(!node)return;
  const names=Object.entries(giftTotals).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([code,value])=>code+':'+value).join(' · ');
- node.textContent='LIVE BRIDGE: '+(connectedToLive?'CONNECTED':'OFFLINE')+' · GIFT POINTS '+(names||'0')+' · DEMO NOT REAL REVENUE';
+ node.textContent='LOCAL BRIDGE: '+(connectedToLive?'ON':'OFF')+' · TIKTOK: '+(tiktokStreamOnline?'LIVE':'NOT CONNECTED')+' · GIFT METADATA POINTS '+(names||'0')+' · NOT REVENUE';
 }
 function connectLiveBridge(){
  // Local loopback connector only. No external server is allowed to inject gifts.
  if(!['localhost','127.0.0.1'].includes(location.hostname))return;
  try{
   liveSocket=new WebSocket('ws://127.0.0.1:8765');
-  liveSocket.onopen=()=>{connectedToLive=true;liveReconnect=0;updateBridgeStatus()};
+  liveSocket.onopen=()=>{connectedToLive=true;tiktokStreamOnline=false;liveReconnect=0;updateBridgeStatus()};
   liveSocket.onmessage=e=>{
    try{
     const msg=JSON.parse(e.data);
     if(!msg||typeof msg!=='object')return;
+    if(msg.type==='status'){tiktokStreamOnline=Boolean(msg.connected);updateBridgeStatus();return}
     if(msg.type==='comment')applyComment(msg);
     if(msg.type==='gift')applyGift({...msg,source:'live'});
    }catch(err){console.warn('Invalid local LIVE event',err)}
   };
-  liveSocket.onclose=()=>{connectedToLive=false;updateBridgeStatus();liveReconnect=Math.min(liveReconnect+1,8);setTimeout(connectLiveBridge,Math.min(30000,1500*Math.pow(1.5,liveReconnect)))};
+  liveSocket.onclose=()=>{connectedToLive=false;tiktokStreamOnline=false;updateBridgeStatus();liveReconnect=Math.min(liveReconnect+1,8);setTimeout(connectLiveBridge,Math.min(30000,1500*Math.pow(1.5,liveReconnect)))};
   liveSocket.onerror=()=>{};
  }catch(err){console.warn('Local LIVE bridge unavailable',err)}
 }
@@ -690,7 +692,7 @@ function loop(now){
  if(roundState==='countdown'){
   const digit=Math.max(0,Math.ceil((countdownUntil-now)/1000));
   if(digit>0){countdownNode.hidden=false;countdownNode.textContent=String(Math.min(3,digit));if(shownStartDigit!==digit){shownStartDigit=digit;soundEngine.play('count')}}
-  else{countdownNode.hidden=true;roundState='racing';flash('GO!');soundEngine.play('go')}
+  else{countdownNode.hidden=true;roundState='racing';cars.forEach((car,i)=>{const saved=pendingByCountry[codes[i]]||0;if(saved){car.boost=Math.min(10,car.boost+saved);car.burst=performance.now()+1750;delete pendingByCountry[codes[i]]}});flash('GO!');soundEngine.play('go')}
  }else countdownNode.hidden=true;
  const racing=roundState==='racing';
  if(racing)remaining=Math.max(0,remaining-dt);
@@ -718,7 +720,7 @@ function loop(now){
  const leader=order[0],focusZ=performance.now()<spotlightUntil&&spotlightIndex>=0?cars[spotlightIndex].group.position.z:leader.group.position.z;
  if(racing && (leader.progress>=100||remaining<=0))finishRound(now,remaining<=0);
  if(roundState==='racing'&&leadIndex!==leader.i){
-  if(leadIndex>=0 && remaining<70){
+  if(leadIndex>=0 && remaining<ROUND_SECONDS-5){
    flash(flags[leader.i]+' '+teams[leader.i]+' TAKES THE LEAD!');soundEngine.play('lead');
    closeupUntil=now+2200;
   }
