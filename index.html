@@ -1,5 +1,5 @@
 <!-- WORLD RUSH OTOMATIK GUNCELLEME TEST 123 -->
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WORLD RUSH v7 — GULF LEAGUE</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WORLD RUSH v8 — LIVE RACE LAB</title><style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:#050914;color:#f4f7ff;font-family:Inter,"Segoe UI",system-ui,Arial,sans-serif}
 body{display:grid;place-items:center;font-weight:650}
@@ -55,7 +55,13 @@ h1 span{color:#75d4ff}
 #error{display:none;position:absolute;z-index:11;top:42%;left:10%;right:10%;border-radius:10px;background:#320e22;padding:20px;border:1px solid #f88;text-align:center}
 @media(max-width:380px){#hud{padding-left:9px;padding-right:48px}h1{font-size:18px}.name{font-size:10px}.pct{min-width:47px;font-size:10px}#distance{font-size:10px;min-width:61px}#battle{font-size:9px}#countdown{font-size:8px;min-width:48px}}
 @media(prefers-reduced-motion:reduce){#event,.fill,.trackCar{transition:none}}
-</style></head><body><main id="app"><div id="stage"></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 01:15</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">86m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="event" aria-live="polite"></div><div id="comeback" hidden></div></div>
+
+#app.booting #hud,#app.booting #stage{visibility:hidden}
+#bootScreen{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:radial-gradient(ellipse at center,#122540,#050914 70%);pointer-events:none}
+#bootScreen[hidden]{display:none}.bootLogo{font-size:36px;font-weight:1000;letter-spacing:2px}.bootLogo span{color:#6ccfff}.bootCaption{font-size:11px;font-weight:800;letter-spacing:2px;color:#98bbd4}
+#startCountdown{position:absolute;z-index:7;top:40%;left:0;right:0;text-align:center;font-size:clamp(72px,15vw,120px);line-height:1;font-weight:1000;font-variant-numeric:tabular-nums;color:#fff0ce;text-shadow:0 8px 25px #000,0 0 33px #e8ba5577;pointer-events:none}
+.flag{width:27px;height:18px;flex-basis:27px;border:1px solid #e3f1ffb0;image-rendering:auto}@media(max-width:380px){.flag{width:24px;height:16px;flex-basis:24px}}
+</style></head><body><main id="app" class="booting"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 01:15</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">86m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="event" aria-live="polite"></div><div id="startCountdown" aria-live="polite" hidden>3</div><div id="comeback" hidden></div></div>
 <div id="safePreview" hidden><div class="topSafe"><span>TIKTOK HEADER</span></div><div class="rightSafe"></div><div class="bottomSafe"><span>COMMENTS + GIFTS</span></div></div>
 <div id="operatorPanel" hidden><div class="operatorHead"><span>WORLD RUSH · OPERATOR</span><span class="hint">P: hide · T: safe · L: next league</span></div><div id="controls"><button class="btn" data-action="join">JOIN / TEAM</button><button class="btn" data-action="rose">ROSE</button><button class="btn" data-action="turbo">TURBO</button><button class="btn" data-action="mega">MEGA</button><button class="btn" data-action="cam">CAMERA</button><button class="btn" data-action="audio" id="audioButton">🔇 SOUND OFF</button><button class="btn" data-action="safe">SAFE ZONES</button><button class="btn" data-action="league">NEXT LEAGUE</button></div><div class="hint" style="margin-top:7px">75-MIN LEAGUES · LOCAL SIMULATION, NOT REAL GIFTS · 1–4: teams · Q/W/E: boosts · C: camera · M: sound.</div><div class="hint" id="leagueStatus" style="margin-top:5px">GULF LEAGUE · Test mode</div></div><div id="error"></div></main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
@@ -178,8 +184,8 @@ let colors=starterCountries.map(c=>countryLibrary[c].color),
  codes=[...starterCountries],cars=[];
 const flagImages=Object.create(null);
 function makeFlagTexture(code){
- const canvas=document.createElement('canvas');canvas.width=512;canvas.height=320;
- const c=canvas.getContext('2d');const w=512,h=320;
+ const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=640;
+ const c=canvas.getContext('2d');c.scale(2,2);const w=512,h=320;
  const fill=(col,x=0,y=0,ww=w,hh=h)=>{c.fillStyle=col;c.fillRect(x,y,ww,hh)};
  if(code==='SA'){
   fill('#006c35');
@@ -219,7 +225,7 @@ function makeFlagTexture(code){
  }
  c.strokeStyle='#ffffff';c.lineWidth=8;c.strokeRect(4,4,w-8,h-8);
  flagImages[code]=canvas.toDataURL('image/png');
- const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());return tex;
+ const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=Math.min(16,renderer.capabilities.getMaxAnisotropy());tex.generateMipmaps=true;tex.minFilter=THREE.LinearMipmapLinearFilter;tex.magFilter=THREE.LinearFilter;return tex;
 }
 
 function createCar(i){
@@ -286,22 +292,27 @@ function createCar(i){
  part(.10,.018,.64,stripe,0,.89,-1.17);
  part(.09,.017,.48,stripe,0,1.43,.06);
  // High-resolution, per-nation roof flags. Retained when switching to GLB models.
- const flagMaterial=new THREE.MeshBasicMaterial({map:makeFlagTexture(codes[i]),side:THREE.DoubleSide,depthWrite:true});
- const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.25,.79),flagMaterial);
- flag.rotation.x=-Math.PI/2;flag.position.set(0,1.43,.06);flag.renderOrder=2;group.add(flag);
+ const flagMaterial=new THREE.MeshBasicMaterial({map:makeFlagTexture(codes[i]),side:THREE.DoubleSide,depthWrite:true,toneMapped:false});
+ const flagBacking=new THREE.Mesh(new THREE.PlaneGeometry(1.51,1.04),new THREE.MeshBasicMaterial({color:0x101820,side:THREE.DoubleSide,depthWrite:true,toneMapped:false}));
+ flagBacking.rotation.x=-Math.PI/2;flagBacking.position.set(0,1.428,.06);flagBacking.renderOrder=2;group.add(flagBacking);
+ const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.43,.95),flagMaterial);
+ flag.rotation.x=-Math.PI/2;flag.position.set(0,1.442,.06);flag.renderOrder=3;group.add(flag);
  group.position.x=(i-1.5)*3.6;scene.add(group);
- return {group,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0,flag,paintMaterials:[paint],model:null}
+ return {group,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0,flag,flagBacking,paintMaterials:[paint],model:null}
 }
 cars=teams.map((_,i)=>createCar(i));
  // Optional community GLB; verify model and asset licences before public distribution.
  // Keep original cars as a safe fallback if the remote model cannot load.
  const gt3ModelUrl='https://raw.githubusercontent.com/JaronKBragg7337/spectral-gt-rs/main/spectral_gt_rs_game_ready.glb';
+ let carAssetsFinalized=false;
+ const assetTimeout=setTimeout(()=>{if(!carAssetsFinalized){carAssetsFinalized=true;console.warn('GT3 model unavailable at startup; using consistent procedural cars');beginRace()}},4500);
  new GLTFLoader().load(gt3ModelUrl,(gltf)=>{
+   if(carAssetsFinalized)return;
    const source=gltf.scene;
    source.updateMatrixWorld(true);
    const bounds=new THREE.Box3().setFromObject(source);
    const dimensions=bounds.getSize(new THREE.Vector3());
-   if(!dimensions.x||!dimensions.y||!dimensions.z)return;
+   if(!dimensions.x||!dimensions.y||!dimensions.z){carAssetsFinalized=true;clearTimeout(assetTimeout);beginRace();return;}
    cars.forEach((car,i)=>{
      const original=car.group;
      const model=source.clone(true);
@@ -334,12 +345,13 @@ cars=teams.map((_,i)=>createCar(i));
        if(node.material.length===1)node.material=node.material[0];
      });
      // Remove the old blocky car, but retain its national flag roof decal.
-     original.children.filter(obj=>obj!==original.children[original.children.length-1]).forEach(obj=>original.remove(obj));
+     original.children.filter(obj=>obj!==car.flag&&obj!==car.flagBacking).forEach(obj=>original.remove(obj));
      original.add(model);
-     car.flag.position.y=Math.min(1.82,.245+rotatedSize.y*scale);
+     car.flag.position.y=Math.min(1.88,.245+rotatedSize.y*scale);car.flagBacking.position.y=car.flag.position.y-.014;
    });
    console.info('WORLD RUSH: detailed GT sports cars loaded');
- },undefined,(err)=>console.warn('GT model unavailable; keeping original cars',err));
+   carAssetsFinalized=true;clearTimeout(assetTimeout);beginRace();
+ },undefined,(err)=>{if(!carAssetsFinalized){carAssetsFinalized=true;clearTimeout(assetTimeout);console.warn('GT model unavailable; using fallback',err);beginRace()}});
 
 // Fixed finish line at 86 metres from start, matching car progress in metres.
 const RACE_METRES=86,finish=new THREE.Group();
@@ -690,7 +702,15 @@ function loop(now){
  composer.render();
 }
 
-cars.forEach(c=>c.group.position.z=20);applyLeagueRoster();updateRank();requestAnimationFrame(loop);
+function beginRace(){
+ const app=document.getElementById('app');
+ if(!app.classList.contains('booting'))return;
+ applyLeagueRoster();cars.forEach(c=>c.group.position.z=20);updateRank();
+ remaining=ROUND_SECONDS;roundState='countdown';countdownUntil=performance.now()+3500;
+ last=performance.now();shownStartDigit=0;
+ document.getElementById('bootScreen').hidden=true;app.classList.remove('booting');
+ requestAnimationFrame(loop);
+}
 </script><script>
 // Local development refresh: detects updates to the single index.html file.
 (()=>{let previous=null;setInterval(async()=>{try{const r=await fetch('/index.html?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const body=await r.text();if(previous!==null && body!==previous)location.reload();previous=body;}catch(e){}},3500)})();
