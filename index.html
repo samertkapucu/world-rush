@@ -77,6 +77,34 @@ function createCar(i){
  const stripe=new THREE.MeshStandardMaterial({color:0xf4f8ff,metalness:.45,roughness:.3});
  part(.10,.018,.64,stripe,0,.89,-1.17);
  part(.09,.017,.48,stripe,0,1.43,.06);
+ // Country flag decal on the roof, facing the overhead race camera.
+ const flagCanvas=document.createElement('canvas');flagCanvas.width=256;flagCanvas.height=160;
+ const ctx=flagCanvas.getContext('2d');const fw=256,fh=160;
+ if(i===0){ // Turkey
+   ctx.fillStyle='#e30a17';ctx.fillRect(0,0,fw,fh);
+   ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(103,80,47,0,Math.PI*2);ctx.fill();
+   ctx.fillStyle='#e30a17';ctx.beginPath();ctx.arc(119,80,37,0,Math.PI*2);ctx.fill();
+   const cx=167,cy=80,outer=26,inner=10;ctx.fillStyle='#fff';ctx.beginPath();
+   for(let k=0;k<10;k++){const a=-Math.PI/2+k*Math.PI/5;const r=k%2?inner:outer;const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;k?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.fill();
+ }else if(i===1){ // Brazil
+   ctx.fillStyle='#009b3a';ctx.fillRect(0,0,fw,fh);
+   ctx.fillStyle='#ffdf00';ctx.beginPath();ctx.moveTo(128,14);ctx.lineTo(232,80);ctx.lineTo(128,146);ctx.lineTo(24,80);ctx.closePath();ctx.fill();
+   ctx.fillStyle='#002776';ctx.beginPath();ctx.arc(128,80,43,0,Math.PI*2);ctx.fill();
+   ctx.strokeStyle='#fff';ctx.lineWidth=8;ctx.beginPath();ctx.arc(130,132,79,Math.PI*1.13,Math.PI*1.83);ctx.stroke();
+ }else if(i===2){ // USA
+   ctx.fillStyle='#fff';ctx.fillRect(0,0,fw,fh);
+   ctx.fillStyle='#b22234';for(let k=0;k<13;k+=2)ctx.fillRect(0,k*fh/13,fw,fh/13);
+   ctx.fillStyle='#3c3b6e';ctx.fillRect(0,0,110,fh*7/13);
+   ctx.fillStyle='#fff';for(let row=0;row<5;row++)for(let col=0;col<6;col++){ctx.beginPath();ctx.arc(9+col*18,9+row*15,2.6,0,Math.PI*2);ctx.fill()}
+ }else{ // Germany
+   ctx.fillStyle='#111';ctx.fillRect(0,0,fw,fh/3);
+   ctx.fillStyle='#dd0000';ctx.fillRect(0,fh/3,fw,fh/3);
+   ctx.fillStyle='#ffce00';ctx.fillRect(0,2*fh/3,fw,fh/3);
+ }
+ const flagTexture=new THREE.CanvasTexture(flagCanvas);flagTexture.colorSpace=THREE.SRGBColorSpace;
+ const flagMat=new THREE.MeshBasicMaterial({map:flagTexture,side:THREE.DoubleSide,depthWrite:true});
+ const flag=new THREE.Mesh(new THREE.PlaneGeometry(.94,.60),flagMat);
+ flag.rotation.x=-Math.PI/2;flag.position.set(0,1.428,.06);group.add(flag);
  group.position.x=(i-1.5)*3.6;scene.add(group);
  return {group,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0}
 }
