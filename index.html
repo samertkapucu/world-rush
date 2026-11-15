@@ -622,6 +622,7 @@ rank.addEventListener('keydown',e=>{
 // Realtime team participation counts are comments, NOT TikTok follows.
 const liveFans=new Map(),liveTeamCounts=Object.create(null),seenGiftIds=new Set(),giftTotals=Object.create(null);
 const seenFollowUsers=new Set(),seenShareUsers=new Set();
+const pendingUnassignedGifts=new Map();
 let liveFollowEvents=0,liveUniqueShares=0;
 let toastExpiresAt=0,lastJoinToastAt=0;
 function showTeamToast(message,teamCode){
@@ -701,6 +702,13 @@ function applyComment(msg){
  if(previous)liveTeamCounts[previous]=Math.max(0,(liveTeamCounts[previous]||0)-1);
  liveFans.set(userId,team);
  liveTeamCounts[team]=(liveTeamCounts[team]||0)+1;
+ const waiting=pendingUnassignedGifts.get(userId);
+ if(waiting){
+  pendingUnassignedGifts.delete(userId);
+  if(waiting.expires>Date.now()){
+   for(const gift of waiting.events)applyGift({...gift,eventId:String(gift.eventId||'gift')+'-assigned'});
+  }
+ }
  if(liveFans.size>15000){
   const first=liveFans.entries().next().value;
   if(first){liveFans.delete(first[0]);liveTeamCounts[first[1]]=Math.max(0,(liveTeamCounts[first[1]]||0)-1)}
@@ -748,6 +756,16 @@ function applyGift(msg){
  const team=source==='test'?String(msg.teamCode||codes[selected]):liveFans.get(userId);
  // Never secretly assign paid gifts to a team; only a user's explicit team comment counts.
  if(!team||!codes.includes(team)||!points){
+  if(source==='live'&&userId&&points&&!team){
+   const old=pendingUnassignedGifts.get(userId);
+   const events=old&&old.expires>Date.now()?old.events:[];
+   if(events.length>=4)events.shift();
+   events.push({...msg,source:'live'});
+   pendingUnassignedGifts.set(userId,{events,expires:Date.now()+120000});
+   if(pendingUnassignedGifts.size>1000)pendingUnassignedGifts.delete(pendingUnassignedGifts.keys().next().value);
+   updateLastGift('LIVE '+nick+' · '+String(msg.giftName||'?')+' · '+points+' pts · WAITING FOR COUNTRY COMMENT');
+   flash(nick+' · GIFT RECEIVED · COMMENT COUNTRY TO APPLY');return
+  }
   updateLastGift((source==='live'?'LIVE':'TEST')+' '+nick+' · '+String(msg.giftName||'?')+' · '+points+' pts · NO TEAM/POINTS');
   flash(nick+' · THANK YOU! · COMMENT TEAM CODE');return
  }
@@ -788,7 +806,7 @@ function connectLiveBridge(){
     if(msg.type==='gift')applyGift({...msg,source:'live'});
    }catch(err){console.warn('Invalid local LIVE event',err)}
   };
-  liveSocket.onclose=()=>{connectedToLive=false;tiktokStreamOnline=false;updateBridgeStatus();liveReconnect=Math.min(liveReconnect+1,8);setTimeout(connectLiveBridge,Math.min(30000,1500*Math.pow(1.5,liveReconnect)))};
+  liveSocket.onclose=()=>{connectedToLive=false;tiktokStreamOnline=false;updateBridgeStatus();liveReconnect=Math.min(liveReconnect+1,8);setTimeout(connectLiveBridge,Math.min(30000,8000+2500*liveReconnect))};
   liveSocket.onerror=()=>{};
  }catch(err){console.warn('Local LIVE bridge unavailable',err)}
 }
