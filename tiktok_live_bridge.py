@@ -66,6 +66,11 @@ async def set_status(connected: bool, note: str) -> None:
 
 
 async def handle_browser(websocket: Any) -> None:
+    # Prevent unrelated websites from reading local stream events via WebSocket.
+    origin = websocket.request.headers.get("Origin", "")
+    if origin not in {"http://localhost:8000", "http://127.0.0.1:8000"}:
+        await websocket.close(code=1008, reason="Only local WORLD RUSH browser is allowed")
+        return
     CLIENTS.add(websocket)
     LOG.info("WORLD RUSH browser connected")
     await websocket.send(json.dumps(STATE, ensure_ascii=False))
