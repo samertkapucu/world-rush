@@ -5,6 +5,7 @@
 </style></head><body><main id="app"><div id="stage"></div><div id="overlay"></div><div id="hud"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD RUSH</h1><div id="meta">ROUND 01 · 01:05 · SEASON 01</div></header><div id="rank" class="pill"></div><div id="battle">RACE STARTING</div><div id="countdown">LIVE OVERTAKES · EVERY SECOND COUNTS</div><div id="event">TURBO ACTIVATED!</div><div id="footer"><div id="ticker">COMMENT TR / BR / US / DE TO JOIN · GIFTS BOOST YOUR TEAM</div><div id="controls"><button class="btn" data-action="join">💬 JOIN</button><button class="btn" data-action="rose">🌹 ROSE</button><button class="btn" data-action="turbo">⚡ TURBO</button><button class="btn" data-action="mega">🌟 MEGA</button><button class="btn" data-action="cam">🎥 CAMERA</button></div></div></div><div id="error"></div><div id="notice">v0.5 WIDE CAMERA EDITION · OFFLINE SIMULATION · NO TIKTOK CONNECTION · NO MONETARY PRIZES</div></main>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
+import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
 const el=document.getElementById('stage'),rank=document.getElementById('rank'),meta=document.getElementById('meta'),event=document.getElementById('event');
 const W=560,H=900,scene=new THREE.Scene();scene.background=new THREE.Color('#081120');scene.fog=new THREE.Fog('#081120',22,80);
 const camera=new THREE.PerspectiveCamera(60,W/H,.1,160),renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.outputColorSpace=THREE.SRGBColorSpace;el.appendChild(renderer.domElement);
@@ -109,6 +110,52 @@ function createCar(i){
  return {group,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0}
 }
 cars=teams.map((_,i)=>createCar(i));
+ // Replace procedural cars with a licensed, detailed CC0 sports-car GLB.
+ // Keep original cars as a safe fallback if the remote model cannot load.
+ const gt3ModelUrl='https://raw.githubusercontent.com/JaronKBragg7337/spectral-gt-rs/main/spectral_gt_rs_game_ready.glb';
+ new GLTFLoader().load(gt3ModelUrl,(gltf)=>{
+   const source=gltf.scene;
+   source.updateMatrixWorld(true);
+   const bounds=new THREE.Box3().setFromObject(source);
+   const dimensions=bounds.getSize(new THREE.Vector3());
+   if(!dimensions.x||!dimensions.y||!dimensions.z)return;
+   cars.forEach((car,i)=>{
+     const original=car.group;
+     const model=source.clone(true);
+     model.rotation.y=Math.PI/2; // source car faces +X; race cars face -Z
+     model.updateMatrixWorld(true);
+     const rotatedBounds=new THREE.Box3().setFromObject(model);
+     const rotatedSize=rotatedBounds.getSize(new THREE.Vector3());
+     const scale=Math.min(2.1/rotatedSize.x,4.05/rotatedSize.z,1.55/rotatedSize.y);
+     model.scale.setScalar(scale);
+     model.updateMatrixWorld(true);
+     const fitted=new THREE.Box3().setFromObject(model);
+     const center=fitted.getCenter(new THREE.Vector3());
+     model.position.set(-center.x,.22-fitted.min.y,-center.z);
+     const tint=new THREE.Color(colors[i]);
+     model.traverse((node)=>{
+       if(!node.isMesh)return;
+       node.castShadow=true;
+       node.receiveShadow=true;
+       node.material=(Array.isArray(node.material)?node.material:[node.material]).map(mat=>{
+         const copy=mat.clone();
+         const label=((node.name||'')+' '+(mat.name||'')).toLowerCase();
+         if(/body|paint|shell|hood|bonnet|fender|door|roof|panel|exterior/.test(label)){
+           if(copy.color)copy.color.copy(tint);
+           if('metalness' in copy)copy.metalness=.68;
+           if('roughness' in copy)copy.roughness=.24;
+         }
+         return copy;
+       });
+       if(node.material.length===1)node.material=node.material[0];
+     });
+     // Remove the old blocky car, but retain its national flag roof decal.
+     original.children.filter(obj=>obj!==original.children[original.children.length-1]).forEach(obj=>original.remove(obj));
+     original.add(model);
+   });
+   console.info('WORLD RUSH: detailed GT sports cars loaded');
+ },undefined,(err)=>console.warn('GT model unavailable; keeping original cars',err));
+
 const finish=new THREE.Group();for(let j=0;j<16;j++){let tile=box(.9,.04,.8,j%2?0xffffff:0x0b1019);tile.position.set((j-7.5)*.9,.04,-66);finish.add(tile)}scene.add(finish);
 camera.position.set(0,19,53);camera.lookAt(0,.6,17);let round=1,remaining=65,selected=0,season=[0,0,0,0],mode=0,flashUntil=0,last=performance.now(),acc=0,uiTick=0,leadIndex=-1,closeupUntil=0;
 function flash(s){event.textContent=s;event.classList.add('on');flashUntil=performance.now()+1700}
