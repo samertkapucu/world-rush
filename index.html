@@ -316,7 +316,7 @@ function createCar(i){
  const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.43,.95),flagMaterial);
  flag.rotation.x=-Math.PI/2;flag.position.set(0,1.442,.06);flag.renderOrder=3;group.add(flag);
  group.position.x=(i-1.5)*3.6;scene.add(group);
- return {group,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0,flag,flagBacking,paintMaterials:[paint],model:null}
+ return {group,laneX:(i-1.5)*3.6,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0,flag,flagBacking,paintMaterials:[paint],model:null}
 }
 cars=teams.map((_,i)=>createCar(i));
  // Optional community GLB; verify model and asset licences before public distribution.
@@ -388,6 +388,7 @@ camera.position.set(0,19,53);camera.lookAt(0,.6,17);let round=1,remaining=ROUND_
 const cameraLook=new THREE.Vector3(0,.6,17);let spotlightUntil=0,spotlightIndex=-1;
 // TV-director camera: gentle angle changes, with a wide shot between close perspectives.
 const cameraSequence=[0,1,0,2];
+let previousRankOrder=[0,1,2,3],lastOvertakeMoment=0,duelFocusUntil=0,duelFocusIndex=-1;
 let cameraSequenceStep=0,nextCameraSwitch=performance.now()+9500;
 function changeCameraManually(){mode=(mode+1)%3;nextCameraSwitch=performance.now()+12000}
 const markerElements=cars.map(c=>document.getElementById('trackCar'+c.i));
@@ -544,7 +545,8 @@ function updateLeagueStatus(){
 function resetRound(){
  if(queuedLeagueChange||Date.now()>=leagueEndsAt)advanceLeague();
  round++;remaining=ROUND_SECONDS;roundState='countdown';countdownUntil=performance.now()+3500;shownStartDigit=0;winnerIndex=-1;leadIndex=-1;finishReason='';soundEngine.finalCued=false;
- cars.forEach(c=>{c.progress=0;c.boost=0;c.pace=0;c.burst=0;c.group.position.z=20});
+ cars.forEach(c=>{c.progress=0;c.boost=0;c.pace=0;c.burst=0;c.group.position.z=20;c.group.position.x=c.laneX;c.group.rotation.set(0,0,0)});
+ previousRankOrder=[0,1,2,3];lastOvertakeMoment=performance.now();duelFocusUntil=0;duelFocusIndex=-1;
  flashUntil=0;event.classList.remove('on');
 }
 function finishRound(now,byTime){
@@ -792,7 +794,12 @@ function loop(now){
    c.boost=Math.max(0,c.boost-dt);
    c.group.position.z=20-c.progress*.86;
    c.group.position.y=Math.sin(t*12+c.i)*.025;
-   c.group.rotation.y=Math.sin(t*1.1+c.i)*.025;
+   // Visible, lane-contained racecraft during close battles; country identity stays on its own lane.
+   const duel=cars.some(other=>other!==c&&Math.abs((c.progress-other.progress)*METRES_PER_PERCENT)<10);
+   const drift=duel?Math.sin(t*2.8+c.i*1.55)*.30:(c.boost>0?Math.sin(t*2.2+c.i)*.11:0);
+   c.group.position.x=THREE.MathUtils.lerp(c.group.position.x,c.laneX+drift,Math.min(1,dt*5));
+   c.group.rotation.y=Math.sin(t*1.1+c.i)*.025-(c.group.position.x-c.laneX)*.065;
+   c.group.rotation.z=(c.group.position.x-c.laneX)*.025;
   }
   const active=racing&&(c.boost>0||now<c.burst);
   effectParticles[c.i].forEach((spark,j)=>{
@@ -804,7 +811,11 @@ function loop(now){
   });
  });
  const order=[...cars].sort((a,b)=>b.progress-a.progress);
- const leader=order[0],focusZ=performance.now()<spotlightUntil&&spotlightIndex>=0?cars[spotlightIndex].group.position.z:leader.group.position.z;
+ const leader=order[0],lastCar=order[3];
+ const wideFocus=leader.group.position.z*.65+lastCar.group.position.z*.35;
+ const focusZ=now<spotlightUntil&&spotlightIndex>=0?cars[spotlightIndex].group.position.z:
+   now<duelFocusUntil&&duelFocusIndex>=0?cars[duelFocusIndex].group.position.z:wideFocus;
+ const raceSpread=Math.abs(leader.group.position.z-lastCar.group.position.z);
  if(racing && (leader.progress>=100||remaining<=0))finishRound(now,remaining<=0);
  if(roundState==='racing'&&leadIndex!==leader.i){
   if(leadIndex>=0 && remaining<ROUND_SECONDS-5){
@@ -813,11 +824,25 @@ function loop(now){
   }
   leadIndex=leader.i;
  }
+ const currentRank=order.map(c=>c.i);
+ if(racing&&remaining<ROUND_SECONDS-7){
+  const climber=currentRank.find((index,place)=>place<previousRankOrder.indexOf(index));
+  if(climber!==undefined&&now-lastOvertakeMoment>5500&&now>=spotlightUntil){
+   lastOvertakeMoment=now;duelFocusIndex=climber;duelFocusUntil=now+2400;
+   const passing=cars[climber];passing.burst=now+1900;
+   if(climber!==leader.i){
+    flash(codes[climber]+' '+teams[climber]+' MAKES A MOVE!');
+   }
+   soundEngine.play('lead');
+   nextCameraSwitch=Math.max(nextCameraSwitch,now+3500);
+  }
+ }
+ previousRankOrder=currentRank;
  // Auto-broadcast camera change every ~11s, but do not interrupt lead-change closeups.
  if(now>=nextCameraSwitch && roundState==='racing' && now>=closeupUntil){
   cameraSequenceStep=(cameraSequenceStep+1)%cameraSequence.length;
   mode=cameraSequence[cameraSequenceStep];
-  nextCameraSwitch=now+11000;
+  nextCameraSwitch=now+9000+(cameraSequenceStep%3)*1300;
  }
  const gap=order[0].progress-order[1].progress;
  colorTarget.setHex(colors[leader.i]);dominationColor.lerp(colorTarget,Math.min(1,dt*1.8));
@@ -865,12 +890,13 @@ function loop(now){
   countdown.classList.toggle('urgent',roundState==='racing'&&(finalSprint||remaining<10));
  }
  const cameraTargets=[
-  {pos:[0,17,focusZ+30],aim:[0,.65,focusZ-3]},
-  {pos:[-5,20,focusZ+33],aim:[0,.65,focusZ-3]},
-  {pos:[0,28,focusZ+21],aim:[0,.5,focusZ-6]}
+  {pos:[0,15.5+raceSpread*.13,focusZ+25+raceSpread*.30],aim:[0,.65,focusZ-3]},
+  {pos:[-4.2,18+raceSpread*.15,focusZ+28+raceSpread*.32],aim:[0,.65,focusZ-3]},
+  {pos:[0,24+raceSpread*.13,focusZ+20+raceSpread*.26],aim:[0,.5,focusZ-6]}
  ];
- const target=cameraTargets[now<closeupUntil||now<spotlightUntil?0:mode],dynamicPos=[...target.pos],dynamicAim=[...target.aim];
- if(now<closeupUntil||now<spotlightUntil){dynamicPos[1]-=1.3;dynamicPos[2]-=2.5;dynamicAim[2]+=1}
+ const highlight=now<closeupUntil||now<spotlightUntil||now<duelFocusUntil;
+ const target=cameraTargets[highlight?0:mode],dynamicPos=[...target.pos],dynamicAim=[...target.aim];
+ if(highlight){dynamicPos[1]-=1.4;dynamicPos[2]-=2.6;dynamicAim[2]+=1.2}
  const smooth=1-Math.exp(-dt*3.7);
  camera.position.lerp(new THREE.Vector3(...dynamicPos),smooth);
  cameraLook.lerp(new THREE.Vector3(...dynamicAim),smooth);
