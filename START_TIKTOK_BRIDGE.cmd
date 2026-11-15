@@ -5,7 +5,8 @@ echo ============================================
 echo   WORLD RUSH - LOCAL TIKTOK LIVE BRIDGE
 echo ============================================
 echo.
-set /p STREAMER=Enter TikTok LIVE username without @: 
+set /p STREAMER=TikTok LIVE username [worldrush.live] - press Enter to keep: 
+if "%STREAMER%"=="" set "STREAMER=worldrush.live"
 if "%STREAMER%"=="" (
   echo TikTok username is required.
   pause
