@@ -1039,6 +1039,9 @@ function beginRace(){
  last=performance.now();shownStartDigit=0;
  document.getElementById('bootScreen').hidden=true;app.classList.remove('booting');
  requestAnimationFrame(loop);
+ // Browser sources may permit autoplay. If denied by Chromium, audio remains silent
+ // until a user gesture; the visual race keeps running independently.
+ if(streamMode)soundEngine.toggle();
 }
 </script><script>
 // Broadcast reliability: NEVER reload while streaming.
