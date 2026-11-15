@@ -1,5 +1,5 @@
 <!-- WORLD RUSH OTOMATIK GUNCELLEME TEST 123 -->
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WORLD RUSH v4 — DOMINATION</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WORLD RUSH v5 — RACE DIRECTOR</title><style>
 *{box-sizing:border-box}body{margin:0;background:#050914;color:#fff;font:600 14px system-ui,Arial}#app{width:min(100vw,560px);height:100dvh;min-height:650px;margin:auto;position:relative;overflow:hidden;background:#091426}canvas{display:block}#stage{position:absolute;inset:0}#hud{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;padding:18px 15px 20px;text-shadow:0 2px 10px #000}header{text-align:center;background:linear-gradient(#081324e8,#08132488);border:1px solid #7b9cbd66;border-radius:16px;padding:12px}header small{letter-spacing:3px;color:#7bd9ff}h1{font-size:34px;letter-spacing:3px;margin:0;color:#fff;text-shadow:0 0 18px #2cc8ff}#meta{color:#ffd979;font-size:13px}.pill{background:#071326d9;border:1px solid #80a8c26e;border-radius:12px;padding:10px 12px;backdrop-filter:blur(8px)}#rank{margin-top:12px;display:grid;gap:6px}.team{display:flex;align-items:center;gap:8px;font-size:15px}.team .pos{width:24px;color:#ffcf67}.team .name{flex:1}.team .pct{font-variant-numeric:tabular-nums}.bar{height:4px;background:#ffffff22;border-radius:5px;margin:3px 0 0 32px}.fill{height:100%;border-radius:5px;transition:width .2s}#event{margin:auto 0;text-align:center;font-size:30px;font-weight:900;opacity:0;transform:scale(.7);transition:opacity .2s,transform .2s;color:#ffe49b;text-shadow:0 0 25px #ff9d00}#event.on{opacity:1;transform:scale(1)}#footer{margin-top:auto;text-align:center}#ticker{font-size:12px;color:#c5e7ff;margin-bottom:8px}#controls{pointer-events:auto;display:flex;gap:5px;flex-wrap:wrap;justify-content:center}.btn{background:linear-gradient(#22466b,#10233d);border:1px solid #76baf7;color:white;padding:9px 10px;border-radius:9px;font-weight:800;cursor:pointer}.btn:hover{background:#2e5f8f}#notice{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:10px;color:#b1c3d5;background:#06101e;padding:3px}#error{display:none;position:absolute;top:45%;left:8%;right:8%;background:#290d18;padding:20px;border:1px solid #f77;border-radius:12px;text-align:center}#overlay{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 35%,#0206108a 100%)}
 #battle{text-align:center;margin-top:9px;padding:9px;border:1px solid #e4bd6077;background:linear-gradient(90deg,#0d2037,#26331c,#0d2037);color:#ffe09c;border-radius:12px;font-size:17px;font-weight:950;letter-spacing:1px}#countdown{text-align:center;font-size:11px;letter-spacing:2px;color:#8ee5ff;padding-top:6px}.urgent{font-size:18px!important;color:#ff6477!important;animation:pulse .5s infinite alternate}@keyframes pulse{to{opacity:.55;transform:scale(1.025)}}.racer.leading{background:#d7a83b18;border-radius:6px;padding:4px}.team .name{font-weight:900}.team .pct{font-weight:900;color:#f8e8ba}#rank{gap:2px}#event{font-size:27px}#stage{background:#091426}
 
@@ -22,7 +22,23 @@ header small{color:#65f1ff;font-weight:900}h1{font-weight:1000;letter-spacing:4p
 #battle{transition:border-color .4s,box-shadow .4s}
 #countdown{font-weight:850}
 #comeback{font-size:11px;text-align:center;color:#e5f3ff;padding:5px 7px;background:#07182ed9;border-radius:7px;margin-top:5px;border:1px solid #4a80b344}
-</style></head><body><main id="app"><div id="stage"></div><div id="overlay"></div><div id="hud"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD RUSH</h1><div id="meta">ROUND 01 · 01:05 · SEASON 01</div></header><div id="rank" class="pill"></div><div id="raceProgress"><div id="progressLabel"><span>🏁 FINISH LINE</span><strong id="distance">86m TO FINISH</strong></div><div id="progressTrack"><div id="progressFill"></div><div id="finishMark"></div></div><div id="comeback">ALL TEAMS STILL IN THE RACE</div></div><div id="battle">RACE STARTING</div><div id="countdown">LIVE OVERTAKES · EVERY SECOND COUNTS</div><div id="event">TURBO ACTIVATED!</div><div id="footer"><div id="ticker">COMMENT TR / BR / US / DE TO JOIN · GIFTS BOOST YOUR TEAM</div><div id="controls"><button class="btn" data-action="join">💬 JOIN</button><button class="btn" data-action="rose">🌹 ROSE</button><button class="btn" data-action="turbo">⚡ TURBO</button><button class="btn" data-action="mega">🌟 MEGA</button><button class="btn" data-action="cam">🎥 CAMERA</button></div></div></div><div id="error"></div><div id="notice">v4.0 DOMINATION · OFFLINE SIMULATION · NO TIKTOK CONNECTION · NO MONETARY PRIZES</div></main>
+
+/* Race director UX — readable competition without obscuring the cars. */
+#rank{pointer-events:auto}
+.racer{border-radius:6px;cursor:pointer;outline:1px solid transparent;transition:background .2s,outline-color .2s}
+.racer:hover{background:#78d4ff15}
+.racer.selected{background:#2676a82e;outline-color:#62daffaa}
+.racer.selected .name:after{content:" ●";color:#61e5ff;font-size:10px}
+.racer:focus-visible{outline:2px solid #fff}
+#progressTrack{height:30px;overflow:hidden;background:linear-gradient(90deg,#192539,#0b1c2d);border:1px solid #426080}
+#progressFill{position:absolute;top:0;left:0;height:100%;opacity:.18}
+.trackCar{position:absolute;left:0%;height:5px;width:11px;border:1px solid #ffffffb8;border-radius:3px;transform:translateX(-50%);box-shadow:0 0 6px currentColor;transition:left .16s linear;z-index:2}
+#finishMark{height:30px;top:-1px;width:11px;z-index:3}
+#comeback{font-size:11px;font-weight:850;padding:6px 7px}
+#raceProgress{border-color:#5299c2aa}
+#event.on{animation:race-event .5s ease-out}
+@keyframes race-event{from{filter:brightness(1.8)}to{filter:brightness(1)}}
+</style></head><body><main id="app"><div id="stage"></div><div id="overlay"></div><div id="hud"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD RUSH</h1><div id="meta">ROUND 01 · 01:05 · SEASON 01</div></header><div id="rank" class="pill"></div><div id="raceProgress"><div id="progressLabel"><span>🏁 FINISH LINE</span><strong id="distance">86m TO FINISH</strong></div><div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:2px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:9px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:16px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:23px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div><div id="comeback">SELECT A TEAM · BOOST YOUR COUNTRY</div></div><div id="battle">RACE STARTING</div><div id="countdown">LIVE OVERTAKES · EVERY SECOND COUNTS</div><div id="event">TURBO ACTIVATED!</div><div id="footer"><div id="ticker">COMMENT TR / BR / US / DE TO JOIN · GIFTS BOOST YOUR TEAM</div><div id="controls"><button class="btn" data-action="join">💬 JOIN</button><button class="btn" data-action="rose">🌹 ROSE</button><button class="btn" data-action="turbo">⚡ TURBO</button><button class="btn" data-action="mega">🌟 MEGA</button><button class="btn" data-action="cam">🎥 CAMERA</button></div></div></div><div id="error"></div><div id="notice">v5.0 RACE DIRECTOR · OFFLINE SIMULATION · NO TIKTOK CONNECTION · NO MONETARY PRIZES</div></main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
@@ -33,11 +49,11 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 const el=document.getElementById('stage'),rank=document.getElementById('rank'),meta=document.getElementById('meta'),event=document.getElementById('event');
 const W=560,H=900,scene=new THREE.Scene();scene.background=new THREE.Color('#070a22');scene.fog=new THREE.FogExp2('#080d25',.011);
-const camera=new THREE.PerspectiveCamera(60,W/H,.1,160),renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;el.appendChild(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(58,W/H,.1,160),renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;el.appendChild(renderer.domElement);
 // Real GPU post-processing pipeline: physically rendered scene -> HDR bloom -> display output.
 const composer=new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene,camera));
-const bloom=new UnrealBloomPass(new THREE.Vector2(W,H),.24,.24,.94);
+const bloom=new UnrealBloomPass(new THREE.Vector2(W,H),.18,.18,.97);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
 scene.add(new THREE.HemisphereLight(0x99eaff,0x16112c,2.25));const sun=new THREE.DirectionalLight(0xffd9b5,3.2);sun.position.set(-7,16,9);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-24;sun.shadow.camera.right=24;sun.shadow.camera.top=60;sun.shadow.camera.bottom=-70;scene.add(sun);const fillLight=new THREE.DirectionalLight(0x568aff,1.6);fillLight.position.set(9,7,-20);scene.add(fillLight);
@@ -49,11 +65,11 @@ const ground=box(38,.2,150,0x07121e);ground.position.set(0,-.25,-25);ground.rece
  for(let n=0;n<4500;n++){const shade=25+Math.floor(Math.random()*44);ac.fillStyle='rgba('+shade+','+(shade+13)+','+(shade+24)+',.27)';ac.fillRect(Math.random()*256,Math.random()*256,1+Math.random()*2,1+Math.random()*2)}
  const asphaltTexture=new THREE.CanvasTexture(asphaltCanvas);asphaltTexture.wrapS=asphaltTexture.wrapT=THREE.RepeatWrapping;asphaltTexture.repeat.set(1,24);asphaltTexture.colorSpace=THREE.SRGBColorSpace;
  const asphaltMat=new THREE.MeshStandardMaterial({map:asphaltTexture,roughness:.79,metalness:.08});
- const neonMat=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:1.75,metalness:.3,roughness:.28});
+ const neonMat=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:1.35,metalness:.3,roughness:.28});
  const cyanGlow=neonMat(0x18dfff),purpleGlow=neonMat(0x8a49ff),goldGlow=neonMat(0xffbd3a);
 
 for(let i=0;i<4;i++){const x=(i-1.5)*3.6;const lane=new THREE.Mesh(new THREE.BoxGeometry(3.35,.04,140),asphaltMat);lane.position.set(x,-.08,-26);lane.receiveShadow=true;scene.add(lane);const strip=box(.08,.06,140,i===0?0xff4c62:i===1?0x31d98c:i===2?0x48b8ff:0xffc84b);strip.position.set(x-1.64,.01,-26);scene.add(strip);for(let z=-82;z<39;z+=7){const line=box(.08,.03,3,0x8ba8c6);line.position.set(x+1.63,.015,z);scene.add(line)}}
-for(let z=-78;z<45;z+=9){for(const side of [-1,1]){const pole=box(.14,4,.14,0x466b87,.8);pole.position.set(side*8.3,2,z);scene.add(pole);const lamp=box(1,.14,.5,0x82dfff);lamp.position.set(side*8.3,4.1,z);scene.add(lamp);const light=new THREE.PointLight(0x4dbbff,8,12);light.position.set(side*8.3,4,z);scene.add(light)}}
+for(let z=-78;z<45;z+=9){for(const side of [-1,1]){const pole=box(.14,4,.14,0x466b87,.8);pole.position.set(side*8.3,2,z);scene.add(pole);const lamp=box(1,.14,.5,0x82dfff);lamp.position.set(side*8.3,4.1,z);scene.add(lamp);if(Math.round((z+78)/9)%3===0){const light=new THREE.PointLight(0x4dbbff,5.5,13);light.position.set(side*8.3,4,z);scene.add(light)}}}
 // Neon arena architecture: illuminated rails, gantries, billboards, and distant skyline.
 const dominationMaterials=[];const arena=new THREE.Group();scene.add(arena);
 for(let z=-85;z<=48;z+=12){
@@ -82,7 +98,7 @@ const lineGeo=new THREE.BoxGeometry(.075,.025,140);
 for(let i=0;i<4;i++){
  const x=(i-1.5)*3.6;
  const lightLine=new THREE.Mesh(lineGeo,neonMat([0xff315e,0x18f5a0,0x27aeff,0xffcf4d][i]));
- lightLine.position.set(x-1.48,.055,-26);accents.add(lightLine);dominationMaterials.push(lightLine.material);
+ lightLine.position.set(x-1.48,.055,-26);accents.add(lightLine); // Lane colors stay identifiable even during domination.
 }
 for(let z=-72;z<38;z+=18){
  for(const side of [-1,1]){
@@ -195,7 +211,7 @@ function createCar(i){
  return {group,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0}
 }
 cars=teams.map((_,i)=>createCar(i));
- // Replace procedural cars with a licensed, detailed CC0 sports-car GLB.
+ // Optional community GLB; verify model and asset licences before public distribution.
  // Keep original cars as a safe fallback if the remote model cannot load.
  const gt3ModelUrl='https://raw.githubusercontent.com/JaronKBragg7337/spectral-gt-rs/main/spectral_gt_rs_game_ready.glb';
  new GLTFLoader().load(gt3ModelUrl,(gltf)=>{
@@ -244,53 +260,145 @@ cars=teams.map((_,i)=>createCar(i));
 // Fixed finish line at 86 metres from start, matching car progress in metres.
 const RACE_METRES=86,finish=new THREE.Group();
 for(let j=0;j<16;j++){const tile=box(.9,.055,.8,j%2?0xffffff:0x0b1019);tile.position.set((j-7.5)*.9,.055,-66);finish.add(tile)}
-const finishBeam=new THREE.Mesh(new THREE.BoxGeometry(15,.08,.16),goldGlow);finishBeam.position.set(0,.13,-66);finish.add(finishBeam);scene.add(finish);
-const dominationColor=new THREE.Color(0x18dfff);
-camera.position.set(0,19,53);camera.lookAt(0,.6,17);let round=1,remaining=65,selected=0,season=[0,0,0,0],mode=0,flashUntil=0,last=performance.now(),acc=0,uiTick=0,leadIndex=-1,closeupUntil=0;
+const finishBeam=new THREE.Mesh(new THREE.BoxGeometry(15,.08,.16),goldGlow);finishBeam.position.set(0,.13,-66);finish.add(finishBeam);
+for(const side of [-1,1]){const support=box(.28,6.8,.4,0x31445d,.6,.25);support.position.set(side*7.1,3.25,-66);finish.add(support)}
+const headerBeam=box(14.5,.32,.35,0x1b2c46,.65,.3);headerBeam.position.set(0,6.6,-66);finish.add(headerBeam);
+const bannerCanvas=document.createElement('canvas');bannerCanvas.width=512;bannerCanvas.height=128;
+const bc=bannerCanvas.getContext('2d');bc.fillStyle='#0a172b';bc.fillRect(0,0,512,128);
+bc.strokeStyle='#ffc953';bc.lineWidth=7;bc.strokeRect(4,4,504,120);bc.font='900 76px system-ui';bc.textAlign='center';bc.textBaseline='middle';bc.fillStyle='#fff2b1';bc.fillText('FINISH',256,68);
+const bannerTex=new THREE.CanvasTexture(bannerCanvas);bannerTex.colorSpace=THREE.SRGBColorSpace;
+const banner=new THREE.Mesh(new THREE.PlaneGeometry(7.6,1.9),new THREE.MeshBasicMaterial({map:bannerTex,side:THREE.DoubleSide}));banner.position.set(0,7.6,-66);finish.add(banner);
+scene.add(finish);
+const dominationColor=new THREE.Color(0x18dfff),colorTarget=new THREE.Color();
+camera.position.set(0,19,53);camera.lookAt(0,.6,17);let round=1,remaining=75,selected=0,season=[0,0,0,0],mode=0,flashUntil=0,last=performance.now(),uiTick=0,leadIndex=-1,closeupUntil=0,roundState='racing',resultUntil=0,winnerIndex=-1,finishReason='';
+const cameraLook=new THREE.Vector3(0,.6,17);
+const markerElements=cars.map(c=>document.getElementById('trackCar'+c.i));
 function flash(s){event.textContent=s;event.classList.add('on');flashUntil=performance.now()+1700}
-function resetRound(){const order=[...cars].sort((a,b)=>b.progress-a.progress);season[order[0].i]+=3;season[order[1].i]+=2;season[order[2].i]+=1;flash(flags[order[0].i]+' '+teams[order[0].i]+' WINS!');round++;remaining=65;leadIndex=-1;cars.forEach(c=>{c.progress=0;c.boost=0;c.pace=0;c.group.position.z=20});}
-function effect(type){const c=cars[selected];if(type==='join'){flash(flags[selected]+' JOINED '+teams[selected]);return}let power={rose:2,turbo:5,mega:9}[type];c.boost=Math.min(8,c.boost+power);c.burst=performance.now()+1800;flash(flags[selected]+' '+({rose:'SPEED UP!',turbo:'TURBO ACTIVATED!',mega:'MEGA OVERDRIVE!'}[type]));}
+function resetRound(){
+ round++;remaining=75;roundState='racing';winnerIndex=-1;leadIndex=-1;finishReason='';
+ cars.forEach(c=>{c.progress=0;c.boost=0;c.pace=0;c.burst=0;c.group.position.z=20});
+ flashUntil=0;event.classList.remove('on');
+}
+function finishRound(now,byTime){
+ if(roundState!=='racing')return;
+ const order=[...cars].sort((a,b)=>b.progress-a.progress);
+ winnerIndex=order[0].i;
+ season[order[0].i]+=3;season[order[1].i]+=2;season[order[2].i]+=1;
+ roundState='results';finishReason=byTime?'TIME LIMIT':'FINISH LINE';resultUntil=now+4400;
+ flash('🏆 '+flags[winnerIndex]+' '+teams[winnerIndex]+' WINS!');
+ flashUntil=now+3900;
+}
+function effect(type){
+ const c=cars[selected];
+ if(type==='join'){flash(flags[selected]+' '+teams[selected]+' SELECTED');return}
+ if(roundState!=='racing')return;
+ const power={rose:2,turbo:5,mega:9}[type];
+ const order=[...cars].sort((a,b)=>b.progress-a.progress);
+ const deficit=order[0].progress-c.progress;
+ const comeback=deficit*.86>=4 && order[0].i!==selected;
+ const boostTime=Math.min(10,c.boost+power*(comeback?1.25:1));
+ c.boost=boostTime;c.burst=performance.now()+1800;
+ flash(flags[selected]+' '+(comeback?'COMEBACK +25% BOOST!':({rose:'SPEED UP!',turbo:'TURBO ACTIVATED!',mega:'MEGA OVERDRIVE!'}[type])));
+}
+rank.addEventListener('click',e=>{
+ const row=e.target.closest('[data-team]');
+ if(!row)return;
+ selected=Number(row.dataset.team);effect('join');updateRank();
+});
+rank.addEventListener('keydown',e=>{
+ if(e.key!=='Enter'&&e.key!==' ')return;
+ const row=e.target.closest('[data-team]');if(!row)return;
+ e.preventDefault();selected=Number(row.dataset.team);effect('join');updateRank();
+});
+
 document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.action;if(a==='cam'){mode=(mode+1)%3;return}if(a==='join'){selected=(selected+1)%4;effect('join')}else effect(a)}));
-function updateRank(){let sorted=[...cars].sort((a,b)=>b.progress-a.progress);rank.innerHTML=sorted.map((c,k)=>`<div class="racer ${k===0?'leading':''}"><div class="team"><span class="pos">${k+1}</span><span>${flags[c.i]}</span><span class="name">${teams[c.i]}</span><span class="pct">${Math.floor(c.progress)}% ${k===0?'👑':'-'+Math.round((sorted[0].progress-c.progress)*.86)+'m'}</span></div><div class="bar"><div class="fill" style="width:${Math.max(1,c.progress)}%;background:#${c.color.toString(16).padStart(6,'0')}"></div></div></div>`).join('');meta.textContent=`ROUND ${String(round).padStart(2,'0')} · ${String(Math.floor(remaining/60)).padStart(2,'0')}:${String(Math.floor(remaining%60)).padStart(2,'0')} · SEASON 01`}
+function updateRank(){let sorted=[...cars].sort((a,b)=>b.progress-a.progress);rank.innerHTML=sorted.map((c,k)=>`<div class="racer ${k===0?'leading':''} ${selected===c.i?'selected':''}" data-team="${c.i}" tabindex="0" role="button" aria-label="Select ${teams[c.i]}" title="Season points: ${season[c.i]}"><div class="team"><span class="pos">${k+1}</span><span>${flags[c.i]}</span><span class="name">${teams[c.i]}</span><span class="pct">${Math.floor(c.progress)}% ${k===0?'👑':'-'+Math.round((sorted[0].progress-c.progress)*.86)+'m'}</span></div><div class="bar"><div class="fill" style="width:${Math.max(1,c.progress)}%;background:#${c.color.toString(16).padStart(6,'0')}"></div></div></div>`).join('');meta.textContent=roundState==='results'?'ROUND '+String(round).padStart(2,'0')+' · FINISHED · '+finishReason:`ROUND ${String(round).padStart(2,'0')} · ${String(Math.floor(remaining/60)).padStart(2,'0')}:${String(Math.floor(remaining%60)).padStart(2,'0')} · SEASON 01`}
 function resize(){const r=el.getBoundingClientRect();camera.aspect=r.width/r.height;camera.updateProjectionMatrix();renderer.setSize(r.width,r.height);composer.setSize(r.width,r.height)}window.addEventListener('resize',resize);resize();
-function loop(now){requestAnimationFrame(loop);const dt=Math.min((now-last)/1000,.05);last=now;remaining-=dt;if(remaining<=0||cars.some(c=>c.progress>=100))resetRound();const t=now*.001;cars.forEach(c=>{const wave=Math.sin(t*.44+c.i*1.67)*.43+Math.sin(t*.19+c.i*2.8)*.28;const speed=Math.max(.32,1.05+wave+(c.boost>0?1.15:0));c.progress=Math.min(100,c.progress+speed*dt*1.48);c.boost=Math.max(0,c.boost-dt);c.group.position.z=20-c.progress*.86;c.group.position.y=Math.sin(t*12+c.i)*.025;c.group.rotation.y=Math.sin(t*1.1+c.i)*.025;
- const active=c.boost>0||now<c.burst;
- effectParticles[c.i].forEach((spark,j)=>{
-  spark.visible=active;
-  if(!active)return;
-  const phase=(t*4+j/12)%1;
-  spark.position.set(c.group.position.x+Math.sin(j*2.4)*.65,c.group.position.y+.22+phase*.22,c.group.position.z+1.8+phase*3.8);
-  const scale=(1-phase)*(.9+(j%3)*.28);spark.scale.setScalar(scale);
+function loop(now){
+ requestAnimationFrame(loop);
+ const dt=Math.min((now-last)/1000,.05);last=now;
+ if(roundState==='results'&&now>=resultUntil)resetRound();
+ const racing=roundState==='racing';
+ if(racing)remaining=Math.max(0,remaining-dt);
+ const t=now*.001;
+ cars.forEach(c=>{
+  if(racing){
+   const wave=Math.sin(t*.44+c.i*1.67)*.43+Math.sin(t*.19+c.i*2.8)*.28;
+   const speed=Math.max(.32,1.05+wave+(c.boost>0?1.15:0));
+   c.progress=Math.min(100,c.progress+speed*dt*1.48);
+   c.boost=Math.max(0,c.boost-dt);
+   c.group.position.z=20-c.progress*.86;
+   c.group.position.y=Math.sin(t*12+c.i)*.025;
+   c.group.rotation.y=Math.sin(t*1.1+c.i)*.025;
+  }
+  const active=racing&&(c.boost>0||now<c.burst);
+  effectParticles[c.i].forEach((spark,j)=>{
+   spark.visible=active;
+   if(!active)return;
+   const phase=(t*4+j/12)%1;
+   spark.position.set(c.group.position.x+Math.sin(j*2.4)*.65,c.group.position.y+.22+phase*.22,c.group.position.z+1.8+phase*3.8);
+   spark.scale.setScalar((1-phase)*(.9+(j%3)*.28));
+  });
  });
-});const order=[...cars].sort((a,b)=>b.progress-a.progress);const leader=order[0];const focusZ=leader.group.position.z;
-if(leadIndex!==leader.i){if(leadIndex>=0 && remaining<60){flash(flags[leader.i]+' '+teams[leader.i]+' TAKES THE LEAD!');closeupUntil=now+2400}leadIndex=leader.i}
-const gap=order[0].progress-order[1].progress;
-document.getElementById('battle').textContent=gap<1.6?'⚔️ PHOTO FINISH BATTLE':flags[leader.i]+' '+teams[leader.i]+' DOMINATES · +'+Math.round(gap*.86)+'m';
-const targetColor=new THREE.Color(colors[leader.i]);dominationColor.lerp(targetColor,Math.min(1,dt*1.8));
-for(const mat of dominationMaterials){mat.color.copy(dominationColor);mat.emissive.copy(dominationColor)}
-const battleEl=document.getElementById('battle');battleEl.style.borderColor='#'+dominationColor.getHexString();battleEl.style.boxShadow='0 0 18px #'+dominationColor.getHexString()+'55';
-const remainingMetres=Math.max(0,Math.ceil(RACE_METRES-leader.progress*.86));
-document.getElementById('distance').textContent=remainingMetres+'m TO FINISH';
-document.getElementById('progressFill').style.width=Math.min(100,leader.progress)+'%';
-document.getElementById('progressFill').style.background='linear-gradient(90deg,#173a56,#'+dominationColor.getHexString()+')';
-const lastCar=order[3],chaseGap=Math.max(0,Math.round((leader.progress-lastCar.progress)*.86));
-document.getElementById('comeback').textContent=chaseGap<2?'⚡ ALL FOUR TEAMS NECK AND NECK!':'🔥 '+flags[lastCar.i]+' '+teams[lastCar.i]+' COMEBACK: '+chaseGap+'m BEHIND · BOOST TO CATCH UP';
-const last15=remaining<15;document.getElementById('countdown').textContent=last15?'FINAL '+Math.ceil(remaining)+' SECONDS':'LIVE OVERTAKES · EVERY SECOND COUNTS';document.getElementById('countdown').classList.toggle('urgent',last15);
-// Frame all four lanes at portrait aspect ratio; avoid clipping outside cars.
-const cameraTargets=[
- {pos:[0,19,focusZ+33],aim:[0,.6,focusZ-3]},
- {pos:[-5,23,focusZ+37],aim:[0,.6,focusZ-3]},
- {pos:[0,31,focusZ+21],aim:[0,.5,focusZ-6]}
-];
-const target=cameraTargets[mode];
-const dynamicPos=[...target.pos];const dynamicAim=[...target.aim];
-if(now<closeupUntil && mode===0){dynamicPos[1]-=2;dynamicPos[2]-=5;dynamicAim[2]+=1.5}
-camera.position.lerp(new THREE.Vector3(...dynamicPos),.055);
-const desiredLook=new THREE.Vector3(...dynamicAim);
-if(!window._camLook)window._camLook=desiredLook.clone();window._camLook.lerp(desiredLook,.08);camera.lookAt(window._camLook);if(now>flashUntil)event.classList.remove('on');
-renderer.toneMappingExposure=1.12+Math.sin(t*.35)*.025;
-bloom.strength=.22+(cars.some(c=>c.boost>0)?.07:0);
-uiTick+=dt;if(uiTick>.16){uiTick=0;updateRank()}composer.render()}cars.forEach(c=>c.group.position.z=20);updateRank();requestAnimationFrame(loop);
+ const order=[...cars].sort((a,b)=>b.progress-a.progress);
+ const leader=order[0],focusZ=leader.group.position.z;
+ if(racing && (leader.progress>=100||remaining<=0))finishRound(now,remaining<=0);
+ if(roundState==='racing'&&leadIndex!==leader.i){
+  if(leadIndex>=0 && remaining<70){
+   flash(flags[leader.i]+' '+teams[leader.i]+' TAKES THE LEAD!');
+   closeupUntil=now+2200;
+  }
+  leadIndex=leader.i;
+ }
+ const gap=order[0].progress-order[1].progress;
+ const battleEl=document.getElementById('battle');
+ battleEl.textContent=roundState==='results'
+  ?'🏆 '+flags[winnerIndex]+' '+teams[winnerIndex]+' IS THE CHAMPION!'
+  :gap<1.6?'⚔️ PHOTO FINISH BATTLE':flags[leader.i]+' '+teams[leader.i]+' DOMINATES · +'+Math.round(gap*.86)+'m';
+ colorTarget.setHex(colors[leader.i]);dominationColor.lerp(colorTarget,Math.min(1,dt*1.8));
+ for(const mat of dominationMaterials){mat.color.copy(dominationColor);mat.emissive.copy(dominationColor)}
+ const leaderHex='#'+dominationColor.getHexString();
+ battleEl.style.borderColor=leaderHex;battleEl.style.boxShadow='0 0 16px '+leaderHex+'55';
+ const remainingMetres=Math.max(0,Math.ceil(RACE_METRES-leader.progress*.86));
+ document.getElementById('distance').textContent=roundState==='results'?'🏆 RACE COMPLETE':remainingMetres+'m TO FINISH';
+ document.getElementById('progressFill').style.width=Math.min(100,leader.progress)+'%';
+ document.getElementById('progressFill').style.background='linear-gradient(90deg,#173a56,'+leaderHex+')';
+ markerElements.forEach((marker,i)=>{marker.style.left=Math.max(0,Math.min(98,cars[i].progress))+'%'});
+ const chosen=cars[selected],place=order.indexOf(chosen)+1,deficit=Math.max(0,Math.round((leader.progress-chosen.progress)*.86));
+ const comeback=place>1&&deficit>=4;
+ const supportLine=roundState==='results'
+  ?'🏁 '+flags[winnerIndex]+' '+teams[winnerIndex]+' WINS · NEXT ROUND STARTING'
+  :place===1?'👑 SUPPORTING '+flags[selected]+' '+teams[selected]+' · DEFEND THE LEAD'
+  :'🔥 SUPPORTING '+flags[selected]+' '+teams[selected]+' · #'+place+' / '+deficit+'m BACK'+(comeback?' · +25% BOOST BONUS':'');
+ document.getElementById('comeback').textContent=supportLine;
+ document.getElementById('comeback').style.borderColor='#'+colors[selected].toString(16).padStart(6,'0')+'99';
+ const finalSprint=remainingMetres<=15;
+ const countdown=document.getElementById('countdown');
+ countdown.textContent=roundState==='results'?'🏆 '+finishReason+' · FINAL STANDINGS LOCKED'
+   :finalSprint?'🏁 FINAL SPRINT · '+remainingMetres+'m TO GO!'
+   :remaining<15?'⏱️ '+Math.ceil(remaining)+'s LEFT · PUSH YOUR TEAM!'
+   :'TAP A TEAM ABOVE · BOOST YOUR COUNTRY';
+ countdown.classList.toggle('urgent',roundState==='racing'&&(finalSprint||remaining<10));
+ const cameraTargets=[
+  {pos:[0,17,focusZ+30],aim:[0,.65,focusZ-3]},
+  {pos:[-5,20,focusZ+33],aim:[0,.65,focusZ-3]},
+  {pos:[0,28,focusZ+21],aim:[0,.5,focusZ-6]}
+ ];
+ const target=cameraTargets[mode],dynamicPos=[...target.pos],dynamicAim=[...target.aim];
+ if(now<closeupUntil&&mode===0){dynamicPos[1]-=1.3;dynamicPos[2]-=2.5;dynamicAim[2]+=1}
+ const smooth=1-Math.exp(-dt*3.7);
+ camera.position.lerp(new THREE.Vector3(...dynamicPos),smooth);
+ cameraLook.lerp(new THREE.Vector3(...dynamicAim),smooth);
+ camera.lookAt(cameraLook);
+ if(now>flashUntil)event.classList.remove('on');
+ renderer.toneMappingExposure=1.07+Math.sin(t*.35)*.02;
+ bloom.strength=.18+(racing&&cars.some(c=>c.boost>0)?.065:0);
+ uiTick+=dt;
+ if(uiTick>.12){uiTick=0;updateRank()}
+ composer.render();
+}
+
+cars.forEach(c=>c.group.position.z=20);updateRank();requestAnimationFrame(loop);
 </script><script>
 // Local development refresh: detects updates to the single index.html file.
 (()=>{let previous=null;setInterval(async()=>{try{const r=await fetch('/index.html?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const body=await r.text();if(previous!==null && body!==previous)location.reload();previous=body;}catch(e){}},3500)})();
