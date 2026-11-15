@@ -728,6 +728,80 @@ function recordWorldResults(orderedCars){
 }
 let connectedToLive=false,tiktokStreamOnline=false,liveSocket=null,liveReconnect=0;
 const pendingByCountry=Object.create(null);
+
+// Genuine TikTok artwork is supplied by the connected LIVE gift catalog/event.
+// Preview falls back to universally legible emoji; never invents gift receipts.
+const giftArtworkURLs=new Map();
+const giftEmojiByName={'Rose':'🌹','Finger Heart':'🫰','Doughnut':'🍩',
+ 'Money Gun':'🔫','Galaxy':'🌌','Sports Car':'🏎️','Lion':'🦁','Universe':'🌠'};
+let giftMomentUntil=0;
+function canonicalGiftKey(giftName){
+ const name=String(giftName||'').trim().toLowerCase();
+ if(name.includes('sports car')||name.includes('sport car')||name.includes('supercar')||name.includes('luxury car'))return 'Sports Car';
+ if(name.includes('finger heart'))return 'Finger Heart';
+ if(name.includes('money gun'))return 'Money Gun';
+ if(name.includes('doughnut')||name.includes('donut'))return 'Doughnut';
+ if(name.includes('galaxy'))return 'Galaxy';
+ if(name.includes('universe'))return 'Universe';
+ if(name.includes('lion'))return 'Lion';
+ if(name.includes('rose'))return 'Rose';
+ return '';
+}
+function safeGiftArtwork(url){
+ if(typeof url!=='string'||url.length>1800)return null;
+ try{
+  const u=new URL(url);
+  if(u.protocol!=='https:')return null;
+  const host=u.hostname.toLowerCase();
+  const known=['tiktokcdn.com','tiktokcdn-us.com','tiktokv.com','byteimg.com','ibytedtos.com','byteoversea.com','muscdn.com'];
+  return known.some(domain=>host===domain||host.endsWith('.'+domain))?u.href:null;
+ }catch(err){return null}
+}
+function attachGiftVisual(parent,key,url){
+ const emoji=document.createElement('span');emoji.className='giftEmoji';emoji.textContent=giftEmojiByName[key]||'🎁';
+ parent.appendChild(emoji);
+ const src=safeGiftArtwork(url)||giftArtworkURLs.get(key);
+ if(src){
+  const img=document.createElement('img');
+  img.className='giftArt';img.alt=key||'TikTok gift';
+  img.hidden=true;img.decoding='async';img.referrerPolicy='no-referrer';
+  img.onload=()=>{img.hidden=false;emoji.hidden=true};
+  img.onerror=()=>{img.hidden=true;emoji.hidden=false};
+  img.src=src;parent.appendChild(img);
+ }
+}
+function updateGiftGuideArt(){
+ for(const badge of document.querySelectorAll('#giftGuide [data-gift-key]')){
+  const key=badge.dataset.giftKey,url=giftArtworkURLs.get(key);if(!url)continue;
+  const emoji=badge.querySelector('.giftEmoji'),img=badge.querySelector('.giftArt');
+  if(!emoji||!img||img.dataset.url===url)continue;
+  img.hidden=true;emoji.hidden=false;img.dataset.url=url;img.referrerPolicy='no-referrer';
+  img.onload=()=>{img.hidden=false;emoji.hidden=true};
+  img.onerror=()=>{img.hidden=true;emoji.hidden=false};
+  img.src=url;
+ }
+}
+function addGiftArtwork(giftName,url){
+ const key=canonicalGiftKey(giftName),safe=safeGiftArtwork(url);
+ if(key&&safe){giftArtworkURLs.set(key,safe);updateGiftGuideArt()}
+}
+function showGiftMoment(msg,team,tier,source,nick){
+ const node=document.getElementById('giftMoment');if(!node)return;
+ const key=canonicalGiftKey(msg.giftName);
+ addGiftArtwork(msg.giftName,msg.giftIconUrl);
+ node.classList.remove('on');node.replaceChildren();
+ const art=document.createElement('div');art.className='giftVisual';
+ attachGiftVisual(art,key,safeGiftArtwork(msg.giftIconUrl));
+ const message=document.createElement('div');message.className='giftMessage';
+ const title=document.createElement('div');title.className='giftTitle';
+ title.textContent=(source==='live'?'':'DEMO · ')+String(msg.giftName||tier.label).slice(0,25);
+ const detail=document.createElement('div');detail.className='giftDetail';
+ detail.textContent=nick+' → '+team+' · '+tier.label;
+ message.append(title,detail);node.append(art,message);
+ node.hidden=false;requestAnimationFrame(()=>node.classList.add('on'));
+ giftMomentUntil=performance.now()+(tier.cinematic?3300:1900);
+}
+
 function giftPresentation(giftName,tier){
  const name=String(giftName||'').trim().toLowerCase();
  if(/(sport.*car|luxury.*car|racing debut|supercar)/.test(name)){
@@ -842,13 +916,12 @@ function applyGift(msg){
  const countFactor=Math.min(2,1+Math.log2(quantity)/4),boost=tier.boost*countFactor*(comeback?1.25:1);
  if(source==='live')giftTotals[team]=(giftTotals[team]||0)+Math.round(points*quantity);
  updateLastGift((source==='live'?'LIVE':'TEST')+' '+nick+' · '+String(msg.giftName||'?')+' ×'+quantity+' · '+points+' pts → '+team+' · '+tier.label+' ('+tier.boost+'s base)');
- if(roundState!=='racing'){pendingByCountry[team]=Math.min(10,(pendingByCountry[team]||0)+boost);flash(nick+' · '+team+' · BOOST SAVED FOR NEXT RACE');return}
+ if(roundState!=='racing'){pendingByCountry[team]=Math.min(10,(pendingByCountry[team]||0)+boost);showGiftMoment(msg,team,{...tier,label:'NEXT RACE'},source,nick);return}
  car.boost=Math.min(10,car.boost+boost);car.burst=performance.now()+2100;
  if(tier.cinematic){
   spotlightIndex=i;spotlightUntil=performance.now()+(tier.cameraDuration||3300);
-  flash(nick+' · '+flags[i]+' '+teams[i]+' '+tier.label);
-  event.classList.add('prestige');flashUntil=performance.now()+(tier.cameraDuration||3300)+400;
- }else flash(flags[i]+' '+teams[i]+' · '+tier.label+' · '+nick);
+ }
+ showGiftMoment(msg,team,tier,source,nick);
  soundEngine.play(tier.sound);
 }
 function updateBridgeStatus(){
@@ -878,6 +951,9 @@ function connectLiveBridge(){
     const msg=JSON.parse(e.data);
     if(!msg||typeof msg!=='object')return;
     if(msg.type==='status'){tiktokStreamOnline=Boolean(msg.connected);updateBridgeStatus();return}
+    if(msg.type==='gift_catalog'&&Array.isArray(msg.items)){
+     for(const item of msg.items.slice(0,60))if(item)addGiftArtwork(item.name,item.url);
+    }
     if(msg.type==='comment')applyComment(msg);
     if(msg.type==='follow')applyFollow(msg);
     if(msg.type==='share')applyShare(msg);
@@ -1069,10 +1145,12 @@ function loop(now){
    const phase=(now/1000)%37;
    const showFollow=roundState==='results'||(roundState==='racing'&&phase>=28&&phase<34);
    const showGiftGuide=roundState==='racing'&&phase>=16&&phase<27;
+   const giftGuide=document.getElementById('giftGuide');
+   if(giftGuide)giftGuide.hidden=!showGiftGuide;
+   joinHint.hidden=showGiftGuide;
    joinHint.classList.toggle('following',showFollow);
    joinHint.textContent=showFollow
     ?"FOLLOW @worldrush.live · NEXT COUNTRY LEAGUE"
-    :showGiftGuide?'ROSE = SPARK · GALAXY = TURBO · LION = LEGEND'
     :'COMMENT '+codes.join(' / ')+' TO JOIN A TEAM · FREE';
   }
   const battleEl=document.getElementById('battle');
@@ -1118,6 +1196,10 @@ function loop(now){
  camera.lookAt(cameraLook);
  if(now>flashUntil){event.classList.remove('on');event.classList.remove('prestige')}
  if(now>toastExpiresAt)document.getElementById('teamToast').hidden=true;
+ if(now>giftMomentUntil){
+  const moment=document.getElementById('giftMoment');
+  moment.classList.remove('on');moment.hidden=true;
+ }
  soundEngine.update(roundState==='racing',Math.max(0,RACE_METRES-leader.progress*METRES_PER_PERCENT)<=35,leader.progress);
  renderer.toneMappingExposure=1.07+Math.sin(t*.35)*.02;
  bloom.strength=.18+(racing&&cars.some(c=>c.boost>0)?.065:0);
