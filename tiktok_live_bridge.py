@@ -38,12 +38,15 @@ def gift_icon_url(model: object) -> str:
         urls = model.get("url_list") or model.get("urlList") or []
     else:
         urls = getattr(model, "url_list", None) or []
-    if not isinstance(urls, (list, tuple)):
-        return ""
-    for item in urls:
-        url = str(item)
-        if url.startswith("https://") and len(url) <= 1500:
-            return url
+    if isinstance(urls, str):
+        urls = [urls]
+    try:
+        for item in urls:
+            url = str(item)
+            if url.startswith("https://") and len(url) <= 1500:
+                return url
+    except TypeError:
+        pass
     return ""
 
 
