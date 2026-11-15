@@ -1,6 +1,7 @@
 """
 WORLD RUSH — optional LOCAL TikTok LIVE bridge (unofficial).
-Relays public chat/gift events only to ws://127.0.0.1:8765.
+Relays public chat/gift events to the local browser; optionally also to a phone
+on the SAME private Wi-Fi via an explicitly selected LAN IPv4 address.
 No login cookie, password, or other credentials requested or stored.
 Use only for an account/stream you are authorized to monitor.
 """
@@ -10,6 +11,7 @@ import argparse
 import asyncio
 import json
 import logging
+from ipaddress import ip_address
 from typing import Any
 
 from TikTokLive import TikTokLiveClient
@@ -20,6 +22,7 @@ LOG = logging.getLogger("world-rush")
 CLIENTS: set[Any] = set()
 STATE = {"type": "status", "connected": False, "note": "Waiting for LIVE"}
 COUNTER = 0
+ALLOWED_ORIGINS = {"http://localhost:8000", "http://127.0.0.1:8000"}
 
 
 def bounded(text: object, n: int) -> str:
@@ -68,7 +71,7 @@ async def set_status(connected: bool, note: str) -> None:
 async def handle_browser(websocket: Any) -> None:
     # Prevent unrelated websites from reading local stream events via WebSocket.
     origin = websocket.request.headers.get("Origin", "")
-    if origin not in {"http://localhost:8000", "http://127.0.0.1:8000"}:
+    if origin not in ALLOWED_ORIGINS:
         await websocket.close(code=1008, reason="Only local WORLD RUSH browser is allowed")
         return
     CLIENTS.add(websocket)
@@ -82,12 +85,20 @@ async def handle_browser(websocket: Any) -> None:
         CLIENTS.discard(websocket)
 
 
-async def main(unique_id: str) -> None:
+async def main(unique_id: str, lan_ip: str | None = None) -> None:
     global COUNTER
     unique_id = unique_id.strip().lstrip("@")
     if not unique_id:
         raise ValueError("TikTok username is required.")
     client = TikTokLiveClient(unique_id="@" + unique_id)
+    listen_hosts = ["127.0.0.1"]
+    if lan_ip:
+        address = ip_address(lan_ip)
+        if address.version != 4 or not address.is_private or address.is_loopback:
+            raise ValueError("LAN IP must be a private IPv4 address (for example 192.168.1.187).")
+        listen_hosts.append(str(address))
+        ALLOWED_ORIGINS.add(f"http://{address}:8000")
+        LOG.info("Phone bridge allowed only on this private LAN address: %s", address)
 
     @client.on(ConnectEvent)
     async def on_connected(event: ConnectEvent):
@@ -159,8 +170,10 @@ async def main(unique_id: str) -> None:
         LOG.info("Gift event: %s x%s (metadata points %s)",
                  bounded(getattr(gift, "name", None), 80), count, gift_points(gift))
 
-    async with serve(handle_browser, "127.0.0.1", 8765, max_size=16384):
+    async with serve(handle_browser, listen_hosts, 8765, max_size=16384):
         LOG.info("Local event relay: ws://127.0.0.1:8765")
+        if lan_ip:
+            LOG.info("Phone relay: ws://%s:8765 (same Wi-Fi only)", lan_ip)
         LOG.info("Waiting for TikTok LIVE @%s — keep this console running.", unique_id)
         while True:
             try:
@@ -176,9 +189,10 @@ async def main(unique_id: str) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Local WORLD RUSH TikTok LIVE event relay")
     parser.add_argument("--user", required=True, help="TikTok LIVE creator username, e.g. @yourname")
+    parser.add_argument("--lan-ip", default=None, help="Optional private LAN IPv4 of the PC hosting the game")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     try:
-        asyncio.run(main(args.user))
+        asyncio.run(main(args.user, args.lan_ip))
     except KeyboardInterrupt:
         print("\nBridge stopped.")
