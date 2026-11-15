@@ -1,5 +1,5 @@
 <!-- WORLD RUSH OTOMATIK GUNCELLEME TEST 123 -->
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WORLD RUSH v6 — BROADCAST EDITION</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WORLD RUSH v7 — GULF LEAGUE</title><style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:#050914;color:#f4f7ff;font-family:Inter,"Segoe UI",system-ui,Arial,sans-serif}
 body{display:grid;place-items:center;font-weight:650}
@@ -57,7 +57,7 @@ h1 span{color:#75d4ff}
 @media(prefers-reduced-motion:reduce){#event,.fill,.trackCar{transition:none}}
 </style></head><body><main id="app"><div id="stage"></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 01:15</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">86m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="event" aria-live="polite"></div><div id="comeback" hidden></div></div>
 <div id="safePreview" hidden><div class="topSafe"><span>TIKTOK HEADER</span></div><div class="rightSafe"></div><div class="bottomSafe"><span>COMMENTS + GIFTS</span></div></div>
-<div id="operatorPanel" hidden><div class="operatorHead"><span>WORLD RUSH · OPERATOR</span><span class="hint">P = hide · T = safe zones</span></div><div id="controls"><button class="btn" data-action="join">JOIN / TEAM</button><button class="btn" data-action="rose">ROSE</button><button class="btn" data-action="turbo">TURBO</button><button class="btn" data-action="mega">MEGA</button><button class="btn" data-action="cam">CAMERA</button><button class="btn" data-action="audio" id="audioButton">🔇 SOUND OFF</button><button class="btn" data-action="safe">SAFE ZONES</button></div><div class="hint" style="margin-top:7px">SIMULATION · No TikTok connection. 1–4: teams · Q/W/E: boosts · C: camera · M: sound.</div></div><div id="error"></div></main>
+<div id="operatorPanel" hidden><div class="operatorHead"><span>WORLD RUSH · OPERATOR</span><span class="hint">P: hide · T: safe · L: next league</span></div><div id="controls"><button class="btn" data-action="join">JOIN / TEAM</button><button class="btn" data-action="rose">ROSE</button><button class="btn" data-action="turbo">TURBO</button><button class="btn" data-action="mega">MEGA</button><button class="btn" data-action="cam">CAMERA</button><button class="btn" data-action="audio" id="audioButton">🔇 SOUND OFF</button><button class="btn" data-action="safe">SAFE ZONES</button><button class="btn" data-action="league">NEXT LEAGUE</button></div><div class="hint" style="margin-top:7px">75-MIN LEAGUES · LOCAL SIMULATION, NOT REAL GIFTS · 1–4: teams · Q/W/E: boosts · C: camera · M: sound.</div><div class="hint" id="leagueStatus" style="margin-top:5px">GULF LEAGUE · Test mode</div></div><div id="error"></div></main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
@@ -87,7 +87,8 @@ const ground=box(38,.2,150,0x07121e);ground.position.set(0,-.25,-25);ground.rece
  const neonMat=(color)=>new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:1.35,metalness:.3,roughness:.28});
  const cyanGlow=neonMat(0x18dfff),purpleGlow=neonMat(0x8a49ff),goldGlow=neonMat(0xffbd3a);
 
-for(let i=0;i<4;i++){const x=(i-1.5)*3.6;const lane=new THREE.Mesh(new THREE.BoxGeometry(3.35,.04,140),asphaltMat);lane.position.set(x,-.08,-26);lane.receiveShadow=true;scene.add(lane);const strip=box(.08,.06,140,i===0?0xff4c62:i===1?0x31d98c:i===2?0x48b8ff:0xffc84b);strip.position.set(x-1.64,.01,-26);scene.add(strip);for(let z=-82;z<39;z+=7){const line=box(.08,.03,3,0x8ba8c6);line.position.set(x+1.63,.015,z);scene.add(line)}}
+const laneStrips=[];
+for(let i=0;i<4;i++){const x=(i-1.5)*3.6;const lane=new THREE.Mesh(new THREE.BoxGeometry(3.35,.04,140),asphaltMat);lane.position.set(x,-.08,-26);lane.receiveShadow=true;scene.add(lane);const strip=box(.08,.06,140,[0x16cb77,0xff5050,0x39bddd,0xa84373][i]);strip.position.set(x-1.64,.01,-26);scene.add(strip);laneStrips.push(strip);for(let z=-82;z<39;z+=7){const line=box(.08,.03,3,0x8ba8c6);line.position.set(x+1.63,.015,z);scene.add(line)}}
 for(let z=-78;z<45;z+=9){for(const side of [-1,1]){const pole=box(.14,4,.14,0x466b87,.8);pole.position.set(side*8.3,2,z);scene.add(pole);const lamp=box(1,.14,.5,0x82dfff);lamp.position.set(side*8.3,4.1,z);scene.add(lamp);if(Math.round((z+78)/9)%3===0){const light=new THREE.PointLight(0x4dbbff,5.5,13);light.position.set(side*8.3,4,z);scene.add(light)}}}
 // Neon arena architecture: illuminated rails, gantries, billboards, and distant skyline.
 const dominationMaterials=[];const arena=new THREE.Group();scene.add(arena);
@@ -114,9 +115,10 @@ for(let n=0;n<32;n++){
 // V2 premium racing scenery: trackside light strips, speed gates, and ambient reflections.
 const accents=new THREE.Group();scene.add(accents);
 const lineGeo=new THREE.BoxGeometry(.075,.025,140);
+const laneAccentMaterials=[];
 for(let i=0;i<4;i++){
  const x=(i-1.5)*3.6;
- const lightLine=new THREE.Mesh(lineGeo,neonMat([0xff315e,0x18f5a0,0x27aeff,0xffcf4d][i]));
+ const lightLine=new THREE.Mesh(lineGeo,neonMat([0x16cb77,0xff5050,0x39bddd,0xa84373][i]));laneAccentMaterials.push(lightLine.material);
  lightLine.position.set(x-1.48,.055,-26);accents.add(lightLine); // Lane colors stay identifiable even during domination.
 }
 for(let z=-72;z<38;z+=18){
@@ -134,7 +136,89 @@ for(let i=0;i<4;i++){
  for(let j=0;j<12;j++){const spark=new THREE.Mesh(particleGeo,mat);spark.visible=false;scene.add(spark);pool.push(spark)}
  effectParticles.push(pool);
 }
-const colors=[0xff3656,0x16cb77,0x349aff,0xffc12f],teams=['TURKEY','BRAZIL','USA','GERMANY'],flags=['🇹🇷','🇧🇷','🇺🇸','🇩🇪'];let cars=[];
+// 75-minute league blocks: retain two nations between consecutive sets.
+// Audience reach and gifts are NOT inferred from country, and LIVE donations are not connected.
+const countryLibrary={
+ SA:{name:'SAUDI',code:'SA',flag:'🇸🇦',color:0x18c976},
+ AE:{name:'UAE',code:'AE',flag:'🇦🇪',color:0xff4658},
+ KW:{name:'KUWAIT',code:'KW',flag:'🇰🇼',color:0x36c6df},
+ QA:{name:'QATAR',code:'QA',flag:'🇶🇦',color:0xc04c8c},
+ TR:{name:'TURKEY',code:'TR',flag:'🇹🇷',color:0xff3656},
+ BR:{name:'BRAZIL',code:'BR',flag:'🇧🇷',color:0x16cb77},
+ US:{name:'USA',code:'US',flag:'🇺🇸',color:0x349aff},
+ DE:{name:'GERMANY',code:'DE',flag:'🇩🇪',color:0xffc12f}
+};
+const leagueProfiles=[
+ {id:'GULF',title:'GULF CHAMPIONSHIP',countries:['SA','AE','KW','QA']},
+ {id:'CROSSOVER',title:'GULF x WORLD',countries:['SA','AE','TR','BR']},
+ {id:'GLOBAL',title:'GLOBAL CHAMPIONSHIP',countries:['TR','BR','US','DE']}
+];
+const LEAGUE_LENGTH_MS=75*60*1000,LEAGUE_STORE_KEY='world-rush-league-v7';
+let leagueIndex=0,leagueEndsAt=Date.now()+LEAGUE_LENGTH_MS,queuedLeagueChange=false;
+try{
+ const cached=JSON.parse(localStorage.getItem(LEAGUE_STORE_KEY)||'null');
+ if(cached&&Number.isInteger(cached.index)&&cached.index>=0&&cached.index<leagueProfiles.length&&Number.isFinite(cached.endsAt)&&cached.endsAt>0){
+  leagueIndex=cached.index;leagueEndsAt=cached.endsAt;
+  const now=Date.now();
+  if(leagueEndsAt<=now){
+   const hops=Math.floor((now-leagueEndsAt)/LEAGUE_LENGTH_MS)+1;
+   leagueIndex=(leagueIndex+hops)%leagueProfiles.length;leagueEndsAt+=hops*LEAGUE_LENGTH_MS;
+  }
+ }
+}catch(err){console.info('League storage unavailable; using default league')}
+function persistLeague(){
+ try{localStorage.setItem(LEAGUE_STORE_KEY,JSON.stringify({index:leagueIndex,endsAt:leagueEndsAt}))}catch(err){}
+}
+persistLeague();
+const starterCountries=leagueProfiles[leagueIndex].countries;
+let colors=starterCountries.map(c=>countryLibrary[c].color),
+ teams=starterCountries.map(c=>countryLibrary[c].name),
+ flags=starterCountries.map(c=>countryLibrary[c].flag),
+ codes=[...starterCountries],cars=[];
+function makeFlagTexture(code){
+ const canvas=document.createElement('canvas');canvas.width=512;canvas.height=320;
+ const c=canvas.getContext('2d');const w=512,h=320;
+ const fill=(col,x=0,y=0,ww=w,hh=h)=>{c.fillStyle=col;c.fillRect(x,y,ww,hh)};
+ if(code==='SA'){
+  fill('#006c35');
+  c.fillStyle='#ffffff';c.textAlign='center';c.textBaseline='middle';
+  c.font='bold 44px Tahoma,Arial,sans-serif';c.fillText('لا إله إلا الله محمد رسول الله',256,135,470);
+  fill('#ffffff',115,240,275,9);fill('#ffffff',384,229,24,15);
+ }else if(code==='AE'){
+  fill('#00732f',128,0,384,107);fill('#ffffff',128,107,384,106);fill('#101010',128,213,384,107);fill('#e31b36',0,0,128,320);
+ }else if(code==='KW'){
+  fill('#007a3d',0,0,512,107);fill('#ffffff',0,107,512,106);fill('#ce1126',0,213,512,107);
+  c.fillStyle='#0b0b0b';c.beginPath();c.moveTo(0,0);c.lineTo(140,100);c.lineTo(140,220);c.lineTo(0,320);c.closePath();c.fill();
+ }else if(code==='QA'){
+  fill('#8d1b46');c.fillStyle='#ffffff';c.beginPath();c.moveTo(0,0);c.lineTo(140,0);
+  for(let i=0;i<18;i++)c.lineTo(i%2?140:169,(i+1)*h/18);
+  c.lineTo(0,h);c.closePath();c.fill();
+ }else if(code==='TR'){
+  fill('#e30a17');c.fillStyle='#fff';c.beginPath();c.arc(206,160,91,0,Math.PI*2);c.fill();
+  c.fillStyle='#e30a17';c.beginPath();c.arc(230,160,71,0,Math.PI*2);c.fill();
+  c.fillStyle='#fff';c.beginPath();for(let j=0;j<10;j++){
+   const angle=-Math.PI/2+j*Math.PI/5,r=j%2?24:60;
+   const x=331+Math.cos(angle)*r,y=160+Math.sin(angle)*r;
+   j?c.lineTo(x,y):c.moveTo(x,y);
+  }c.closePath();c.fill();
+ }else if(code==='BR'){
+  fill('#009b3a');c.fillStyle='#ffdf00';c.beginPath();
+  c.moveTo(256,24);c.lineTo(476,160);c.lineTo(256,296);c.lineTo(36,160);c.closePath();c.fill();
+  c.fillStyle='#002776';c.beginPath();c.arc(256,160,92,0,Math.PI*2);c.fill();
+  c.strokeStyle='#ffffff';c.lineWidth=13;c.beginPath();c.arc(254,253,169,Math.PI*1.18,Math.PI*1.80);c.stroke();
+ }else if(code==='US'){
+  fill('#ffffff');for(let k=0;k<13;k+=2)fill('#b22234',0,k*h/13,w,h/13);
+  fill('#3c3b6e',0,0,224,h*7/13);
+  c.fillStyle='#ffffff';for(let row=0;row<5;row++)for(let col=0;col<6;col++){
+   c.beginPath();c.arc(16+col*37,14+row*29,5,0,Math.PI*2);c.fill();
+  }
+ }else if(code==='DE'){
+  fill('#101010',0,0,w,h/3);fill('#dd0000',0,h/3,w,h/3);fill('#ffce00',0,2*h/3,w,h/3);
+ }
+ c.strokeStyle='#ffffff';c.lineWidth=8;c.strokeRect(4,4,w-8,h-8);
+ const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());return tex;
+}
+
 function createCar(i){
  const group=new THREE.Group();
  const paint=new THREE.MeshStandardMaterial({color:colors[i],metalness:.74,roughness:.26});
@@ -198,36 +282,12 @@ function createCar(i){
  const stripe=new THREE.MeshStandardMaterial({color:0xf4f8ff,metalness:.45,roughness:.3});
  part(.10,.018,.64,stripe,0,.89,-1.17);
  part(.09,.017,.48,stripe,0,1.43,.06);
- // Country flag decal on the roof, facing the overhead race camera.
- const flagCanvas=document.createElement('canvas');flagCanvas.width=256;flagCanvas.height=160;
- const ctx=flagCanvas.getContext('2d');const fw=256,fh=160;
- if(i===0){ // Turkey
-   ctx.fillStyle='#e30a17';ctx.fillRect(0,0,fw,fh);
-   ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(103,80,47,0,Math.PI*2);ctx.fill();
-   ctx.fillStyle='#e30a17';ctx.beginPath();ctx.arc(119,80,37,0,Math.PI*2);ctx.fill();
-   const cx=167,cy=80,outer=26,inner=10;ctx.fillStyle='#fff';ctx.beginPath();
-   for(let k=0;k<10;k++){const a=-Math.PI/2+k*Math.PI/5;const r=k%2?inner:outer;const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;k?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.fill();
- }else if(i===1){ // Brazil
-   ctx.fillStyle='#009b3a';ctx.fillRect(0,0,fw,fh);
-   ctx.fillStyle='#ffdf00';ctx.beginPath();ctx.moveTo(128,14);ctx.lineTo(232,80);ctx.lineTo(128,146);ctx.lineTo(24,80);ctx.closePath();ctx.fill();
-   ctx.fillStyle='#002776';ctx.beginPath();ctx.arc(128,80,43,0,Math.PI*2);ctx.fill();
-   ctx.strokeStyle='#fff';ctx.lineWidth=8;ctx.beginPath();ctx.arc(130,132,79,Math.PI*1.13,Math.PI*1.83);ctx.stroke();
- }else if(i===2){ // USA
-   ctx.fillStyle='#fff';ctx.fillRect(0,0,fw,fh);
-   ctx.fillStyle='#b22234';for(let k=0;k<13;k+=2)ctx.fillRect(0,k*fh/13,fw,fh/13);
-   ctx.fillStyle='#3c3b6e';ctx.fillRect(0,0,110,fh*7/13);
-   ctx.fillStyle='#fff';for(let row=0;row<5;row++)for(let col=0;col<6;col++){ctx.beginPath();ctx.arc(9+col*18,9+row*15,2.6,0,Math.PI*2);ctx.fill()}
- }else{ // Germany
-   ctx.fillStyle='#111';ctx.fillRect(0,0,fw,fh/3);
-   ctx.fillStyle='#dd0000';ctx.fillRect(0,fh/3,fw,fh/3);
-   ctx.fillStyle='#ffce00';ctx.fillRect(0,2*fh/3,fw,fh/3);
- }
- const flagTexture=new THREE.CanvasTexture(flagCanvas);flagTexture.colorSpace=THREE.SRGBColorSpace;
- const flagMat=new THREE.MeshBasicMaterial({map:flagTexture,side:THREE.DoubleSide,depthWrite:true});
- const flag=new THREE.Mesh(new THREE.PlaneGeometry(.94,.60),flagMat);
- flag.rotation.x=-Math.PI/2;flag.position.set(0,1.428,.06);group.add(flag);
+ // High-resolution, per-nation roof flags. Retained when switching to GLB models.
+ const flagMaterial=new THREE.MeshBasicMaterial({map:makeFlagTexture(codes[i]),side:THREE.DoubleSide,depthWrite:true});
+ const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.25,.79),flagMaterial);
+ flag.rotation.x=-Math.PI/2;flag.position.set(0,1.43,.06);flag.renderOrder=2;group.add(flag);
  group.position.x=(i-1.5)*3.6;scene.add(group);
- return {group,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0}
+ return {group,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0,flag,paintMaterials:[paint],model:null}
 }
 cars=teams.map((_,i)=>createCar(i));
  // Optional community GLB; verify model and asset licences before public distribution.
@@ -252,7 +312,7 @@ cars=teams.map((_,i)=>createCar(i));
      const fitted=new THREE.Box3().setFromObject(model);
      const center=fitted.getCenter(new THREE.Vector3());
      model.position.set(-center.x,.22-fitted.min.y,-center.z);
-     const tint=new THREE.Color(colors[i]);
+     const tint=new THREE.Color(colors[i]);car.model=model;
      model.traverse((node)=>{
        if(!node.isMesh)return;
        node.castShadow=true;
@@ -262,6 +322,7 @@ cars=teams.map((_,i)=>createCar(i));
          const label=((node.name||'')+' '+(mat.name||'')).toLowerCase();
          if(/body|paint|shell|hood|bonnet|fender|door|roof|panel|exterior/.test(label)){
            if(copy.color)copy.color.copy(tint);
+           car.paintMaterials.push(copy);
            if('metalness' in copy)copy.metalness=.68;
            if('roughness' in copy)copy.roughness=.24;
          }
@@ -272,6 +333,7 @@ cars=teams.map((_,i)=>createCar(i));
      // Remove the old blocky car, but retain its national flag roof decal.
      original.children.filter(obj=>obj!==original.children[original.children.length-1]).forEach(obj=>original.remove(obj));
      original.add(model);
+     car.flag.position.y=Math.min(1.82,.245+rotatedSize.y*scale);
    });
    console.info('WORLD RUSH: detailed GT sports cars loaded');
  },undefined,(err)=>console.warn('GT model unavailable; keeping original cars',err));
