@@ -13,7 +13,7 @@ import logging
 from typing import Any
 
 from TikTokLive import TikTokLiveClient
-from TikTokLive.events import CommentEvent, ConnectEvent, DisconnectEvent, GiftEvent
+from TikTokLive.events import CommentEvent, ConnectEvent, DisconnectEvent, GiftEvent, FollowEvent, ShareEvent
 from websockets.asyncio.server import serve
 
 LOG = logging.getLogger("world-rush")
@@ -107,6 +107,28 @@ async def main(unique_id: str) -> None:
             "userId": bounded(getattr(user, "unique_id", None) or getattr(user, "user_id", None), 100),
             "nickname": bounded(getattr(user, "nickname", None), 50),
             "text": bounded(getattr(event, "comment", None), 200),
+        })
+
+    @client.on(FollowEvent)
+    async def on_follow(event: FollowEvent):
+        user = getattr(event, "user", None)
+        if user is None:
+            return
+        await broadcast({
+            "type": "follow",
+            "userId": bounded(getattr(user, "unique_id", None) or getattr(user, "user_id", None), 100),
+            "nickname": bounded(getattr(user, "nickname", None), 50),
+        })
+
+    @client.on(ShareEvent)
+    async def on_share(event: ShareEvent):
+        user = getattr(event, "user", None)
+        if user is None:
+            return
+        await broadcast({
+            "type": "share",
+            "userId": bounded(getattr(user, "unique_id", None) or getattr(user, "user_id", None), 100),
+            "nickname": bounded(getattr(user, "nickname", None), 50),
         })
 
     @client.on(GiftEvent)
