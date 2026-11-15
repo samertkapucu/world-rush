@@ -794,7 +794,7 @@ function updateBridgeStatus(){
  const badge=document.getElementById('bridgeBadge');
  if(badge&&new URLSearchParams(location.search).get('debug')==='1'){
   badge.hidden=false;
-  badge.textContent=tiktokStreamOnline?'LIVE SYNC: CONNECTED · GIFTS READY':
+  badge.textContent=tiktokStreamOnline?'LIVE SYNC: TIKTOK CONNECTED · TEST EVENTS':
     connectedToLive?'LIVE SYNC: BRIDGE ON · WAITING FOR TIKTOK':'LIVE SYNC: OFFLINE · CHECK PC BRIDGE';
   badge.style.color=tiktokStreamOnline?'#9bffd0':'#ffd7a3';
  }
