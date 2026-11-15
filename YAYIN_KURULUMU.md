@@ -56,6 +56,13 @@ Yarış içi boost toplamı **en fazla 10 sn**. Son sıradaki takım liderden en
 
 Gerçek hediye kataloğunu LIVE Gift ekranından kontrol et. Oyunda normal sayfada `P` tuşuna basarak **LAST GIFT** satırından hangi isim ve kaç metadata puanı geldiğini görebilirsin. `TEST ROSE`, `TEST GALAXY`, `TEST SPORTS CAR`, `TEST LION` düğmeleri ücretli değildir ve gerçek destek sayılmaz.
 
+## Mobil ses ve TikTok hediye görselleri
+
+- iPhone Safari'de WORLD RUSH açıldığında oyun üzerinde **🔊 SESİ AÇ / TAP FOR SOUND** düğmesine **bir kez dokun**. Ses başlamasının ardından düğme gizlenir. Sesin duyulup duyulmadığını kısa onay tonuyla kontrol et. iPhone'un medya sesini de aç.
+- TikTok Mobile Gaming'den Safari'ye dönerken iOS Web Audio'yu askıya alabilir. Ses kesilirse Safari'deki ses düğmesine yeniden dokun. Ekran paylaşımında oyun sesinin izleyicilere de gittiğini ikinci hesaptan mutlaka dinleyerek doğrula; iOS/TikTok yakalama davranışı değişebilir.
+- Hediye kılavuzu artık **🌹 🍩 🌌 🏎️ 🦁** ikonlarıyla kısa süreli görünür; sıralama paneli yukarı taşındı. Gerçek TikTok LIVE bağlantısı kurulduğunda oyun **TikTok'un kendi hediye kataloglarından gelen görsel URL'lerini** kullanmayı dener. Katalogda görsel yoksa veya CDN erişilemiyorsa emoji görünür. Bu görseller gerçek bir hediye alınana kadar gelen hediye sayısı veya geliri temsil etmez.
+- Gerçek hediye geldiğinde görsel kart ve kısa efekt çıkar; manuel **TEST** düğmeleri yalnızca simülasyondur.
+
 ## Önemli teknik sınırlar
 
 - **Kamera/bayraklar/gift efektleri** oyun kodunda uygulanmıştır; TikTok LIVE Studio'da 1080×1920 kaynak ve gerçek TikTok hesabı ile uçtan uca test gereklidir.
