@@ -135,7 +135,7 @@ h1 span{color:#75d4ff}
  font:900 12px Inter,Arial,sans-serif;letter-spacing:.4px;cursor:pointer;
  pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 #soundUnlock[hidden]{display:none!important}
-#app.stream-mode #soundUnlock{bottom:26%;font-size:15px}
+#app.stream-mode #soundUnlock{display:none!important}
 
 </style></head><body><main id="app" class="booting broadcast-safe"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN A TEAM · FREE</div>
 <div id="giftGuide" hidden aria-label="Hediye efektleri"><span class="giftBubble" data-gift-key="Rose"><span class="giftEmoji">🌹</span><img class="giftArt" hidden alt=""><span class="giftPower">.65s</span></span>
@@ -482,10 +482,10 @@ const soundEngine={
   const AudioContextClass=window.AudioContext||window.webkitAudioContext;
   if(!AudioContextClass)throw new Error('Web Audio unavailable');
   const ctx=this.ctx=new AudioContextClass();
-  this.master=ctx.createGain();this.master.gain.value=.60;this.master.connect(ctx.destination);
-  this.music=ctx.createGain();this.music.gain.value=.36;this.music.connect(this.master);
-  this.fx=ctx.createGain();this.fx.gain.value=.5;this.fx.connect(this.master);
-  this.engine=ctx.createGain();this.engine.gain.value=.025;this.engine.connect(this.master);
+  this.master=ctx.createGain();this.master.gain.value=.68;this.master.connect(ctx.destination);
+  this.music=ctx.createGain();this.music.gain.value=.48;this.music.connect(this.master);
+  this.fx=ctx.createGain();this.fx.gain.value=.62;this.fx.connect(this.master);
+  this.engine=ctx.createGain();this.engine.gain.value=.055;this.engine.connect(this.master);
   const filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=250;filter.Q.value=.5;filter.connect(this.engine);
   this.motor=ctx.createOscillator();this.motor.type='sawtooth';this.motor.frequency.value=56;this.motor.connect(filter);this.motor.start();
   const data=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*.6),ctx.sampleRate);
@@ -547,21 +547,41 @@ const soundEngine={
   if(!this.enabled||!this.ctx||this.ctx.state!=='running')return;
   const ctx=this.ctx,t=ctx.currentTime;
   this.motor.frequency.setTargetAtTime(racing?56+Math.min(22,pace*.12):44,t,.09);
-  this.engine.gain.setTargetAtTime(racing?.025:.012,t,.25);
-  this.music.gain.setTargetAtTime(finalSprint?.47:.36,t,.38);
+  this.engine.gain.setTargetAtTime(racing?.057:.018,t,.25);
+  this.music.gain.setTargetAtTime(finalSprint?.55:.45,t,.38);
   if(this.nextBeat<t-.1)this.nextBeat=t+.025;
   let calls=0;while(this.nextBeat<t+.08&&calls<4){
    this.tick(this.nextBeat,finalSprint);this.nextBeat+=60/100/2;calls++;
   }
  },
- async toggle(){
+ syncUI(){
+  const active=this.enabled&&this.ctx&&this.ctx.state==='running';
   const button=document.getElementById('audioButton');
+  const unlock=document.getElementById('soundUnlock');
+  if(button)button.textContent=active?'🔊 SOUND ON':'🔇 SOUND OFF';
+  if(unlock)unlock.hidden=Boolean(active||streamMode);
+ },
+ async enable(){
   try{
    if(!this.ctx)this.init();
-   if(this.enabled){this.enabled=false;await this.ctx.suspend()}
-   else{await this.ctx.resume();this.enabled=true;this.step=0;this.nextBeat=this.ctx.currentTime+.035}
-   button.textContent=this.enabled?'🔊 SOUND ON':'🔇 SOUND OFF';
-  }catch(err){this.enabled=false;button.textContent='SOUND UNAVAILABLE';console.warn('WORLD RUSH audio:',err)}
+   // Must run directly inside an iOS Safari user gesture when autoplay is blocked.
+   this.enabled=true;
+   await this.ctx.resume();
+   if(this.ctx.state!=='running')throw Error('Waiting for a user gesture to enable audio');
+   this.step=0;this.nextBeat=this.ctx.currentTime+.025;
+   this.play('go'); // Audible confirmation to verify game sound is actually active.
+   this.syncUI();
+  }catch(err){
+   this.syncUI();
+   console.warn('WORLD RUSH audio unlock:',err);
+  }
+ },
+ async toggle(){
+  try{
+   if(this.enabled&&this.ctx&&this.ctx.state==='running'){
+    this.enabled=false;await this.ctx.suspend();this.syncUI();
+   }else await this.enable();
+  }catch(err){this.syncUI();console.warn('WORLD RUSH audio toggle:',err)}
  }
 };
 
@@ -912,6 +932,20 @@ document.addEventListener('keydown',e=>{
  if(action)effect(action);
 });
 function toggleSound(){soundEngine.toggle()}
+document.getElementById('soundUnlock').addEventListener('click',()=>soundEngine.enable());
+// Mobile Safari may suspend WebAudio when switching between TikTok and Safari.
+document.addEventListener('visibilitychange',()=>{
+ if(!document.hidden&&soundEngine.enabled&&soundEngine.ctx){
+  if(soundEngine.ctx.state!=='running')soundEngine.ctx.resume().catch(()=>{});
+  soundEngine.syncUI();
+ }
+});
+window.addEventListener('pageshow',()=>soundEngine.syncUI());
+document.addEventListener('pointerdown',()=>{
+ if(soundEngine.enabled&&soundEngine.ctx&&soundEngine.ctx.state==='suspended'){
+  soundEngine.ctx.resume().then(()=>soundEngine.syncUI()).catch(()=>soundEngine.syncUI());
+ }
+},{passive:true});
 const rankRows=cars.map(c=>{
  const row=document.createElement('div');row.className='racer';row.dataset.team=String(c.i);
  row.tabIndex=0;row.setAttribute('role','button');row.setAttribute('aria-label','Select '+teams[c.i]);
