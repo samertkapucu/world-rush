@@ -449,7 +449,57 @@ const soundEngine={
 };
 
 function flash(s){event.textContent=s;event.classList.add('on');flashUntil=performance.now()+1700}
+const localTestInputs=Object.create(null);
+function applyLeagueRoster(){
+ const roster=leagueProfiles[leagueIndex].countries;
+ for(let i=0;i<4;i++){
+  const country=countryLibrary[roster[i]],car=cars[i];
+  codes[i]=country.code;teams[i]=country.name;flags[i]=country.flag;colors[i]=country.color;
+  car.color=country.color;
+  for(const mat of car.paintMaterials){if(mat&&mat.color)mat.color.setHex(country.color)}
+  if(car.flag&&car.flag.material){
+   const prevTexture=car.flag.material.map;
+   car.flag.material.map=makeFlagTexture(country.code);
+   car.flag.material.needsUpdate=true;
+   if(prevTexture)prevTexture.dispose();
+  }
+  if(laneStrips[i])laneStrips[i].material.color.setHex(country.color);
+  if(laneAccentMaterials[i]){
+   laneAccentMaterials[i].color.setHex(country.color);
+   laneAccentMaterials[i].emissive.setHex(country.color);
+  }
+ }
+ selected=0;
+ const label=document.getElementById('leagueStatus');
+ if(label)label.textContent=leagueProfiles[leagueIndex].title+' · LOCAL TEST · NO REAL GIFT DATA';
+}
+function advanceLeague(){
+ const now=Date.now();
+ if(queuedLeagueChange){
+  leagueIndex=(leagueIndex+1)%leagueProfiles.length;
+  leagueEndsAt=now+LEAGUE_LENGTH_MS;
+ }else{
+  const hops=Math.max(1,Math.floor((now-leagueEndsAt)/LEAGUE_LENGTH_MS)+1);
+  leagueIndex=(leagueIndex+hops)%leagueProfiles.length;
+  leagueEndsAt+=hops*LEAGUE_LENGTH_MS;
+ }
+ queuedLeagueChange=false;persistLeague();
+ season=[0,0,0,0];round=0;leadIndex=-1;
+ applyLeagueRoster();
+}
+function queueLeague(){
+ if(roundState!=='racing'){queuedLeagueChange=true;flash('NEXT LEAGUE AFTER THIS ROUND');return}
+ queuedLeagueChange=true;flash('NEXT LEAGUE AFTER THIS ROUND');
+}
+function updateLeagueStatus(){
+ const label=document.getElementById('leagueStatus');if(!label)return;
+ const minutes=Math.max(0,Math.ceil((leagueEndsAt-Date.now())/60000));
+ const checks=codes.map(c=>c+':'+(localTestInputs[c]||0)).join(' · ');
+ label.textContent=leagueProfiles[leagueIndex].title+' · '+(queuedLeagueChange?'NEXT LEAGUE QUEUED':minutes+'m UNTIL NEXT')+' · TEST BOOST CLICKS '+checks+' · NO LIVE GIFTS';
+}
+
 function resetRound(){
+ if(queuedLeagueChange||Date.now()>=leagueEndsAt)advanceLeague();
  round++;remaining=75;roundState='racing';winnerIndex=-1;leadIndex=-1;finishReason='';soundEngine.finalCued=false;
  cars.forEach(c=>{c.progress=0;c.boost=0;c.pace=0;c.burst=0;c.group.position.z=20});
  flashUntil=0;event.classList.remove('on');
@@ -468,6 +518,7 @@ function effect(type){
  if(type==='join'){flash(flags[selected]+' '+teams[selected]+' SELECTED');return}
  if(roundState!=='racing')return;
  const power={rose:2,turbo:5,mega:9}[type];
+ localTestInputs[codes[selected]]=(localTestInputs[codes[selected]]||0)+1;
  const order=[...cars].sort((a,b)=>b.progress-a.progress);
  const deficit=order[0].progress-c.progress;
  const comeback=deficit*.86>=4 && order[0].i!==selected;
@@ -495,6 +546,7 @@ document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click'
  const a=b.dataset.action;
  if(a==='cam'){changeCameraManually();return}
  if(a==='safe'){toggleSafe();return}
+ if(a==='league'){queueLeague();return}
  if(a==='audio'){toggleSound();return}
  if(a==='join'){selectTeam((selected+1)%4);return}
  effect(a);
@@ -504,6 +556,7 @@ document.addEventListener('keydown',e=>{
  const key=e.key.toLowerCase();
  if(key==='p'){toggleOperator();return}
  if(key==='t'){toggleSafe();return}
+ if(key==='l'){queueLeague();return}
  if(key==='c'){changeCameraManually();return}
  if(key==='m'){toggleSound();return}
  if(/^[1-4]$/.test(key)){selectTeam(Number(key)-1);return}
@@ -523,14 +576,18 @@ function updateRank(){
   const node=rankRows[c.i];node.classList.toggle('leading',k===0);
   node.classList.toggle('selected',c.i===selected);
   node.querySelector('.pos').textContent=String(k+1);
+  node.querySelector('.flag').textContent=flags[c.i];
+  node.querySelector('.name').textContent=teams[c.i];
+  node.setAttribute('aria-label','Select '+teams[c.i]);
   node.querySelector('.pct').textContent=k===0?'LEADER':Math.round((sorted[0].progress-c.progress)*.86)+'m BACK';
   node.querySelector('.fill').style.width=Math.max(1,c.progress)+'%';
   node.querySelector('.fill').style.background='#'+c.color.toString(16).padStart(6,'0');
   rank.appendChild(node);
  });
+ updateLeagueStatus();
  meta.textContent=roundState==='results'
- ?'R'+String(round).padStart(2,'0')+' · RESULTS'
- :'R'+String(round).padStart(2,'0')+' · '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(Math.floor(remaining%60)).padStart(2,'0');
+ ?leagueProfiles[leagueIndex].id+' · RESULTS'
+ :leagueProfiles[leagueIndex].id+' · R'+String(round).padStart(2,'0')+' · '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(Math.floor(remaining%60)).padStart(2,'0');
 }
 function resize(){const r=el.getBoundingClientRect();camera.aspect=r.width/r.height;camera.updateProjectionMatrix();renderer.setSize(r.width,r.height);composer.setSize(r.width,r.height)}window.addEventListener('resize',resize);resize();
 function loop(now){
@@ -629,7 +686,7 @@ function loop(now){
  composer.render();
 }
 
-cars.forEach(c=>c.group.position.z=20);updateRank();requestAnimationFrame(loop);
+cars.forEach(c=>c.group.position.z=20);applyLeagueRoster();updateRank();requestAnimationFrame(loop);
 </script><script>
 // Local development refresh: detects updates to the single index.html file.
 (()=>{let previous=null;setInterval(async()=>{try{const r=await fetch('/index.html?check='+Date.now(),{cache:'no-store'});if(!r.ok)return;const body=await r.text();if(previous!==null && body!==previous)location.reload();previous=body;}catch(e){}},3500)})();
