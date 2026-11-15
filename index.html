@@ -16,29 +16,50 @@ for(let z=-78;z<45;z+=9){for(const side of [-1,1]){const pole=box(.14,4,.14,0x46
 const colors=[0xff3656,0x16cb77,0x349aff,0xffc12f],teams=['TURKEY','BRAZIL','USA','GERMANY'],flags=['🇹🇷','🇧🇷','🇺🇸','🇩🇪'];let cars=[];
 function createCar(i){
  const group=new THREE.Group();
- const paint=new THREE.MeshStandardMaterial({color:colors[i],metalness:.78,roughness:.19});
- const glass=new THREE.MeshPhysicalMaterial({color:0x101d32,metalness:.25,roughness:.09,transparent:true,opacity:.83});
- const dark=new THREE.MeshStandardMaterial({color:0x0a101a,metalness:.45,roughness:.35});
+ const paint=new THREE.MeshStandardMaterial({color:colors[i],metalness:.72,roughness:.24});
+ const carbon=new THREE.MeshStandardMaterial({color:0x10141a,metalness:.32,roughness:.52});
+ const trim=new THREE.MeshStandardMaterial({color:0x323c48,metalness:.72,roughness:.29});
+ const glass=new THREE.MeshPhysicalMaterial({color:0x102238,metalness:.25,roughness:.09,transparent:true,opacity:.86});
+ const rimMat=new THREE.MeshStandardMaterial({color:0xa6b2c0,metalness:.93,roughness:.22});
+ const white=new THREE.MeshStandardMaterial({color:0xe5f6ff,emissive:0x66cfff,emissiveIntensity:1.1});
+ const red=new THREE.MeshStandardMaterial({color:0xff2638,emissive:0xbb1020,emissiveIntensity:1});
  function part(w,h,d,mat,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);m.castShadow=true;group.add(m);return m}
- // Low-poly GT race car, nose points toward negative Z (finish line)
- part(1.85,.32,3.75,paint,0,.57,0);
- part(1.72,.14,1.05,paint,0,.74,-1.35);
- part(1.62,.17,.75,paint,0,.78,1.38);
- const cabin=part(1.40,.47,1.50,glass,0,1.04,.18);cabin.rotation.x=-.06;
- part(1.48,.07,.07,dark,0,1.33,.1);
- part(2.10,.09,.33,dark,0,.85,1.73);
- for(const x of [-.82,.82])part(.09,.28,.09,dark,x,.79,1.58);
- part(1.96,.10,.35,dark,0,.35,-1.91);
- for(const x of [-.63,.63]){
-   part(.38,.12,.08,new THREE.MeshStandardMaterial({color:0xc9f4ff,emissive:0x55aacc,emissiveIntensity:.85}),x,.72,-1.9);
-   part(.31,.12,.07,new THREE.MeshStandardMaterial({color:0xff2636,emissive:0xaa1018,emissiveIntensity:.7}),x,.65,1.9);
+ // GT3 proportions: low wide body, deep front splitter and muscular wheel arches.
+ part(1.92,.28,3.73,paint,0,.55,0);
+ part(2.05,.15,1.18,paint,0,.70,-1.21);
+ part(1.90,.13,.85,paint,0,.74,-1.53);
+ part(2.04,.17,.93,paint,0,.71,1.34);
+ part(1.53,.18,1.47,paint,0,.83,.13);
+ const cabin=part(1.43,.43,1.43,glass,0,1.05,.13);cabin.rotation.x=-.08;
+ part(1.43,.055,1.12,carbon,0,1.29,.19);
+ part(2.18,.075,.40,carbon,0,.34,-1.89);
+ part(1.72,.09,.32,carbon,0,.33,1.90);
+ for(const side of [-1,1]){
+   part(.16,.12,2.30,carbon,side*.98,.37,.12);
+   part(.21,.13,.72,paint,side*.95,.74,-1.15);
+   part(.21,.13,.74,paint,side*.95,.73,1.15);
+   part(.19,.11,.37,carbon,side*.90,.87,-.27);
+   part(.09,.48,.12,carbon,side*.74,1.08,1.65);
+   part(.09,.25,.48,carbon,side*1.08,1.40,1.73);
+   part(.36,.095,.06,white,side*.71,.69,-1.91);
+   part(.43,.10,.06,red,side*.69,.69,1.91);
+   part(.12,.08,.06,red,side*.94,.57,1.91);
  }
- for(const x of [-1.0,1.0])for(const z of [-1.23,1.22]){
-   const tire=new THREE.Mesh(new THREE.CylinderGeometry(.39,.39,.28,24),dark);tire.rotation.z=Math.PI/2;tire.position.set(x,.40,z);tire.castShadow=true;group.add(tire);
-   const rim=new THREE.Mesh(new THREE.CylinderGeometry(.19,.19,.30,16),new THREE.MeshStandardMaterial({color:0x9faebd,metalness:.9,roughness:.22}));rim.rotation.z=Math.PI/2;rim.position.set(x,.40,z);group.add(rim);
+ const wing=part(2.28,.09,.45,carbon,0,1.49,1.73);wing.rotation.x=-.08;
+ part(1.46,.035,.16,trim,0,1.54,1.75);
+ for(const x of [-.44,0,.44])part(.085,.17,.34,carbon,x,.34,1.84);
+ // Racing slicks with visible metallic hubs.
+ for(const x of [-1.04,1.04])for(const z of [-1.22,1.22]){
+   const tire=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.34,32),carbon);
+   tire.rotation.z=Math.PI/2;tire.position.set(x,.42,z);tire.castShadow=true;group.add(tire);
+   const rim=new THREE.Mesh(new THREE.CylinderGeometry(.235,.235,.345,12),rimMat);
+   rim.rotation.z=Math.PI/2;rim.position.set(x,.42,z);group.add(rim);
+   const hub=new THREE.Mesh(new THREE.CylinderGeometry(.075,.075,.365,16),carbon);
+   hub.rotation.z=Math.PI/2;hub.position.set(x,.42,z);group.add(hub);
  }
- // Distinct national-color racing stripe along the roof and hood
- part(.14,.012,3.12,new THREE.MeshStandardMaterial({color:0xf2f6ff,metalness:.5,roughness:.2}),0,.755,-.18);
+ const stripe=new THREE.MeshStandardMaterial({color:0xf4f8ff,metalness:.4,roughness:.3});
+ part(.13,.015,.80,stripe,0,.815,-1.26);
+ part(.11,.015,.65,stripe,0,1.322,.19);
  group.position.x=(i-1.5)*3.6;scene.add(group);
  return {group,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0}
 }
