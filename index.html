@@ -1,5 +1,5 @@
 <!-- WORLD RUSH OTOMATIK GUNCELLEME TEST 123 -->
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WORLD RUSH v9 — BROADCAST PRO</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WORLD RUSH v10 — LIVE READY</title><style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:#050914;color:#f4f7ff;font-family:Inter,"Segoe UI",system-ui,Arial,sans-serif}
 body{display:grid;place-items:center;font-weight:650}
@@ -64,6 +64,17 @@ h1 span{color:#75d4ff}
 #joinHint{font-size:9px;letter-spacing:.2px;line-height:1.2;color:#b9cedc;text-align:center;margin-top:3px;white-space:nowrap;transition:color .3s}
 #joinHint.following{color:#ffe39a;font-weight:900;text-shadow:0 0 8px #e8ac3766}#event.prestige{font-size:25px;color:#fff0be;text-shadow:0 2px 6px #000,0 0 24px #ffbd3ca8,0 0 35px #0af7ec44}#event.prestige:before{content:"★ LEGEND MOMENT ★";display:block;font-size:10px;letter-spacing:2px;margin-bottom:5px}
 
+/* 9:16 high-resolution, direct LIVE Studio link source. All HUD measurements 
+   are authored at a 540x960 logical resolution then scaled to source pixels. */
+#app.stream-mode{width:100vw;height:100dvh;min-height:0;max-width:none;box-shadow:none}
+#app.stream-mode #hud{inset:0 auto auto 0;width:540px;height:960px;
+  transform-origin:top left;transform:scale(var(--stream-scale,2));
+  padding:225px 58px 133px 14px}
+#app.stream-mode #topStack{max-width:490px}
+#app.stream-mode #operatorPanel,#app.stream-mode #safePreview{display:none!important}
+#app.stream-mode #bootScreen .bootLogo{font-size:64px}
+#app.stream-mode #bootScreen .bootCaption{font-size:18px}
+#app.stream-mode #startCountdown{font-size:96px}
 /* Broadcast safe areas: UI begins below TikTok LIVE profile, goals, and top badges. */
 #app.broadcast-safe #hud{padding-top:clamp(170px,27dvh,260px);padding-right:clamp(56px,11%,72px)}
 #app.broadcast-safe #topStack{gap:4px}
@@ -79,6 +90,7 @@ h1 span{color:#75d4ff}
 .racer .fans{font-size:9px;color:#7ad8c7;min-width:0;white-space:nowrap}
 #teamToast{transition:opacity .18s}
 @media(max-height:720px){#app.broadcast-safe #hud{padding-top:clamp(140px,25dvh,185px)}}
+#app.stream-mode.broadcast-safe #hud{padding-top:225px;padding-right:58px}
 </style></head><body><main id="app" class="booting broadcast-safe"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN A TEAM · FREE</div><div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="event" aria-live="polite"></div><div id="startCountdown" aria-live="polite" hidden>3</div><div id="comeback" hidden></div><div id="teamToast" hidden aria-live="polite"></div></div>
 <div id="safePreview" hidden><div class="topSafe"><span>TIKTOK HEADER</span></div><div class="rightSafe"></div><div class="bottomSafe"><span>COMMENTS + GIFTS</span></div></div>
 <div id="operatorPanel" hidden><div class="operatorHead"><span>WORLD RUSH · OPERATOR</span><span class="hint">P: hide · B: broadcast safe · T: guide</span></div><div id="controls"><button class="btn" data-action="join">JOIN / TEAM</button><button class="btn" data-action="rose">ROSE</button><button class="btn" data-action="turbo">TURBO</button><button class="btn" data-action="mega">MEGA</button><button class="btn" data-action="cam">CAMERA</button><button class="btn" data-action="audio" id="audioButton">🔇 SOUND OFF</button><button class="btn" data-action="safe">SAFE ZONES</button><button class="btn" data-action="broadcast" id="broadcastButton">BROADCAST SAFE ON</button><button class="btn" data-action="league">NEXT LEAGUE</button><button class="btn" data-action="testJoin">TEST TEAM JOIN</button><button class="btn" data-action="testFollow">TEST FOLLOW</button><button class="btn" data-action="gift1">TEST ROSE</button><button class="btn" data-action="gift1000">TEST GALAXY</button><button class="btn" data-action="gift30000">TEST LUXURY</button></div><div class="hint" style="margin-top:7px">75-MIN LEAGUES · LOCAL SIMULATION, NOT REAL GIFTS · 1–4: teams · Q/W/E: boosts · C: camera · M: sound.</div><div class="hint" id="leagueStatus" style="margin-top:5px">GULF LEAGUE · Test mode</div><div class="hint" id="liveStatus" style="margin-top:4px">LIVE BRIDGE: OFFLINE · DEMO ONLY</div><div id="operatorStats">No verified team joins yet</div></div><div id="error"></div></main>
@@ -91,8 +103,14 @@ import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 const el=document.getElementById('stage'),rank=document.getElementById('rank'),meta=document.getElementById('meta'),event=document.getElementById('event');
+const streamMode=new URLSearchParams(location.search).get('stream')==='1';
+if(streamMode){
+ document.getElementById('app').classList.add('stream-mode');
+ const scale=Math.max(.5,window.innerWidth/540);
+ document.getElementById('app').style.setProperty('--stream-scale',scale);
+}
 const W=560,H=900,scene=new THREE.Scene();scene.background=new THREE.Color('#070a22');scene.fog=new THREE.FogExp2('#080d25',.011);
-const camera=new THREE.PerspectiveCamera(58,W/H,.1,160),renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;el.appendChild(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(58,W/H,.1,160),renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(streamMode?1:Math.min(devicePixelRatio,1.75));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;el.appendChild(renderer.domElement);
 // Real GPU post-processing pipeline: physically rendered scene -> HDR bloom -> display output.
 const composer=new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene,camera));
@@ -803,7 +821,15 @@ function updateRank(){
  ?leagueProfiles[leagueIndex].id+' · RESULTS'
  :leagueProfiles[leagueIndex].id+' · R'+String(round).padStart(2,'0')+' · '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(Math.floor(remaining%60)).padStart(2,'0');
 }
-function resize(){const r=el.getBoundingClientRect();camera.aspect=r.width/r.height;camera.updateProjectionMatrix();renderer.setSize(r.width,r.height);composer.setSize(r.width,r.height)}window.addEventListener('resize',resize);resize();
+function resize(){
+ const r=el.getBoundingClientRect();
+ camera.aspect=r.width/r.height;camera.updateProjectionMatrix();
+ if(streamMode){
+  document.getElementById('app').style.setProperty('--stream-scale',Math.max(.5,r.width/540));
+  renderer.setPixelRatio(1);
+ }
+ renderer.setSize(r.width,r.height);composer.setSize(r.width,r.height);
+}window.addEventListener('resize',resize);resize();
 function loop(now){
  requestAnimationFrame(loop);
  const dt=Math.min((now-last)/1000,.05);last=now;
