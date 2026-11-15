@@ -556,6 +556,77 @@ rank.addEventListener('keydown',e=>{
  e.preventDefault();selected=Number(row.dataset.team);effect('join');updateRank();
 });
 
+
+// TikTok LIVE event protocol. Local tests and LIVE events are always distinguished.
+const liveFans=new Map(),seenGiftIds=new Set(),giftTotals=Object.create(null);
+let connectedToLive=false,liveSocket=null,liveReconnect=0;
+function giftTier(points){
+ if(points<10)return {boost:.65,label:'SPARK',sound:'rose'};
+ if(points<100)return {boost:1.2,label:'PULSE',sound:'rose'};
+ if(points<1000)return {boost:2.25,label:'TURBO',sound:'turbo'};
+ if(points<10000)return {boost:4,label:'SUPER TURBO',sound:'turbo'};
+ return {boost:6.5,label:'LEGEND BOOST',sound:'mega',cinematic:true};
+}
+function teamCommand(text){
+ const c=String(text||'').trim().toUpperCase().replace(/^[!#]/,'').split(/\s+/)[0];
+ return codes.includes(c)?c:null;
+}
+function applyComment(msg){
+ const userId=String(msg.userId||'').slice(0,100);
+ if(!userId)return;
+ const team=teamCommand(msg.text);if(!team)return;
+ liveFans.set(userId,team);
+ if(liveFans.size>15000)liveFans.delete(liveFans.keys().next().value);
+}
+function applyGift(msg){
+ const source=msg.source==='live'?'live':'test',eventId=String(msg.eventId||'').slice(0,160);
+ if(eventId&&seenGiftIds.has(eventId))return;
+ if(eventId){seenGiftIds.add(eventId);if(seenGiftIds.size>1200)seenGiftIds.delete(seenGiftIds.values().next().value)}
+ const rawValue=Number(msg.value),quantity=Math.min(1000,Math.max(1,Math.floor(Number(msg.quantity)||1)));
+ const points=Number.isFinite(rawValue)&&rawValue>0?Math.min(100000,rawValue):0;
+ const userId=String(msg.userId||'').slice(0,100),nick=String(msg.nickname||'VIEWER').replace(/[<>&]/g,'').slice(0,18);
+ const team=source==='test'?String(msg.teamCode||codes[selected]):liveFans.get(userId);
+ // Never secretly assign paid gifts to a team; only a user's explicit team comment counts.
+ if(!team||!codes.includes(team)||!points){flash(nick+' · THANK YOU! · COMMENT TEAM CODE');return}
+ const i=codes.indexOf(team),car=cars[i],tier=giftTier(points),order=[...cars].sort((a,b)=>b.progress-a.progress);
+ const gap=(order[0].progress-car.progress)*METRES_PER_PERCENT;
+ const comeback=gap>=12&&order[0].i!==i;
+ const countFactor=Math.min(2,1+Math.log2(quantity)/4),boost=tier.boost*countFactor*(comeback?1.25:1);
+ if(source==='live')giftTotals[team]=(giftTotals[team]||0)+Math.round(points*quantity);
+ if(roundState!=='racing'){flash(nick+' · '+team+' · NEXT RACE STARTS SOON');return}
+ car.boost=Math.min(10,car.boost+boost);car.burst=performance.now()+2100;
+ if(tier.cinematic){
+  spotlightIndex=i;spotlightUntil=performance.now()+3300;
+  flash(nick+' · '+flags[i]+' '+teams[i]+' '+tier.label);
+  event.classList.add('prestige');flashUntil=performance.now()+3700;
+ }else flash(flags[i]+' '+teams[i]+' · '+tier.label+' · '+nick);
+ soundEngine.play(tier.sound);
+}
+function updateBridgeStatus(){
+ const node=document.getElementById('liveStatus');if(!node)return;
+ const names=Object.entries(giftTotals).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([code,value])=>code+':'+value).join(' · ');
+ node.textContent='LIVE BRIDGE: '+(connectedToLive?'CONNECTED':'OFFLINE')+' · GIFT POINTS '+(names||'0')+' · DEMO NOT REAL REVENUE';
+}
+function connectLiveBridge(){
+ // Local loopback connector only. No external server is allowed to inject gifts.
+ if(!['localhost','127.0.0.1'].includes(location.hostname))return;
+ try{
+  liveSocket=new WebSocket('ws://127.0.0.1:8765');
+  liveSocket.onopen=()=>{connectedToLive=true;liveReconnect=0;updateBridgeStatus()};
+  liveSocket.onmessage=e=>{
+   try{
+    const msg=JSON.parse(e.data);
+    if(!msg||typeof msg!=='object')return;
+    if(msg.type==='comment')applyComment(msg);
+    if(msg.type==='gift')applyGift({...msg,source:'live'});
+   }catch(err){console.warn('Invalid local LIVE event',err)}
+  };
+  liveSocket.onclose=()=>{connectedToLive=false;updateBridgeStatus();liveReconnect=Math.min(liveReconnect+1,8);setTimeout(connectLiveBridge,Math.min(30000,1500*Math.pow(1.5,liveReconnect)))};
+  liveSocket.onerror=()=>{};
+ }catch(err){console.warn('Local LIVE bridge unavailable',err)}
+}
+connectLiveBridge();
+
 const operatorPanel=document.getElementById('operatorPanel');
 const safePreview=document.getElementById('safePreview');
 function toggleOperator(force){operatorPanel.hidden=typeof force==='boolean'?!force:!operatorPanel.hidden;document.getElementById('app').classList.toggle('operator-open',!operatorPanel.hidden)}
