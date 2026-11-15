@@ -486,8 +486,8 @@ const soundEngine={
   this.music=ctx.createGain();this.music.gain.value=.48;this.music.connect(this.master);
   this.fx=ctx.createGain();this.fx.gain.value=.62;this.fx.connect(this.master);
   this.engine=ctx.createGain();this.engine.gain.value=.055;this.engine.connect(this.master);
-  const filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=250;filter.Q.value=.5;filter.connect(this.engine);
-  this.motor=ctx.createOscillator();this.motor.type='sawtooth';this.motor.frequency.value=56;this.motor.connect(filter);this.motor.start();
+  const filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=670;filter.Q.value=.65;filter.connect(this.engine);
+  this.motor=ctx.createOscillator();this.motor.type='sawtooth';this.motor.frequency.value=108;this.motor.connect(filter);this.motor.start();
   const data=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*.6),ctx.sampleRate);
   const samples=data.getChannelData(0);for(let i=0;i<samples.length;i++)samples[i]=(Math.random()*2-1)*.6;
   this.noise=data;
@@ -533,25 +533,29 @@ const soundEngine={
   }
  },
  tick(when,finalSprint){
-  const roots=[55,55,65.41,55,49,49,58.27,65.41];
+  // The old 55 Hz bassline was effectively inaudible on iPhone speakers.
+  // Original pentatonic pulse: 200–900 Hz melodic harmonics + light kick.
+  const roots=[110,110,130.81,110,98,98,116.54,130.81];
   const note=roots[Math.floor(this.step/2)%roots.length];
   if(this.step%2===0){
-   this.tone(note,.24,.11,when,'triangle',this.music);
-   this.tone(75,.15,.10,when,'sine',this.music,40);
-  }else if(finalSprint||this.step%4===3){
-   this.tone(460,.046,.025,when,'triangle',this.music,300);
+   this.tone(note*2,.18,.12,when,'triangle',this.music);
+   this.tone(note*4,.09,.035,when+.013,'sine',this.music);
+   this.tone(88,.15,.12,when,'sine',this.music,45);
+  }else{
+   this.tone(finalSprint?920:660,.052,.038,when,'triangle',this.music,440);
+   if(this.step%4===3)this.tone(370,.11,.043,when+.014,'triangle',this.music,230);
   }
   this.step++;
  },
  update(racing,finalSprint,pace){
   if(!this.enabled||!this.ctx||this.ctx.state!=='running')return;
   const ctx=this.ctx,t=ctx.currentTime;
-  this.motor.frequency.setTargetAtTime(racing?56+Math.min(22,pace*.12):44,t,.09);
+  this.motor.frequency.setTargetAtTime(racing?112+Math.min(56,pace*.44):88,t,.09);
   this.engine.gain.setTargetAtTime(racing?.057:.018,t,.25);
   this.music.gain.setTargetAtTime(finalSprint?.55:.45,t,.38);
   if(this.nextBeat<t-.1)this.nextBeat=t+.025;
   let calls=0;while(this.nextBeat<t+.08&&calls<4){
-   this.tick(this.nextBeat,finalSprint);this.nextBeat+=60/100/2;calls++;
+   this.tick(this.nextBeat,finalSprint);this.nextBeat+=60/108/2;calls++;
   }
  },
  syncUI(){
