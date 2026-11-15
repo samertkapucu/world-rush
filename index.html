@@ -93,7 +93,16 @@ h1 span{color:#75d4ff}
 #app.stream-mode.broadcast-safe #hud{padding-top:225px;padding-right:58px}
 </style></head><body><main id="app" class="booting broadcast-safe"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN A TEAM · FREE</div><div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="event" aria-live="polite"></div><div id="startCountdown" aria-live="polite" hidden>3</div><div id="comeback" hidden></div><div id="teamToast" hidden aria-live="polite"></div></div>
 <div id="safePreview" hidden><div class="topSafe"><span>TIKTOK HEADER</span></div><div class="rightSafe"></div><div class="bottomSafe"><span>COMMENTS + GIFTS</span></div></div>
-<div id="operatorPanel" hidden><div class="operatorHead"><span>WORLD RUSH · OPERATOR</span><span class="hint">P: hide · B: broadcast safe · T: guide</span></div><div id="controls"><button class="btn" data-action="join">JOIN / TEAM</button><button class="btn" data-action="rose">ROSE</button><button class="btn" data-action="turbo">TURBO</button><button class="btn" data-action="mega">MEGA</button><button class="btn" data-action="cam">CAMERA</button><button class="btn" data-action="audio" id="audioButton">🔇 SOUND OFF</button><button class="btn" data-action="safe">SAFE ZONES</button><button class="btn" data-action="broadcast" id="broadcastButton">BROADCAST SAFE ON</button><button class="btn" data-action="league">NEXT LEAGUE</button><button class="btn" data-action="testJoin">TEST TEAM JOIN</button><button class="btn" data-action="testFollow">TEST FOLLOW</button><button class="btn" data-action="gift1">TEST ROSE</button><button class="btn" data-action="gift1000">TEST GALAXY</button><button class="btn" data-action="gift30000">TEST LUXURY</button></div><div class="hint" style="margin-top:7px">75-MIN LEAGUES · LOCAL SIMULATION, NOT REAL GIFTS · 1–4: teams · Q/W/E: boosts · C: camera · M: sound.</div><div class="hint" id="leagueStatus" style="margin-top:5px">GULF LEAGUE · Test mode</div><div class="hint" id="liveStatus" style="margin-top:4px">LIVE BRIDGE: OFFLINE · DEMO ONLY</div><div id="operatorStats">No verified team joins yet</div></div><div id="error"></div></main>
+<div id="operatorPanel" hidden><div class="operatorHead"><span>WORLD RUSH · OPERATOR</span><span class="hint">P: hide · B: broadcast safe · T: guide</span></div><div id="controls"><button class="btn" data-action="join">JOIN / TEAM</button><button class="btn" data-action="rose">ROSE</button><button class="btn" data-action="turbo">TURBO</button><button class="btn" data-action="mega">MEGA</button><button class="btn" data-action="cam">CAMERA</button><button class="btn" data-action="audio" id="audioButton">🔇 SOUND OFF</button><button class="btn" data-action="safe">SAFE ZONES</button><button class="btn" data-action="broadcast" id="broadcastButton">BROADCAST SAFE ON</button><button class="btn" data-action="league">NEXT LEAGUE</button><button class="btn" data-action="testJoin">TEST TEAM JOIN</button><button class="btn" data-action="testFollow">TEST FOLLOW</button><button class="btn" data-action="gift1">TEST ROSE</button><button class="btn" data-action="gift1000">TEST GALAXY</button><button class="btn" data-action="gift7000">TEST SPORTS CAR</button><button class="btn" data-action="gift30000">TEST LION</button></div><div class="hint" style="margin-top:7px">75-MIN LEAGUES · LOCAL SIMULATION, NOT REAL GIFTS · 1–4: teams · Q/W/E: boosts · C: camera · M: sound.</div><div class="hint" id="leagueStatus" style="margin-top:5px">GULF LEAGUE · Test mode</div><div class="hint" id="liveStatus" style="margin-top:4px">LIVE BRIDGE: OFFLINE · DEMO ONLY</div><div id="operatorStats">No verified team joins yet</div><div id="giftRules" class="hint" style="margin-top:8px;padding:8px;border:1px solid #315d83;border-radius:5px;line-height:1.6">
+<b>GIFT → RACE EFFECT (metadata points, not cash)</b>
+<div>Rose / Finger Heart (1–9): 0.65s spark</div>
+<div>Doughnut / small gift (10–99): 1.2s pulse</div>
+<div>100–999 pts: 2.25s turbo</div>
+<div>Galaxy / 1,000–9,999 pts: 4s super turbo</div>
+<div>Sports Car: cinematic spotlight + tier boost</div>
+<div>Lion / Universe / 10,000+ pts: 6.5s legend + spotlight</div>
+<div>ALL GIFTS: max 10s active boost · no instant finish · trailing bonus +25%</div>
+<div>Names are examples; the incoming gift's actual metadata sets its tier.</div></div><div id="lastGift" class="hint" style="margin-top:5px">LAST GIFT: none (offline)</div></div><div id="error"></div></main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
@@ -644,6 +653,27 @@ function recordWorldResults(orderedCars){
 }
 let connectedToLive=false,tiktokStreamOnline=false,liveSocket=null,liveReconnect=0;
 const pendingByCountry=Object.create(null);
+function giftPresentation(giftName,tier){
+ const name=String(giftName||'').trim().toLowerCase();
+ if(/(sport.*car|luxury.*car|racing debut|supercar)/.test(name)){
+  return {...tier,label:'SUPERCAR ATTACK',cinematic:true,cameraDuration:2200};
+ }
+ if(name==='galaxy'||name.includes('galaxy ')){
+  return {...tier,label:'GALAXY TURBO'};
+ }
+ if(name.includes('lion'))return {...tier,label:'LION LEGEND',cinematic:true,cameraDuration:3300};
+ if(name.includes('universe'))return {...tier,label:'UNIVERSE LEGEND',cinematic:true,cameraDuration:3300};
+ if(name==='rose')return {...tier,label:'ROSE SPARK'};
+ if(name==='finger heart')return {...tier,label:'HEART SPARK'};
+ if(name==='doughnut'||name==='donut')return {...tier,label:'DOUGHNUT PULSE'};
+ return tier;
+}
+let lastGiftInfo='none (offline)';
+function updateLastGift(note){
+ lastGiftInfo=String(note||'unknown').slice(0,200);
+ const node=document.getElementById('lastGift');
+ if(node)node.textContent='LAST GIFT: '+lastGiftInfo;
+}
 function giftTier(points){
  if(points<10)return {boost:.65,label:'SPARK',sound:'rose'};
  if(points<100)return {boost:1.2,label:'PULSE',sound:'rose'};
@@ -710,18 +740,22 @@ function applyGift(msg){
  const userId=String(msg.userId||'').slice(0,100),nick=String(msg.nickname||'VIEWER').replace(/[<>&]/g,'').slice(0,18);
  const team=source==='test'?String(msg.teamCode||codes[selected]):liveFans.get(userId);
  // Never secretly assign paid gifts to a team; only a user's explicit team comment counts.
- if(!team||!codes.includes(team)||!points){flash(nick+' · THANK YOU! · COMMENT TEAM CODE');return}
- const i=codes.indexOf(team),car=cars[i],tier=giftTier(points),order=[...cars].sort((a,b)=>b.progress-a.progress);
+ if(!team||!codes.includes(team)||!points){
+  updateLastGift((source==='live'?'LIVE':'TEST')+' '+nick+' · '+String(msg.giftName||'?')+' · '+points+' pts · NO TEAM/POINTS');
+  flash(nick+' · THANK YOU! · COMMENT TEAM CODE');return
+ }
+ const i=codes.indexOf(team),car=cars[i],tier=giftPresentation(msg.giftName,giftTier(points)),order=[...cars].sort((a,b)=>b.progress-a.progress);
  const gap=(order[0].progress-car.progress)*METRES_PER_PERCENT;
  const comeback=gap>=12&&order[0].i!==i;
  const countFactor=Math.min(2,1+Math.log2(quantity)/4),boost=tier.boost*countFactor*(comeback?1.25:1);
  if(source==='live')giftTotals[team]=(giftTotals[team]||0)+Math.round(points*quantity);
+ updateLastGift((source==='live'?'LIVE':'TEST')+' '+nick+' · '+String(msg.giftName||'?')+' ×'+quantity+' · '+points+' pts → '+team+' · '+tier.label+' ('+tier.boost+'s base)');
  if(roundState!=='racing'){pendingByCountry[team]=Math.min(10,(pendingByCountry[team]||0)+boost);flash(nick+' · '+team+' · BOOST SAVED FOR NEXT RACE');return}
  car.boost=Math.min(10,car.boost+boost);car.burst=performance.now()+2100;
  if(tier.cinematic){
-  spotlightIndex=i;spotlightUntil=performance.now()+3300;
+  spotlightIndex=i;spotlightUntil=performance.now()+(tier.cameraDuration||3300);
   flash(nick+' · '+flags[i]+' '+teams[i]+' '+tier.label);
-  event.classList.add('prestige');flashUntil=performance.now()+3700;
+  event.classList.add('prestige');flashUntil=performance.now()+(tier.cameraDuration||3300)+400;
  }else flash(flags[i]+' '+teams[i]+' · '+tier.label+' · '+nick);
  soundEngine.play(tier.sound);
 }
@@ -772,7 +806,10 @@ document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click'
  if(a==='league'){queueLeague();return}
  if(a==='testJoin'){showTeamToast('DEMO · '+codes[selected]+' TEAM JOIN PREVIEW',codes[selected]);return}
  if(a==='testFollow'){showTeamToast('DEMO FOLLOW ANIMATION · NOT A REAL FOLLOW',codes[selected]);return}
- if(a==='gift1'||a==='gift1000'||a==='gift30000'){const val=Number(a.slice(4));applyGift({source:'test',userId:'local-demo',nickname:'DEMO',giftName:val===1?'Rose':val===1000?'Galaxy':'Luxury Car',value:val,quantity:1,teamCode:codes[selected],eventId:'demo-'+Date.now()});return}
+ if(a==='gift1'||a==='gift1000'||a==='gift30000'||a==='gift7000'){
+  const val=Number(a.slice(4));
+  applyGift({source:'test',userId:'local-demo',nickname:'DEMO',giftName:({1:'Rose',1000:'Galaxy',7000:'Sports Car',30000:'Lion'})[val],value:val,quantity:1,teamCode:codes[selected],eventId:'demo-'+performance.now()});return
+ }
  if(a==='audio'){toggleSound();return}
  if(a==='join'){selectTeam((selected+1)%4);return}
  effect(a);
