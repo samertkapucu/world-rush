@@ -61,9 +61,10 @@ h1 span{color:#75d4ff}
 #bootScreen[hidden]{display:none}.bootLogo{font-size:36px;font-weight:1000;letter-spacing:2px}.bootLogo span{color:#6ccfff}.bootCaption{font-size:11px;font-weight:800;letter-spacing:2px;color:#98bbd4}
 #startCountdown{position:absolute;z-index:7;top:40%;left:0;right:0;text-align:center;font-size:clamp(72px,15vw,120px);line-height:1;font-weight:1000;font-variant-numeric:tabular-nums;color:#fff0ce;text-shadow:0 8px 25px #000,0 0 33px #e8ba5577;pointer-events:none}
 .flag{width:27px;height:18px;flex-basis:27px;border:1px solid #e3f1ffb0;image-rendering:auto}@media(max-width:380px){.flag{width:24px;height:16px;flex-basis:24px}}
-</style></head><body><main id="app" class="booting"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 01:15</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">86m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="event" aria-live="polite"></div><div id="startCountdown" aria-live="polite" hidden>3</div><div id="comeback" hidden></div></div>
+#joinHint{font-size:8px;letter-spacing:.2px;line-height:1.1;color:#b9cedc;text-align:center;margin-top:3px;white-space:nowrap}#event.prestige{font-size:25px;color:#fff0be;text-shadow:0 2px 6px #000,0 0 24px #ffbd3ca8,0 0 35px #0af7ec44}#event.prestige:before{content:"★ LEGEND MOMENT ★";display:block;font-size:10px;letter-spacing:2px;margin-bottom:5px}
+</style></head><body><main id="app" class="booting"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 01:15</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">86m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN A TEAM · FREE</div><div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="event" aria-live="polite"></div><div id="startCountdown" aria-live="polite" hidden>3</div><div id="comeback" hidden></div></div>
 <div id="safePreview" hidden><div class="topSafe"><span>TIKTOK HEADER</span></div><div class="rightSafe"></div><div class="bottomSafe"><span>COMMENTS + GIFTS</span></div></div>
-<div id="operatorPanel" hidden><div class="operatorHead"><span>WORLD RUSH · OPERATOR</span><span class="hint">P: hide · T: safe · L: next league</span></div><div id="controls"><button class="btn" data-action="join">JOIN / TEAM</button><button class="btn" data-action="rose">ROSE</button><button class="btn" data-action="turbo">TURBO</button><button class="btn" data-action="mega">MEGA</button><button class="btn" data-action="cam">CAMERA</button><button class="btn" data-action="audio" id="audioButton">🔇 SOUND OFF</button><button class="btn" data-action="safe">SAFE ZONES</button><button class="btn" data-action="league">NEXT LEAGUE</button></div><div class="hint" style="margin-top:7px">75-MIN LEAGUES · LOCAL SIMULATION, NOT REAL GIFTS · 1–4: teams · Q/W/E: boosts · C: camera · M: sound.</div><div class="hint" id="leagueStatus" style="margin-top:5px">GULF LEAGUE · Test mode</div></div><div id="error"></div></main>
+<div id="operatorPanel" hidden><div class="operatorHead"><span>WORLD RUSH · OPERATOR</span><span class="hint">P: hide · T: safe · L: next league</span></div><div id="controls"><button class="btn" data-action="join">JOIN / TEAM</button><button class="btn" data-action="rose">ROSE</button><button class="btn" data-action="turbo">TURBO</button><button class="btn" data-action="mega">MEGA</button><button class="btn" data-action="cam">CAMERA</button><button class="btn" data-action="audio" id="audioButton">🔇 SOUND OFF</button><button class="btn" data-action="safe">SAFE ZONES</button><button class="btn" data-action="league">NEXT LEAGUE</button><button class="btn" data-action="gift1">TEST ROSE</button><button class="btn" data-action="gift1000">TEST GALAXY</button><button class="btn" data-action="gift30000">TEST LUXURY</button></div><div class="hint" style="margin-top:7px">75-MIN LEAGUES · LOCAL SIMULATION, NOT REAL GIFTS · 1–4: teams · Q/W/E: boosts · C: camera · M: sound.</div><div class="hint" id="leagueStatus" style="margin-top:5px">GULF LEAGUE · Test mode</div><div class="hint" id="liveStatus" style="margin-top:4px">LIVE BRIDGE: OFFLINE · DEMO ONLY</div></div><div id="error"></div></main>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
@@ -367,7 +368,7 @@ const banner=new THREE.Mesh(new THREE.PlaneGeometry(7.6,1.9),new THREE.MeshBasic
 scene.add(finish);
 const dominationColor=new THREE.Color(0x18dfff),colorTarget=new THREE.Color();
 camera.position.set(0,19,53);camera.lookAt(0,.6,17);let round=1,remaining=ROUND_SECONDS,selected=0,season=[0,0,0,0],mode=0,flashUntil=0,last=performance.now(),uiTick=0,leadIndex=-1,closeupUntil=0,roundState='countdown',countdownUntil=0,shownStartDigit=0,resultUntil=0,winnerIndex=-1,finishReason='';
-const cameraLook=new THREE.Vector3(0,.6,17);
+const cameraLook=new THREE.Vector3(0,.6,17);let spotlightUntil=0,spotlightIndex=-1;
 // TV-director camera: gentle angle changes, with a wide shot between close perspectives.
 const cameraSequence=[0,1,0,2];
 let cameraSequenceStep=0,nextCameraSwitch=performance.now()+9500;
@@ -465,7 +466,7 @@ const soundEngine={
  }
 };
 
-function flash(s){event.textContent=s;event.classList.add('on');flashUntil=performance.now()+1700}
+function flash(s){event.textContent=s;event.classList.add('on');event.classList.remove('prestige');flashUntil=performance.now()+1700}
 const localTestInputs=Object.create(null);
 function applyLeagueRoster(){
  const roster=leagueProfiles[leagueIndex].countries;
@@ -487,6 +488,7 @@ function applyLeagueRoster(){
   }
  }
  selected=0;
+ const joinHint=document.getElementById('joinHint');if(joinHint)joinHint.textContent='COMMENT '+codes.join(' / ')+' TO JOIN A TEAM · FREE';
  const label=document.getElementById('leagueStatus');
  if(label)label.textContent=leagueProfiles[leagueIndex].title+' · LOCAL TEST · NO REAL GIFT DATA';
 }
@@ -564,6 +566,7 @@ document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click'
  if(a==='cam'){changeCameraManually();return}
  if(a==='safe'){toggleSafe();return}
  if(a==='league'){queueLeague();return}
+ if(a==='gift1'||a==='gift1000'||a==='gift30000'){const val=Number(a.slice(4));applyGift({source:'test',userId:'local-demo',nickname:'DEMO',giftName:val===1?'Rose':val===1000?'Galaxy':'Luxury Car',value:val,quantity:1,teamCode:codes[selected],eventId:'demo-'+Date.now()});return}
  if(a==='audio'){toggleSound();return}
  if(a==='join'){selectTeam((selected+1)%4);return}
  effect(a);
@@ -602,7 +605,7 @@ function updateRank(){
   node.querySelector('.fill').style.background='#'+c.color.toString(16).padStart(6,'0');
   rank.appendChild(node);
  });
- updateLeagueStatus();
+ updateLeagueStatus();updateBridgeStatus();
  meta.textContent=roundState==='results'
  ?leagueProfiles[leagueIndex].id+' · RESULTS'
  :leagueProfiles[leagueIndex].id+' · R'+String(round).padStart(2,'0')+' · '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(Math.floor(remaining%60)).padStart(2,'0');
@@ -641,7 +644,7 @@ function loop(now){
   });
  });
  const order=[...cars].sort((a,b)=>b.progress-a.progress);
- const leader=order[0],focusZ=leader.group.position.z;
+ const leader=order[0],focusZ=performance.now()<spotlightUntil&&spotlightIndex>=0?cars[spotlightIndex].group.position.z:leader.group.position.z;
  if(racing && (leader.progress>=100||remaining<=0))finishRound(now,remaining<=0);
  if(roundState==='racing'&&leadIndex!==leader.i){
   if(leadIndex>=0 && remaining<70){
@@ -697,13 +700,13 @@ function loop(now){
   {pos:[-5,20,focusZ+33],aim:[0,.65,focusZ-3]},
   {pos:[0,28,focusZ+21],aim:[0,.5,focusZ-6]}
  ];
- const target=cameraTargets[now<closeupUntil?0:mode],dynamicPos=[...target.pos],dynamicAim=[...target.aim];
- if(now<closeupUntil){dynamicPos[1]-=1.3;dynamicPos[2]-=2.5;dynamicAim[2]+=1}
+ const target=cameraTargets[now<closeupUntil||now<spotlightUntil?0:mode],dynamicPos=[...target.pos],dynamicAim=[...target.aim];
+ if(now<closeupUntil||now<spotlightUntil){dynamicPos[1]-=1.3;dynamicPos[2]-=2.5;dynamicAim[2]+=1}
  const smooth=1-Math.exp(-dt*3.7);
  camera.position.lerp(new THREE.Vector3(...dynamicPos),smooth);
  cameraLook.lerp(new THREE.Vector3(...dynamicAim),smooth);
  camera.lookAt(cameraLook);
- if(now>flashUntil)event.classList.remove('on');
+ if(now>flashUntil){event.classList.remove('on');event.classList.remove('prestige')}
  soundEngine.update(roundState==='racing',Math.max(0,RACE_METRES-leader.progress*METRES_PER_PERCENT)<=35,leader.progress);
  renderer.toneMappingExposure=1.07+Math.sin(t*.35)*.02;
  bloom.strength=.18+(racing&&cars.some(c=>c.boost>0)?.065:0);
