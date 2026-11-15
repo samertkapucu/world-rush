@@ -291,6 +291,10 @@ scene.add(finish);
 const dominationColor=new THREE.Color(0x18dfff),colorTarget=new THREE.Color();
 camera.position.set(0,19,53);camera.lookAt(0,.6,17);let round=1,remaining=75,selected=0,season=[0,0,0,0],mode=0,flashUntil=0,last=performance.now(),uiTick=0,leadIndex=-1,closeupUntil=0,roundState='racing',resultUntil=0,winnerIndex=-1,finishReason='';
 const cameraLook=new THREE.Vector3(0,.6,17);
+// TV-director camera: gentle angle changes, with a wide shot between close perspectives.
+const cameraSequence=[0,1,0,2];
+let cameraSequenceStep=0,nextCameraSwitch=performance.now()+9500;
+function changeCameraManually(){mode=(mode+1)%3;nextCameraSwitch=performance.now()+12000}
 const markerElements=cars.map(c=>document.getElementById('trackCar'+c.i));
 // Procedural, original SOUND ENGINE — no audio files or third-party music.
 // Audio requires an explicit browser gesture (operator SOUND button or M shortcut).
@@ -427,7 +431,7 @@ function toggleSafe(){safePreview.hidden=!safePreview.hidden}
 function selectTeam(i){selected=i;effect('join');updateRank()}
 document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>{
  const a=b.dataset.action;
- if(a==='cam'){mode=(mode+1)%3;return}
+ if(a==='cam'){changeCameraManually();return}
  if(a==='safe'){toggleSafe();return}
  if(a==='audio'){toggleSound();return}
  if(a==='join'){selectTeam((selected+1)%4);return}
@@ -438,7 +442,7 @@ document.addEventListener('keydown',e=>{
  const key=e.key.toLowerCase();
  if(key==='p'){toggleOperator();return}
  if(key==='t'){toggleSafe();return}
- if(key==='c'){mode=(mode+1)%3;return}
+ if(key==='c'){changeCameraManually();return}
  if(key==='m'){toggleSound();return}
  if(/^[1-4]$/.test(key)){selectTeam(Number(key)-1);return}
  const action={q:'rose',w:'turbo',e:'mega'}[key];
@@ -503,6 +507,12 @@ function loop(now){
   }
   leadIndex=leader.i;
  }
+ // Auto-broadcast camera change every ~11s, but do not interrupt lead-change closeups.
+ if(now>=nextCameraSwitch && roundState==='racing' && now>=closeupUntil){
+  cameraSequenceStep=(cameraSequenceStep+1)%cameraSequence.length;
+  mode=cameraSequence[cameraSequenceStep];
+  nextCameraSwitch=now+11000;
+ }
  const gap=order[0].progress-order[1].progress;
  colorTarget.setHex(colors[leader.i]);dominationColor.lerp(colorTarget,Math.min(1,dt*1.8));
  for(const mat of dominationMaterials){mat.color.copy(dominationColor);mat.emissive.copy(dominationColor)}
@@ -544,8 +554,8 @@ function loop(now){
   {pos:[-5,20,focusZ+33],aim:[0,.65,focusZ-3]},
   {pos:[0,28,focusZ+21],aim:[0,.5,focusZ-6]}
  ];
- const target=cameraTargets[mode],dynamicPos=[...target.pos],dynamicAim=[...target.aim];
- if(now<closeupUntil&&mode===0){dynamicPos[1]-=1.3;dynamicPos[2]-=2.5;dynamicAim[2]+=1}
+ const target=cameraTargets[now<closeupUntil?0:mode],dynamicPos=[...target.pos],dynamicAim=[...target.aim];
+ if(now<closeupUntil){dynamicPos[1]-=1.3;dynamicPos[2]-=2.5;dynamicAim[2]+=1}
  const smooth=1-Math.exp(-dt*3.7);
  camera.position.lerp(new THREE.Vector3(...dynamicPos),smooth);
  cameraLook.lerp(new THREE.Vector3(...dynamicAim),smooth);
