@@ -22,11 +22,50 @@ LOG = logging.getLogger("world-rush")
 CLIENTS: set[Any] = set()
 STATE = {"type": "status", "connected": False, "note": "Waiting for LIVE"}
 COUNTER = 0
+GIFT_CATALOG = {"type": "gift_catalog", "items": []}
 ALLOWED_ORIGINS = {"http://localhost:8000", "http://127.0.0.1:8000"}
 
 
 def bounded(text: object, n: int) -> str:
     return str(text or "")[:n]
+
+
+def gift_icon_url(model: object) -> str:
+    """Extract the genuine TikTok CDN image from an ImageModel or catalog dict."""
+    if model is None:
+        return ""
+    if isinstance(model, dict):
+        urls = model.get("url_list") or model.get("urlList") or []
+    else:
+        urls = getattr(model, "url_list", None) or []
+    if not isinstance(urls, (list, tuple)):
+        return ""
+    for item in urls:
+        url = str(item)
+        if url.startswith("https://") and len(url) <= 1500:
+            return url
+    return ""
+
+
+def catalog_artwork(catalog: object) -> list[dict[str, str]]:
+    """Use only compact popular gift artwork; catalog prices are not revenue."""
+    if not isinstance(catalog, dict):
+        return []
+    needles = ("rose", "finger heart", "doughnut", "donut",
+               "galaxy", "sports car", "lion", "universe", "money gun")
+    found = []
+    for gift in catalog.get("gifts", []):
+        if not isinstance(gift, dict):
+            continue
+        name = bounded(gift.get("name"), 60)
+        if not any(term in name.lower() for term in needles):
+            continue
+        url = gift_icon_url(gift.get("image") or gift.get("icon"))
+        if url:
+            found.append({"name": name, "url": url})
+        if len(found) >= 40:
+            break
+    return found
 
 
 def gift_points(gift: object) -> int:
@@ -77,6 +116,8 @@ async def handle_browser(websocket: Any) -> None:
     CLIENTS.add(websocket)
     LOG.info("WORLD RUSH browser connected")
     await websocket.send(json.dumps(STATE, ensure_ascii=False))
+    if GIFT_CATALOG["items"]:
+        await websocket.send(json.dumps(GIFT_CATALOG, ensure_ascii=False))
     try:
         async for _ in websocket:
             # Read-only bridge: the browser cannot control the TikTok connection.
@@ -103,7 +144,11 @@ async def main(unique_id: str, lan_ip: str | None = None) -> None:
     @client.on(ConnectEvent)
     async def on_connected(event: ConnectEvent):
         LOG.info("TikTok LIVE connected: @%s", unique_id)
+        GIFT_CATALOG["items"] = catalog_artwork(client.gift_info)
+        LOG.info("Available gift artwork: %s", len(GIFT_CATALOG["items"]))
         await set_status(True, "TikTok LIVE connected")
+        if GIFT_CATALOG["items"]:
+            await broadcast(GIFT_CATALOG)
 
     @client.on(DisconnectEvent)
     async def on_disconnected(event: DisconnectEvent):
@@ -164,6 +209,7 @@ async def main(unique_id: str, lan_ip: str | None = None) -> None:
             "userId": bounded(getattr(user, "unique_id", None) or getattr(user, "user_id", None), 100),
             "nickname": bounded(getattr(user, "nickname", None), 50),
             "giftName": bounded(getattr(gift, "name", None), 80),
+            "giftIconUrl": gift_icon_url(getattr(gift, "image", None) or getattr(gift, "icon", None)),
             "value": gift_points(gift),
             "quantity": count,
         })
