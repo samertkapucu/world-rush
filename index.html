@@ -20,7 +20,7 @@ h1 span{color:#75d4ff}
 .racer.leading{background:#ffd16a11}
 .pos{width:13px;color:#a9c3d8;text-align:center;font-size:10px;font-variant-numeric:tabular-nums}
 .racer.leading .pos{color:#ffe29e}
-.flag{font-size:12px;width:17px;white-space:nowrap}
+.flag{display:block;width:22px;height:14px;flex:0 0 22px;object-fit:fill;border:1px solid #c9e7f5aa;border-radius:2px;box-shadow:0 1px 3px #0009}
 .name{font-size:11.5px;letter-spacing:.15px;min-width:48px;white-space:nowrap}
 .miniBar{flex:1;height:3px;background:#39506780;border-radius:10px;overflow:hidden}
 .fill{height:100%;background:#50bfff;width:0%;transition:width .12s linear;border-radius:10px}
@@ -176,6 +176,7 @@ let colors=starterCountries.map(c=>countryLibrary[c].color),
  teams=starterCountries.map(c=>countryLibrary[c].name),
  flags=starterCountries.map(c=>countryLibrary[c].flag),
  codes=[...starterCountries],cars=[];
+const flagImages=Object.create(null);
 function makeFlagTexture(code){
  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=320;
  const c=canvas.getContext('2d');const w=512,h=320;
@@ -217,6 +218,7 @@ function makeFlagTexture(code){
   fill('#101010',0,0,w,h/3);fill('#dd0000',0,h/3,w,h/3);fill('#ffce00',0,2*h/3,w,h/3);
  }
  c.strokeStyle='#ffffff';c.lineWidth=8;c.strokeRect(4,4,w-8,h-8);
+ flagImages[code]=canvas.toDataURL('image/png');
  const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());return tex;
 }
 
@@ -568,7 +570,7 @@ function toggleSound(){soundEngine.toggle()}
 const rankRows=cars.map(c=>{
  const row=document.createElement('div');row.className='racer';row.dataset.team=String(c.i);
  row.tabIndex=0;row.setAttribute('role','button');row.setAttribute('aria-label','Select '+teams[c.i]);
- row.innerHTML='<span class="pos"></span><span class="flag">'+flags[c.i]+'</span><span class="name">'+teams[c.i]+'</span><div class="miniBar"><div class="fill"></div></div><span class="pct"></span>';
+ row.innerHTML='<span class="pos"></span><img class="flag" alt="'+codes[c.i]+'" src="'+flagImages[codes[c.i]]+'"><span class="name">'+teams[c.i]+'</span><div class="miniBar"><div class="fill"></div></div><span class="pct"></span>';row.querySelector('.flag').dataset.code=codes[c.i];
  rank.appendChild(row);return row;
 });
 function updateRank(){
@@ -577,7 +579,8 @@ function updateRank(){
   const node=rankRows[c.i];node.classList.toggle('leading',k===0);
   node.classList.toggle('selected',c.i===selected);
   node.querySelector('.pos').textContent=String(k+1);
-  node.querySelector('.flag').textContent=flags[c.i];
+  const flagIcon=node.querySelector('.flag');
+  if(flagIcon.dataset.code!==codes[c.i]){flagIcon.src=flagImages[codes[c.i]];flagIcon.alt=codes[c.i];flagIcon.dataset.code=codes[c.i]}
   node.querySelector('.name').textContent=teams[c.i];
   node.setAttribute('aria-label','Select '+teams[c.i]);
   node.querySelector('.pct').textContent=k===0?'LEADER':Math.round((sorted[0].progress-c.progress)*.86)+'m BACK';
