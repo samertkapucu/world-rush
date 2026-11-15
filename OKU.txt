@@ -1,0 +1,10 @@
+WORLD RUSH - TEK KLASOR
+
+1) Eski PowerShell sunucusunu Ctrl+C ile kapat.
+2) Bu klasoru masaustune tasi.
+3) BASLAT.cmd dosyasina cift tikla. Windows uyarisi olursa sadece dosyanin icerigini kontrol ettikten sonra calistir.
+4) Bundan sonraki guncellemelerde SADECE index.html dosyasini ayni klasorde degistir.
+5) Oyun acikken dosya degisirse sayfa kendini yeniler.
+
+Sunucu kapanmasin diye komut penceresini acik tut.
+TikTok baglantisi yoktur; bu yerel demodur.
