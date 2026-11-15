@@ -790,10 +790,14 @@ function updateBridgeStatus(){
  node.textContent='LOCAL BRIDGE: '+(connectedToLive?'ON':'OFF')+' · TIKTOK: '+(tiktokStreamOnline?'LIVE':'NOT CONNECTED')+' · GIFT METADATA POINTS '+(names||'0')+' · NOT REVENUE';
 }
 function connectLiveBridge(){
- // Local loopback connector only. No external server is allowed to inject gifts.
- if(!['localhost','127.0.0.1'].includes(location.hostname))return;
+ // Trust only the computer hosting the game, not arbitrary remote websites.
+ // On iPhone Safari the local PC is the page hostname (e.g. 192.168.1.187).
+ const host=location.hostname;
+ const isLoopback=host==='localhost'||host==='127.0.0.1';
+ const isPrivateLan=/^(?:192\.168\.(?:\d{1,3})\.(?:\d{1,3})|10\.(?:\d{1,3}\.){2}(?:\d{1,3})|172\.(?:1[6-9]|2\d|3[01])\.(?:\d{1,3})\.(?:\d{1,3}))$/.test(host);
+ if(location.protocol!=='http:'||!(isLoopback||isPrivateLan))return;
  try{
-  liveSocket=new WebSocket('ws://127.0.0.1:8765');
+  liveSocket=new WebSocket('ws://'+(isLoopback?'127.0.0.1':host)+':8765');
   liveSocket.onopen=()=>{connectedToLive=true;tiktokStreamOnline=false;liveReconnect=0;updateBridgeStatus()};
   liveSocket.onmessage=e=>{
    try{
