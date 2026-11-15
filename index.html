@@ -351,34 +351,39 @@ function loop(now){
   leadIndex=leader.i;
  }
  const gap=order[0].progress-order[1].progress;
- const battleEl=document.getElementById('battle');
- battleEl.textContent=roundState==='results'
-  ?'🏆 '+flags[winnerIndex]+' '+teams[winnerIndex]+' IS THE CHAMPION!'
-  :gap<1.6?'⚔️ PHOTO FINISH BATTLE':flags[leader.i]+' '+teams[leader.i]+' DOMINATES · +'+Math.round(gap*.86)+'m';
  colorTarget.setHex(colors[leader.i]);dominationColor.lerp(colorTarget,Math.min(1,dt*1.8));
  for(const mat of dominationMaterials){mat.color.copy(dominationColor);mat.emissive.copy(dominationColor)}
- const leaderHex='#'+dominationColor.getHexString();
- battleEl.style.borderColor=leaderHex;battleEl.style.boxShadow='0 0 16px '+leaderHex+'55';
- const remainingMetres=Math.max(0,Math.ceil(RACE_METRES-leader.progress*.86));
- document.getElementById('distance').textContent=roundState==='results'?'🏆 RACE COMPLETE':remainingMetres+'m TO FINISH';
- document.getElementById('progressFill').style.width=Math.min(100,leader.progress)+'%';
- document.getElementById('progressFill').style.background='linear-gradient(90deg,#173a56,'+leaderHex+')';
- markerElements.forEach((marker,i)=>{marker.style.left=Math.max(0,Math.min(98,cars[i].progress))+'%'});
- const chosen=cars[selected],place=order.indexOf(chosen)+1,deficit=Math.max(0,Math.round((leader.progress-chosen.progress)*.86));
- const comeback=place>1&&deficit>=4;
- const supportLine=roundState==='results'
-  ?'🏁 '+flags[winnerIndex]+' '+teams[winnerIndex]+' WINS · NEXT ROUND STARTING'
-  :place===1?'👑 SUPPORTING '+flags[selected]+' '+teams[selected]+' · DEFEND THE LEAD'
-  :'🔥 SUPPORTING '+flags[selected]+' '+teams[selected]+' · #'+place+' / '+deficit+'m BACK'+(comeback?' · +25% BOOST BONUS':'');
- document.getElementById('comeback').textContent=supportLine;
- document.getElementById('comeback').style.borderColor='#'+colors[selected].toString(16).padStart(6,'0')+'99';
- const finalSprint=remainingMetres<=15;
- const countdown=document.getElementById('countdown');
- countdown.textContent=roundState==='results'?'🏆 '+finishReason+' · FINAL STANDINGS LOCKED'
+ // Keep visual interpolation at frame rate, but batch all DOM writes at ~8 Hz.
+ uiTick+=dt;
+ if(uiTick>=.12){
+  uiTick=0;updateRank();
+  const battleEl=document.getElementById('battle');
+  battleEl.textContent=roundState==='results'
+   ?'🏆 '+flags[winnerIndex]+' '+teams[winnerIndex]+' IS THE CHAMPION!'
+   :gap<1.6?'⚔️ PHOTO FINISH BATTLE':flags[leader.i]+' '+teams[leader.i]+' DOMINATES · +'+Math.round(gap*.86)+'m';
+  const leaderHex='#'+dominationColor.getHexString();
+  battleEl.style.borderColor=leaderHex;
+  battleEl.style.boxShadow='0 0 16px '+leaderHex+'55';
+  const remainingMetres=Math.max(0,Math.ceil(RACE_METRES-leader.progress*.86));
+  document.getElementById('distance').textContent=roundState==='results'?'🏆 RACE COMPLETE':remainingMetres+'m TO FINISH';
+  document.getElementById('progressFill').style.width=Math.min(100,leader.progress)+'%';
+  document.getElementById('progressFill').style.background='linear-gradient(90deg,#173a56,'+leaderHex+')';
+  markerElements.forEach((marker,i)=>{marker.style.left=Math.max(0,Math.min(98,cars[i].progress))+'%'});
+  const chosen=cars[selected],place=order.indexOf(chosen)+1,deficit=Math.max(0,Math.round((leader.progress-chosen.progress)*.86));
+  const comeback=place>1&&deficit>=4;
+  document.getElementById('comeback').textContent=roundState==='results'
+   ?'🏁 '+flags[winnerIndex]+' '+teams[winnerIndex]+' WINS · NEXT ROUND STARTING'
+   :place===1?'👑 SUPPORTING '+flags[selected]+' '+teams[selected]+' · DEFEND THE LEAD'
+   :'🔥 SUPPORTING '+flags[selected]+' '+teams[selected]+' · #'+place+' / '+deficit+'m BACK'+(comeback?' · +25% BOOST BONUS':'');
+  document.getElementById('comeback').style.borderColor='#'+colors[selected].toString(16).padStart(6,'0')+'99';
+  const finalSprint=remainingMetres<=15;
+  const countdown=document.getElementById('countdown');
+  countdown.textContent=roundState==='results'?'🏆 '+finishReason+' · FINAL STANDINGS LOCKED'
    :finalSprint?'🏁 FINAL SPRINT · '+remainingMetres+'m TO GO!'
    :remaining<15?'⏱️ '+Math.ceil(remaining)+'s LEFT · PUSH YOUR TEAM!'
    :'TAP A TEAM ABOVE · BOOST YOUR COUNTRY';
- countdown.classList.toggle('urgent',roundState==='racing'&&(finalSprint||remaining<10));
+  countdown.classList.toggle('urgent',roundState==='racing'&&(finalSprint||remaining<10));
+ }
  const cameraTargets=[
   {pos:[0,17,focusZ+30],aim:[0,.65,focusZ-3]},
   {pos:[-5,20,focusZ+33],aim:[0,.65,focusZ-3]},
@@ -393,8 +398,6 @@ function loop(now){
  if(now>flashUntil)event.classList.remove('on');
  renderer.toneMappingExposure=1.07+Math.sin(t*.35)*.02;
  bloom.strength=.18+(racing&&cars.some(c=>c.boost>0)?.065:0);
- uiTick+=dt;
- if(uiTick>.12){uiTick=0;updateRank()}
  composer.render();
 }
 
