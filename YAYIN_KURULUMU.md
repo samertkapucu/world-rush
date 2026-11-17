@@ -99,5 +99,7 @@ Pist kenarlarındaki neon bariyerler, sütunlar ve dış yapılar geri açıldı
 - Yorumla ülke seçme açıklaması sürekli görünür. Katılım ücretsizdir.
 - Hediye geldiğinde ilgili aracın üzerinde destekçi adı ve gerçekten eklenen turbo süresi görünür. Dört takımın aynı anda turbo alması desteklenir.
 - Altın halka lideri, takım rengindeki halka aktif turboyu gösterir. Geçiş bildirimi gerçek sıralama değişiminden gelir.
-- Son 50 metrede FINAL SPRINT görünür. Finişte kazanan kartı, lig puanı ve 8 saniyelik sonraki yarış sayacı gösterilir.
+- Son 50 metrede FINAL SPRINT görünür. Finişte kazanan kartı, lig puanı ve 3 saniyelik sonraki yarış sayacı gösterilir.
 - Lig puanları ilk üçe 3/2/1 olarak verilir ve lig değişiminde sıfırlanır. Sonuç ekranında gelen hediyeler aynı ülkenin sonraki yarışına aktarılır.
+
+Yeni yarışa geçiş toplam yaklaşık 4,5 saniyedir (3 saniye sonuç + 1,5 saniye başlangıç). İlk açılış geri sayımı 3,5 saniye kalır. Her tur bütün ülkeler farklı bir şeride geçer; ülke seçimi, hediyeler ve lig puanları ülkeye bağlı kalır. Arena görünümü NEON CITY, SUNSET CIRCUIT, ARCTIC RUN ve VIOLET NIGHT arasında döner; neon renkleri, zemin/arka plan ve dış bina yükseklikleri değişir.

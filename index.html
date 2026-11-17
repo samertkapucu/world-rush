@@ -297,10 +297,11 @@ for(let z=-85;z<=48;z+=12){
    const signLight=new THREE.Mesh(new THREE.BoxGeometry(.20,.13,3.2),goldGlow);signLight.position.set(side*8.98,4.5,z+4.5);arena.add(signLight);
  }
 }
+const skyline=[];
 for(let n=0;n<32;n++){
  const side=n%2?-1:1;const z=-95+n*4.6;const h=4+(n*13%11);
  const tower=box(2.2,h,2.3,n%3===0?0x182441:0x0d1930,.4,.6);tower.position.set(side*(14+(n%4)*2),h/2-1,z);arena.add(tower);
- const top=new THREE.Mesh(new THREE.BoxGeometry(2.3,.08,2.4),n%2?purpleGlow:cyanGlow);top.position.set(tower.position.x,h-1,z);arena.add(top);
+ const top=new THREE.Mesh(new THREE.BoxGeometry(2.3,.08,2.4),n%2?purpleGlow:cyanGlow);top.position.set(tower.position.x,h-1,z);arena.add(top);skyline.push({tower,top,height:h});
 }
 // V2 premium racing scenery: trackside light strips, speed gates, and ambient reflections.
 const accents=new THREE.Group();scene.add(accents);
@@ -317,6 +318,28 @@ for(let z=-72;z<38;z+=18){
   const beacon=new THREE.Mesh(new THREE.SphereGeometry(.18,8,6),side<0?cyanGlow:purpleGlow);
   beacon.position.set(side*7.9,1.64,z);accents.add(beacon);
  }
+}
+
+// Reuse geometry between rounds; only scenery colors and skyline heights change.
+const arenaThemes=[
+ {name:'NEON CITY',sky:0x081120,left:0x18dfff,right:0x8a49ff,gold:0xffbd3a,ground:0x07121e},
+ {name:'SUNSET CIRCUIT',sky:0x20101c,left:0xff8844,right:0xff3e91,gold:0xffdb78,ground:0x241626},
+ {name:'ARCTIC RUN',sky:0x0c202b,left:0x64ffe0,right:0x599dff,gold:0xc4f4ff,ground:0x16313b},
+ {name:'VIOLET NIGHT',sky:0x180c29,left:0xb875ff,right:0xff598c,gold:0x66e5ff,ground:0x1c1632}
+];
+let arenaIndex=0;
+function applyArenaTheme(){
+ const theme=arenaThemes[arenaIndex];
+ scene.background.setHex(theme.sky);scene.fog.color.setHex(theme.sky);
+ ground.material.color.setHex(theme.ground);
+ for(const [material,color] of [[cyanGlow,theme.left],[purpleGlow,theme.right],[goldGlow,theme.gold]]){
+  material.color.setHex(color);material.emissive.setHex(color);
+ }
+ skyline.forEach(({tower,top,height},i)=>{
+  const scale=.65+((i*7+arenaIndex*5)%11)/12;
+  tower.scale.y=scale;tower.position.y=height*scale/2-1;
+  top.position.y=height*scale-1;
+ });
 }
 
 const effectParticles=[];
@@ -483,7 +506,7 @@ function createCar(i){
  const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.43,.95),flagMaterial);
  flag.rotation.x=-Math.PI/2;flag.position.set(0,1.442,.06);flag.renderOrder=3;group.add(flag);
  group.position.x=(i-1.5)*3.6;scene.add(group);
- return {group,laneX:(i-1.5)*3.6,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0,flag,flagBacking,paintMaterials:[paint],model:null}
+ return {group,laneIndex:i,laneX:(i-1.5)*3.6,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0,flag,flagBacking,paintMaterials:[paint],model:null}
 }
 cars=teams.map((_,i)=>createCar(i));
 cars.forEach(car=>car.group.scale.setScalar(1.24));
@@ -695,10 +718,10 @@ function applyLeagueRoster(){
    car.flag.material.needsUpdate=true;
    if(prevTexture)prevTexture.dispose();
   }
-  if(laneStrips[i])laneStrips[i].material.color.setHex(country.color);
-  if(laneAccentMaterials[i]){
-   laneAccentMaterials[i].color.setHex(country.color);
-   laneAccentMaterials[i].emissive.setHex(country.color);
+  if(laneStrips[car.laneIndex])laneStrips[car.laneIndex].material.color.setHex(country.color);
+  if(laneAccentMaterials[car.laneIndex]){
+   laneAccentMaterials[car.laneIndex].color.setHex(country.color);
+   laneAccentMaterials[car.laneIndex].emissive.setHex(country.color);
   }
  }
  selected=0;
@@ -738,10 +761,22 @@ function updateLeagueStatus(){
  label.textContent=leagueProfiles[leagueIndex].title+' · '+(queuedLeagueChange?'NEXT LEAGUE QUEUED':minutes+'m UNTIL NEXT')+' · TEST BOOST CLICKS '+checks+' · NO LIVE GIFTS';
 }
 
+function shuffleRaceLanes(){
+ // A non-zero cyclic shift moves every country without changing its team identity.
+ const shift=1+Math.floor(Math.random()*3);
+ for(const car of cars){
+  car.laneIndex=(car.laneIndex+shift)%4;
+  car.laneX=(car.laneIndex-1.5)*3.6;
+  laneStrips[car.laneIndex].material.color.setHex(car.color);
+  laneAccentMaterials[car.laneIndex].color.setHex(car.color);
+  laneAccentMaterials[car.laneIndex].emissive.setHex(car.color);
+ }
+}
 function resetRound(){
  document.getElementById('winnerCard').hidden=true;
  if(queuedLeagueChange||Date.now()>=leagueEndsAt)advanceLeague();
- round++;remaining=ROUND_SECONDS;roundState='countdown';countdownUntil=performance.now()+3500;shownStartDigit=0;winnerIndex=-1;leadIndex=-1;finishReason='';soundEngine.finalCued=false;
+ shuffleRaceLanes();arenaIndex=(arenaIndex+1)%arenaThemes.length;applyArenaTheme();
+ round++;remaining=ROUND_SECONDS;roundState='countdown';countdownUntil=performance.now()+1500;shownStartDigit=0;winnerIndex=-1;leadIndex=-1;finishReason='';soundEngine.finalCued=false;
  cars.forEach(car=>{
   car.progress=0;car.boost=0;car.pace=0;car.burst=0;
   car.group.position.set(car.laneX,0,20);car.group.rotation.set(0,0,0);
@@ -756,7 +791,7 @@ function finishRound(now,byTime){
  winnerIndex=order[0].i;
  season[order[0].i]+=3;season[order[1].i]+=2;season[order[2].i]+=1;
  recordWorldResults(order);
- roundState='results';finishReason=byTime?'TIME LIMIT':'FINISH LINE';resultUntil=now+8000;
+ roundState='results';finishReason=byTime?'TIME LIMIT':'FINISH LINE';resultUntil=now+3000;
  document.getElementById('giftMoment').hidden=true;giftMomentUntil=0;
  document.getElementById('teamToast').hidden=true;
  const winnerCard=document.getElementById('winnerCard');
@@ -1174,7 +1209,7 @@ function updateRank(){
  updateLeagueStatus();updateBridgeStatus();
  meta.textContent=roundState==='results'
  ?leagueProfiles[leagueIndex].id+' · RESULTS'
- :'ROUND '+String(round).padStart(2,'0')+' · '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(Math.floor(remaining%60)).padStart(2,'0');
+ :'ROUND '+String(round).padStart(2,'0')+' · '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(Math.floor(remaining%60)).padStart(2,'0')+' · '+arenaThemes[arenaIndex].name;
 }
 const leagueBoard=document.getElementById('leagueBoard');
 const leagueTitle=document.createElement('strong');leagueTitle.textContent='LEAGUE';leagueBoard.appendChild(leagueTitle);
@@ -1206,7 +1241,7 @@ function updateCarPresentation(order,now){
   if(node.hidden)continue;
   labelPoint.set(car.group.position.x,2.6,car.group.position.z-2.4).project(camera);
   // Keep labels in lane order so simultaneous boosts remain readable.
-  const column=22+(car.i+.5)*113;
+  const column=22+(car.laneIndex+.5)*113;
   const x=THREE.MathUtils.clamp(270+labelPoint.x*width/(2*scale),column-6,column+6);
   const y=THREE.MathUtils.clamp(480-labelPoint.y*height/(2*scale),540,665);
   node.title=boosting?car.boost.toFixed(1)+'s remaining':'';
@@ -1421,7 +1456,7 @@ function loop(now){
 function beginRace(){
  const app=document.getElementById('app');
  if(!app.classList.contains('booting'))return;
- applyLeagueRoster();cars.forEach(c=>c.group.position.z=20);updateRank();
+ applyLeagueRoster();applyArenaTheme();cars.forEach(c=>c.group.position.z=20);updateRank();
  document.getElementById('countdown').textContent='260m RACE · READY TO START';
  document.getElementById('giftGuide').hidden=false;
  remaining=ROUND_SECONDS;roundState='countdown';countdownUntil=performance.now()+3500;

@@ -44,3 +44,9 @@ Kullanıcının TikTok LIVE Studio sahnesine erişilmedi. Studio'nun gerçek dö
 Son görsel güncellemesinde özgün TikTok CDN resimlerinin beş kartta yüklenmesi de otomatik kontrol edildi. Neon yan süslemeleri ve büyütülmüş hediye kartlarıyla üç çözünürlükte testler tekrar çalıştırıldı.
 
 Katılım açıklaması ve hediye kılavuzu sürekli görünür. Araç altındaki halka lideri veya aktif turboyu belirtir. Turbo etiketindeki süre son olayın gerçekten eklediği süredir; 10 saniyelik toplam sınırı uygulanır. Lig puanları mevcut lig boyunca birikir; lig değişiminde sıfırlanır. Yerel testlerin destekçi adı DEMO olarak işaretlenir.
+
+## Hızlı tur geçişi ve arena değişimi
+
+Sonuç ekranı 3 saniye, sonraki başlangıç 1,5 saniyedir. Üç kaynak boyutundaki test, finişten 5 saniye sonra yeni yarışın başladığını, her ülkenin şerit değiştirdiğini ve bekleyen hediyenin doğru destekçiyle taşındığını denetler. `npm run test:live -- --themes-only` dört arena geçişini 1080×1920 boyutunda kontrol eder; ülke kimlikleri ve şerit renklerinin eşleşmesi de denetlenir.
+
+- [Sonraki yarış: yeni şeritler ve Sunset Circuit](live-next-arena-1080x1920.jpg)

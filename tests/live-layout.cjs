@@ -10,6 +10,7 @@ const source = fs.readFile(path.join(root, 'index.html'), 'utf8');
 const instrumentation = `
 const renderFrame=composer.render.bind(composer);
 composer.render=()=>{if(!window.__skipRender)renderFrame()};
+window.__nextArena=()=>resetRound();
 window.__inspectRace=()=>{
  const area=el.getBoundingClientRect(),scale=Math.min(area.width/540,area.height/960);
  const project=(x,y,z)=>{
@@ -17,7 +18,8 @@ window.__inspectRace=()=>{
   return {x:(v.x*area.width/2)/scale+270,y:(-v.y*area.height/2)/scale+480};
  };
  return {
-  roundState,round,mode,remaining,season:[...season],codes:[...codes],metres:Math.max(0,Math.ceil(RACE_METRES-Math.max(...cars.map(c=>c.progress))*METRES_PER_PERCENT)),boosts:cars.map(c=>c.boost),
+  roundState,round,mode,remaining,arenaIndex,lanes:cars.map(c=>c.laneIndex),season:[...season],codes:[...codes],metres:Math.max(0,Math.ceil(RACE_METRES-Math.max(...cars.map(c=>c.progress))*METRES_PER_PERCENT)),boosts:cars.map(c=>c.boost),
+  laneColorsCorrect:cars.every(c=>laneStrips[c.laneIndex].material.color.getHex()===c.color&&laneAccentMaterials[c.laneIndex].color.getHex()===c.color),
   audio:{enabled:soundEngine.enabled,state:soundEngine.ctx?.state},
   cars:cars.map(car=>{
    const b=new THREE.Box3().setFromObject(car.group),p=[];
@@ -57,6 +59,7 @@ async function check(page, frame, label, width, height) {
   assert.deepEqual(state.app,{x:0,y:0,width,height});
   assert.deepEqual(state.overflow,[width,height]);
   assert.equal(state.soundVisible,false);
+  assert.equal(state.laneColorsCorrect,true);
   assert.equal(await frame.locator('#joinHint').isVisible(),true);
   assert.match(await frame.locator('#joinHint').textContent(),/COMMENT .*JOIN YOUR TEAM/);
   assert.equal(await frame.locator('.leagueTeam').count(),4);
@@ -95,7 +98,8 @@ async function check(page, frame, label, width, height) {
     });
     const base='http://127.0.0.1:'+server.address().port;
     const resizeOnly=process.argv.includes('--resize-only');
-    const viewports=resizeOnly?[[540,960]]:[[1080,1920],[540,960],[1080,1080]];
+    const themesOnly=process.argv.includes('--themes-only');
+    const viewports=themesOnly?[[1080,1920]]:resizeOnly?[[540,960]]:[[1080,1920],[540,960],[1080,1080]];
     for (const [width,height] of viewports) {
       const page=await browser.newPage({viewport:{width,height}});
       const errors=[];
@@ -129,6 +133,18 @@ async function check(page, frame, label, width, height) {
       assert.equal(await frame.locator('#joinHint').textContent().then(text=>text.includes('@worldrush.live')),false);
       const prefix=width+'x'+height;
       await check(page,frame,prefix+'-start',width,height);
+      if(themesOnly){
+        let previous=await frame.evaluate(()=>window.__inspectRace());
+        for(let i=1;i<=4;i++){
+          await frame.evaluate(()=>{window.__nextArena();for(let n=0;n<40;n++)window.__tick(50);});
+          const next=await check(page,frame,prefix+'-arena-'+i,width,height);
+          assert.equal(next.arenaIndex,i%4);
+          assert.ok(next.lanes.every((lane,index)=>lane!==previous.lanes[index]));
+          assert.deepEqual(next.codes,previous.codes);
+          previous=next;
+        }
+        assert.deepEqual(errors,[]);await page.close();continue;
+      }
       if(resizeOnly){
         await frame.evaluate(()=>{for(let n=0;n<600;n++)window.__tick(50);});
         for(const [newWidth,newHeight] of [[1080,1080],[1080,1920],[540,960]]){
@@ -199,10 +215,14 @@ async function check(page, frame, label, width, height) {
       assert.match(await frame.locator('#countdown').textContent(),/NEXT RACE/);
       socket.send(JSON.stringify({type:'gift',userId:'viewer',eventId:'next-race',value:1000,giftName:'Galaxy',nickname:'NEXT RACE FAN'}));
       await frame.waitForFunction(()=>document.querySelector('#lastGift').textContent.includes('NEXT RACE FAN'));
-      await frame.evaluate(()=>{for(let n=0;n<240;n++)window.__tick(50);});
+      await frame.evaluate(()=>{for(let n=0;n<100;n++)window.__tick(50);});
       assert.match(await frame.locator('#carLabels').textContent(),/NEXT RACE FAN/);
       assert.ok((await frame.evaluate(()=>window.__inspectRace().round))>1);
-      await check(page,frame,prefix+'-next-round',width,height);
+      const next=await check(page,frame,prefix+'-next-round',width,height);
+      assert.equal(next.roundState,'racing');
+      assert.notEqual(next.arenaIndex,result.arenaIndex);
+      assert.equal(new Set(next.lanes).size,4);
+      assert.ok(next.lanes.every((lane,i)=>lane!==result.lanes[i]));
       assert.deepEqual(errors,[]);
       await page.close();
     }
