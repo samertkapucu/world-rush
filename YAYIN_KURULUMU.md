@@ -2,19 +2,34 @@
 
 **Oyunun 9:16 kaynağı:** `http://localhost:8000/live.html`
 
-Bu URL, `index.html?stream=1` adresini açar. Gerçek 1080×1920 dikey yayında pist ve HUD o boyuta yeniden render edilir; Chrome adres çubuğunu veya geniş masaüstünü kırpmak gerekmez.
+Bu adres, oyunu `index.html?stream=1` üzerinden tek bir tam ekran çerçevede çalıştırır. Adres `live.html` olarak kalır. WebGL ve HUD kaynak boyutuna göre yeniden boyutlanır. 1080×1920 ve 540×960 boyutlarında oyun tüm alanı doldurur. Kare veya yatay kaynakta pist tüm alanı kaplar, skor ve araçlar ortadaki 9:16 alanında kalır. Yayın için kaynak çözünürlüğü yine 1080×1920 olmalıdır.
 
-Normal `index.html` ve yayın `live.html` aynı büyük şampiyona başlığını, dört satırlı skor tablosunu ve sade pist düzenini kullanır. Normal ekranda alt test/kamera düğmeleri görünür. Yayın kaynağı 1080×1920 alanını doldurur.
+Yayın yerleşimi 540×960 mantıksal ölçü kullanır. Önemli içerik soldan 22, sağdan 66, üstten 100 ve alttan 170 piksel içeride tutulur. 1080×1920 kaynakta bunlar iki katına çıkar. TikTok'un hedef ve sohbet katmanları hesap/Studio düzenine göre değişebilir. Kendi mobil önizlemende bu alanları kontrol et.
 
 ## Tek seferlik TikTok LIVE Studio kurulumu
 
-1. WORLD RUSH klasöründen **WORLD_RUSH_YAYIN_HAZIRLA.cmd** dosyasını aç. Sunucu yoksa başlatılır ve LIVE URL panoya kopyalanır. Mevcut Python sunucusu çalışıyorsa yenisi açılmaz.
-2. TikTok LIVE Studio → Kaynak ekle → **Bağlantı / Link / Web sayfası** (sürümüne göre adı değişebilir). **Ctrl+V** ile `http://localhost:8000/live.html` gir.
-3. **Özel çözünürlük / Custom resolution: genişlik 1080, yükseklik 1920** seç. 1080×1920 dikey sahnede kaynağın kırpma ve dönüşüm ayarlarını sıfırla, ardından **Sığdır / Fit** seç. Masaüstü/Chrome penceresi yakalama kaynağını kaldır.
-4. Sahneni TikTok LIVE Studio içinde **kaydet**. Artık her yayın için kırpma gerekmemeli. `http://localhost:8000` sunucusu açık kalmalı.
-5. Mobil önizleme ile üst profil/hedef ve alt yorum alanını kontrol et. Ses izni/kaynak sesini de ayrıca test et. Tarayıcı kaynakları otomatik sesi engelleyebilir.
+1. Güncellemeyi, çalışan Python sunucusunun hizmet verdiği WORLD RUSH klasöründe `GUNCELLE.cmd` ile al. Yeni güncelleyici değiştirilen dosyaları tarih-saat ekli `.old` kopyalarında saklar. Oyunu başka bir klasöre indirmek açık sunucuyu güncellemez.
+2. Aynı klasörden `WORLD_RUSH_YAYIN_HAZIRLA.cmd` dosyasını çalıştır. Kaynak adresi `http://localhost:8000/live.html`.
+3. LIVE Studio'da dikey sahnenin çözünürlüğünü **1080×1920**, Bağlantı kaynağının özel çözünürlüğünü **1080 genişlik × 1920 yükseklik** yap. Kaynağı yenile.
+4. Kaynağı seç. Önceden elle yapılan kırpmayı sıfırla ve dönüşümü sıfırla. Ardından **Sığdır / Fit** uygula ve ortala. Boyut/konum alanları varsa **1080×1920**, **X=0, Y=0**, kırpma kenarları **0** olmalı. Studio sürümünde komut adları değişebilir. Sahneyi kaydet.
+5. Kaynak boyutu doğruyken sahnede boşluk kalıyorsa Studio'nun kaynak dönüşümünü kontrol et. HTML, Studio'daki kaynak konumunu veya kırpma değerlerini değiştiremez. Yenilenmiş kaynağı 1080×1920 sahneye sığdırmak tek ölçek oranı kullanır.
+6. Kaynak sesini etkinleştir. Otomatik ses engellenirse kaynağın etkileşim görünümünde pistin içine tıkla, ardından **M** tuşuna bas. Gerekirse aynı `live.html` adresini Chrome'da açıp pistin içine tıkladıktan sonra M ile ses motorunu dene. Chrome ve Studio'nun ses izinleri ayrı olabilir.
+7. Studio ses göstergesini ve ikinci cihazdaki yayın sesini kontrol et. Gerçek hediye/yorum doğrulaması için `START_TIKTOK_BRIDGE.cmd` ayrıca çalışmalı. Yerel test düğmeleri gerçek TikTok olaylarını doğrulamaz.
 
-**LINK kaynağı yoksa:** `START_WORLD_RUSH_PORTRAIT.cmd` dosyasını aç. Bu, Chrome'u sekmesiz/adres çubuksuz dikey oyun penceresi olarak açar. LIVE Studio'da **Pencere yakalama** ile yalnızca o pencereyi seç; kırpmayı bir kez kaydedip aynı sahneyi tekrar kullan.
+## Tekrarlanabilir görüntü testi
+
+Node.js kurulu bir geliştirme bilgisayarında repo klasöründe çalıştır:
+
+```sh
+npm ci
+npx playwright install chromium
+npm run test:live
+npm run test:live -- --resize-only
+```
+
+Test kendi yerel HTTP sunucusunu açar. 1080×1920, 540×960 ve 1080×1080 kaynaklarda başlangıcı, yarışın ilerleyen bölümünü, Lion efektini, üç kamera modunu ve sonraki turu çalıştırır. Dört aracın ve HUD'un görünür sınırlarını ölçer. Görüntüler ve ölçümler `work/live-check/` içine yazılır. Yerel WebSocket olayları simüle edilir. Test hızlandırılmış oyun adımları ve gerçek WebGL ekran görüntüleri kullanır, FPS ölçümü yapmaz.
+
+Sistem Chromium'u kullanmak için `WORLD_RUSH_CHROMIUM` ortam değişkenine çalıştırılabilir dosya yolunu ver. Kaynaklar Three.js CDN'inden yüklenir. Otomasyonun Web Audio durumunu kontrol etmesi, Studio'nun sesi yakaladığını veya gerçek TikTok hediyelerinin ulaştığını doğrulamaz.
 
 ## iPhone Mobile Gaming ile TikTok LIVE — 192.168.1.187
 

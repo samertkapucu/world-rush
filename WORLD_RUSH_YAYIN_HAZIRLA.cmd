@@ -28,7 +28,8 @@ echo TikTok LIVE Studio:
 echo 1. Kaynak ekle -- Baglanti / Link (Web sayfasi)
 echo 2. Ctrl+V for the URL
 echo 3. Set custom resolution to 1080 x 1920
-echo 4. Fit source to portrait canvas and save the scene.
+echo 4. Reset crop and transform, then Fit to the 1080 x 1920 portrait canvas.
+echo 5. Center the source at X=0 Y=0 and save the scene.
 echo.
 echo No browser window crop is needed.
 echo If your LIVE Studio has no Link source, run START_WORLD_RUSH_PORTRAIT.cmd

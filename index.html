@@ -64,12 +64,6 @@ h1 span{color:#75d4ff}
 #joinHint{font-size:9px;letter-spacing:.2px;line-height:1.2;color:#b9cedc;text-align:center;margin-top:3px;white-space:nowrap;transition:color .3s}
 #joinHint.following{color:#ffe39a;font-weight:900;text-shadow:0 0 8px #e8ac3766}#event.prestige{font-size:25px;color:#fff0be;text-shadow:0 2px 6px #000,0 0 24px #ffbd3ca8,0 0 35px #0af7ec44}#event.prestige:before{content:"★ LEGEND MOMENT ★";display:block;font-size:10px;letter-spacing:2px;margin-bottom:5px}
 
-/* Fill the capture viewport. Keep the HUD and race inside its centered 9:16 area. */
-html.stream-source,html.stream-source body{overflow:hidden}
-#app.stream-mode{width:100%;height:100dvh;min-height:0;max-width:none;box-shadow:none}
-#app.stream-mode #hud{inset:50% auto auto 50%;width:540px;height:960px;
-  transform-origin:center;transform:translate(-50%,-50%) scale(var(--stream-scale))}
-#app.stream-mode #operatorPanel,#app.stream-mode #safePreview{display:none!important}
 /* Broadcast safe areas: UI begins below TikTok LIVE profile, goals, and top badges. */
 #app.broadcast-safe #hud{padding-top:clamp(125px,19dvh,188px);padding-right:clamp(52px,10.5%,70px)}
 #app.broadcast-safe #topStack{gap:3px}
@@ -92,28 +86,6 @@ html.stream-source,html.stream-source body{overflow:hidden}
 .racer .fans{font-size:9px;color:#7ad8c7;min-width:0;white-space:nowrap}
 #teamToast{transition:opacity .18s}
 @media(max-height:720px){#app.broadcast-safe #hud{padding-top:clamp(116px,18dvh,154px)}}
-#app.stream-mode #hud{padding:100px 58px 133px 22px}
-#app.stream-mode #topStack{gap:6px}
-#app.stream-mode header{height:39px}
-#app.stream-mode h1{font-size:27px}
-#app.stream-mode #meta{font-size:13px}
-#app.stream-mode #rank{padding:6px 8px;gap:3px;background:#0b192b;border-color:#55718e}
-#app.stream-mode .racer{height:35px;gap:8px}
-#app.stream-mode .pos{width:21px;flex:none;font-size:16px}
-#app.stream-mode .flag{width:32px;height:21px;flex-basis:32px}
-#app.stream-mode .name{font-size:18px;font-weight:800}
-#app.stream-mode .fans{font-size:13px}
-#app.stream-mode .miniBar{min-width:8px;height:4px}
-#app.stream-mode .pct{min-width:83px;font-size:15px;font-weight:800}
-#app.stream-mode #raceProgress{padding:7px 9px}
-#app.stream-mode #progressLabel{height:22px}
-#app.stream-mode #joinHint{font-size:13px;letter-spacing:0;margin-top:4px}
-#app.stream-mode #distance{font-size:15px}
-#app.stream-mode #battle{font-size:14px}
-#app.stream-mode #countdown{font-size:13px}
-#app.stream-mode #event,#app.stream-mode #startCountdown{top:40%}
-#app.stream-mode #startCountdown{font-size:96px}
-
 /* Gift art uses TikTok's own image metadata when LIVE sends it, with emoji fallback. */
 #giftGuide{height:25px;display:flex;align-items:center;justify-content:center;gap:7px;overflow:hidden}
 #giftGuide[hidden]{display:none!important}
@@ -181,6 +153,35 @@ html.stream-source,html.stream-source body{overflow:hidden}
 #app.stream-mode #quickControls{display:none}
 #app.stream-mode #joinHint,#app.stream-mode #giftGuide{bottom:128px}
 #app.portrait-layout #soundUnlock{bottom:12%}
+
+
+/* LIVE capture fills any host viewport. Essential content uses a centered 9:16 area.
+   Safe bounds in logical pixels: x 22..474, y 100..790. */
+html.stream-source,html.stream-source body{overflow:hidden}
+#app.portrait-layout.stream-mode{width:100vw;height:100dvh;min-height:0;box-shadow:none}
+#app.stream-mode #operatorPanel,#app.stream-mode #safePreview{display:none!important}
+#app.stream-mode #hud{padding:100px 66px 170px 22px}
+#app.stream-mode #topStack{gap:8px}
+#app.stream-mode header{height:76px;padding:8px;gap:4px}
+#app.stream-mode header small{font-size:10px;letter-spacing:2px}
+#app.stream-mode h1{font-size:30px}
+#app.stream-mode #meta{font-size:13px}
+#app.stream-mode #rank{padding:8px;gap:5px;background:#081526}
+#app.stream-mode .racer{height:31px;grid-template-columns:20px 27px minmax(0,1fr) auto auto;grid-template-rows:23px 4px;gap:2px 5px}
+#app.stream-mode .pos{width:20px;font-size:15px}
+#app.stream-mode .flag{width:27px;height:18px}
+#app.stream-mode .name{font-size:16px}
+#app.stream-mode .pct{font-size:14px;min-width:84px}
+#app.stream-mode #battle{font-size:16px;height:38px;letter-spacing:.3px}
+#app.stream-mode #countdown{font-size:11px;letter-spacing:.4px}
+#app.stream-mode #event{left:22px;right:66px;top:44%;font-size:21px}
+#app.stream-mode #startCountdown{left:22px;right:66px;top:46%;font-size:78px}
+#app.stream-mode #teamToast{left:22px;right:66px;top:44%}
+#app.stream-mode #giftMoment{left:34px;right:78px;top:44%;height:60px}
+#app.stream-mode #joinHint,#app.stream-mode #giftGuide{left:22px;right:66px;bottom:170px}
+#app.stream-mode #joinHint{font-size:12px;line-height:1.35}
+#app.stream-mode .giftBubble{padding:1px 4px;gap:2px}
+#app.stream-mode #soundUnlock{display:none!important}
 
 </style></head><body><main id="app" class="booting broadcast-safe portrait-layout"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN A TEAM · FREE</div>
 <div id="giftGuide" hidden aria-label="Hediye efektleri"><span class="giftBubble" data-gift-key="Rose"><span class="giftEmoji">🌹</span><img class="giftArt" hidden alt=""><span class="giftPower">.65s</span></span>
@@ -637,7 +638,11 @@ const soundEngine={
  }
 };
 
-function flash(s){event.textContent=s;event.classList.add('on');event.classList.remove('prestige');flashUntil=performance.now()+1700}
+function flash(s){
+ if(streamMode&&performance.now()<giftMomentUntil)return;
+ event.textContent=s;event.classList.add('on');event.classList.remove('prestige');
+ flashUntil=performance.now()+1700;
+}
 const localTestInputs=Object.create(null);
 function applyLeagueRoster(){
  const roster=leagueProfiles[leagueIndex].countries;
@@ -839,6 +844,10 @@ function addGiftArtwork(giftName,url){
 }
 function showGiftMoment(msg,team,tier,source,nick){
  const node=document.getElementById('giftMoment');if(!node)return;
+ if(streamMode){
+  event.classList.remove('on','prestige');
+  document.getElementById('teamToast').hidden=true;
+ }
  const key=canonicalGiftKey(msg.giftName);
  addGiftArtwork(msg.giftName,msg.giftIconUrl);
  node.classList.remove('on');node.replaceChildren();
@@ -1104,20 +1113,20 @@ function updateRank(){
  ?leagueProfiles[leagueIndex].id+' · RESULTS'
  :'ROUND '+String(round).padStart(2,'0')+' · '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(Math.floor(remaining%60)).padStart(2,'0');
 }
-const portraitArea={width:540,height:960};
+const portraitArea={width:1,height:1};
 const carCorner=new THREE.Vector3();
 function resize(){
  const {width,height}=el.getBoundingClientRect();
  if(!width||!height)return;
+ camera.clearViewOffset();
  camera.aspect=width/height;camera.updateProjectionMatrix();
- {
-  const scale=Math.min(width/540,height/960);
-  appRoot.style.setProperty('--stream-scale',scale);
-  portraitArea.width=540*scale/width;
-  portraitArea.height=960*scale/height;
- }
+ const scale=Math.min(width/540,height/960);
+ appRoot.style.setProperty('--stream-scale',scale);
+ portraitArea.width=540*scale/width;
+ portraitArea.height=960*scale/height;
  renderer.setSize(width,height,false);
  composer.setSize(width,height);
+ framePortraitRace();
 }
 window.addEventListener('resize',resize);resize();
 
@@ -1135,13 +1144,19 @@ function framePortraitRace(){
   }
  }
  // Fit the pack between the score panel and TikTok's comment area.
- const zoom=Math.min(1.82*portraitArea.width/(right-left),.82*portraitArea.height/(top-bottom),2.3);
+ const bounds=streamMode
+  ?{left:22,right:474,top:476,bottom:758}
+  :{left:24.3,right:515.7,top:408,bottom:801.6};
+ const targetWidth=(bounds.right-bounds.left)/270*portraitArea.width;
+ const targetHeight=(bounds.bottom-bounds.top)/480*portraitArea.height;
+ const zoom=Math.min(targetWidth/(right-left),targetHeight/(top-bottom),2.3);
  const centerX=(left+right)/2,centerY=(top+bottom)/2;
- const targetY=-.26*portraitArea.height;
+ const targetX=((bounds.left+bounds.right)/540-1)*portraitArea.width;
+ const targetY=(1-(bounds.top+bounds.bottom)/960)*portraitArea.height;
  const width=el.clientWidth,height=el.clientHeight;
  const viewWidth=width/zoom,viewHeight=height/zoom;
  camera.setViewOffset(width,height,
-  ((1+centerX)*width-viewWidth)/2,
+  ((1+centerX)*width-(1+targetX)*viewWidth)/2,
   ((1-centerY)*height-(1-targetY)*viewHeight)/2,
   viewWidth,viewHeight);
 }
