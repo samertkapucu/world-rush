@@ -1038,8 +1038,12 @@ function giftTier(points){
  return {boost:6.5,label:'LEGEND BOOST',sound:'mega',cinematic:true};
 }
 function teamCommand(text){
- const c=String(text||'').trim().toUpperCase().replace(/^[!#]/,'').split(/\s+/)[0];
- return codes.includes(c)?c:null;
+ // Match complete words anywhere in the comment; never infer a team from a substring.
+ const normalized=String(text||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
+ const words=normalized.match(/[A-Z0-9]+/g)||[];
+ const aliases={SA:['SA','SAUDI','ARABIA'],AE:['AE','UAE','EMIRATES'],KW:['KW','KUWAIT'],QA:['QA','QATAR'],BR:['BR','BRAZIL','BRASIL'],US:['US','USA','AMERICA'],DE:['DE','GERMANY','DEUTSCHLAND']};
+ const matches=codes.filter(code=>(aliases[code]||[code]).some(alias=>words.includes(alias)));
+ return matches.length===1?matches[0]:null;
 }
 function applyComment(msg){
  const userId=String(msg.userId||'').slice(0,100);

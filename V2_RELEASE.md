@@ -11,3 +11,5 @@ The game records real gift events for connection diagnostics only. Gifts do not 
 Arena visuals use bounded reusable Three.js geometry. Eight themes change sky, fog, lights, roadside 3D shapes and skyline. No 3D geometry is added during a race transition. Theme order cycles without repeating adjacent rounds. Race time and a common pace factor rotate together, so all four countries in one race share the same timing rules.
 
 Verification: `npm run test:live -- --themes-only` simulates 20 arena transitions, `npm run test:live` checks 1080×1920, 540×960 and square viewports, and `node tests/supporters.cjs` checks transparency and event deduplication. These use mocked local TikTok events; a real TikTok account and LIVE Studio are not exercised here.
+
+Country comments accept uppercase/lowercase codes, punctuation and country names anywhere in a message. The same TikTok user ID counts once per team; changing teams moves the count. Ambiguous messages containing two active teams are ignored. League changes clear the mappings. Verify with `npm run test:comments`.
