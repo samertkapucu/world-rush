@@ -66,7 +66,15 @@ h1 span{color:#75d4ff}
 
 /* 9:16 high-resolution, direct LIVE Studio link source. All HUD measurements 
    are authored at a 540x960 logical resolution then scaled to source pixels. */
-#app.stream-mode{width:100vw;height:100dvh;min-height:0;max-width:none;box-shadow:none}
+/* Keep a true 9:16 portrait stage even when LIVE Studio's embedded browser
+   reports a square or landscape viewport. The surrounding area is safe to crop
+   with LIVE Studio's 'Doldur' setting; the race and HUD remain intact. */
+#app.stream-mode{
+ width:min(100vw,56.25dvh);
+ height:min(100dvh,177.77778vw);
+ aspect-ratio:9/16;
+ min-height:0;max-width:none;box-shadow:none;
+}
 #app.stream-mode #hud{inset:0 auto auto 0;width:540px;height:960px;
   transform-origin:top left;transform:scale(var(--stream-scale,2));
   padding:187px 58px 133px 14px}
@@ -169,7 +177,7 @@ const el=document.getElementById('stage'),rank=document.getElementById('rank'),m
 const streamMode=new URLSearchParams(location.search).get('stream')==='1';
 if(streamMode){
  document.getElementById('app').classList.add('stream-mode');
- const scale=Math.max(.5,window.innerWidth/540);
+ const scale=Math.max(.5,document.getElementById('app').getBoundingClientRect().width/540);
  document.getElementById('app').style.setProperty('--stream-scale',scale);
 }
 const W=560,H=900,scene=new THREE.Scene();scene.background=new THREE.Color('#070a22');scene.fog=new THREE.FogExp2('#080d25',.011);
