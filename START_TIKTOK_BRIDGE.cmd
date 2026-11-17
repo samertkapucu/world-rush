@@ -5,8 +5,7 @@ echo ============================================
 echo   WORLD RUSH - PC + iPHONE TIKTOK LIVE BRIDGE
 echo ============================================
 echo.
-set /p STREAMER=TikTok LIVE username [worldrush.live] - press Enter to keep: 
-if "%STREAMER%"=="" set "STREAMER=worldrush.live"
+set /p STREAMER=Current TikTok LIVE username:
 if "%STREAMER%"=="" (
   echo TikTok username is required.
   pause

@@ -15,7 +15,7 @@
 | Ses motoru | Otomatik oynatma izni verilen tarayıcıda AudioContext running |
 | JavaScript | Testlerde sayfa hatası oluşmadı |
 
-Görüntüler doğrudan tarayıcı ekran görüntüleridir. Çizim tamponu boyutu kaynak çözünürlüğüyle aynı ölçüldü. HUD ve araç kutuları mantıksal 540×960 koordinatlara dönüştürülüp sınır denetiminden geçirildi. Test edilen kamera ve yarış durumlarında araç genişlikleri yaklaşık 67–118 mantıksal piksel arasındaydı.
+Görüntüler doğrudan tarayıcı ekran görüntüleridir. Çizim tamponu boyutu kaynak çözünürlüğüyle aynı ölçüldü. HUD ve araç kutuları mantıksal 540×960 koordinatlara dönüştürülüp sınır denetiminden geçirildi. Test edilen kamera ve yarış durumlarında araç genişlikleri yaklaşık 56–118 mantıksal piksel arasındaydı.
 
 Test hızlandırılmış oyun adımlarıyla gerçek oyun mantığını çalıştırır. Ara karelerde GPU çizimi atlanır, kontrol karelerinde gerçek WebGL çıktısı kaydedilir. WebSocket olayları test tarafından üretilir.
 
@@ -34,3 +34,5 @@ Repo kökünde `npm ci`, `npx playwright install chromium`, `npm run test:live` 
 ## Windows üzerinde kalan kontroller
 
 Kullanıcının TikTok LIVE Studio sahnesine erişilmedi. Studio'nun gerçek dönüşümü, kişiye özel TikTok katmanları, gerçek yayın sesinin yakalanması ve gerçek TikTok hediye bağlantısı burada doğrulanamadı. Bu testler 60 FPS sonucunu ölçmez. Güvenli alanlar üstte 100, sağda 66, altta 170 mantıksal piksel varsayımıyla düzenlendi. Studio önizlemesiyle kontrol edilmelidir. Windows komut dosyaları Linux ortamında çalıştırılmadı.
+
+Son görsel güncellemesinde özgün TikTok CDN resimlerinin beş kartta yüklenmesi de otomatik kontrol edildi. Neon yan süslemeleri ve büyütülmüş hediye kartlarıyla üç çözünürlükte testler tekrar çalıştırıldı.

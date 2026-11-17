@@ -66,6 +66,7 @@ async function check(page, frame, label, width, height) {
     assert.ok(car.top>=470 && car.bottom<=764,label+' car height '+JSON.stringify(car));
     assert.ok(car.right-car.left>=32,label+' car too small '+JSON.stringify(car));
   }
+  await frame.evaluate(()=>Promise.all(document.getAnimations().filter(a=>Number.isFinite(a.effect?.getTiming().duration)).map(a=>a.finished.catch(()=>{}))));
   await page.screenshot({path:path.join(output,label+'.jpg'),type:'jpeg',quality:90,timeout:60000});
   await fs.writeFile(path.join(output,label+'.json'),JSON.stringify(state,null,2));
   console.log(label, state.roundState, 'canvas',state.canvas,'cars',state.cars.map(c=>Math.round(c.right-c.left)));
@@ -120,6 +121,9 @@ async function check(page, frame, label, width, height) {
       await page.goto(base+'/live.html');
       const frame=await page.locator('iframe').elementHandle().then(h=>h.contentFrame());
       await frame.waitForSelector('#app:not(.booting)',{timeout:45000});
+      await frame.waitForFunction(()=>[...document.querySelectorAll('#giftGuide .giftArt')].every(img=>img.complete&&img.naturalWidth>0&&!img.hidden),{},{timeout:30000});
+      assert.equal(await frame.locator('#giftGuide .giftName').count(),5);
+      assert.equal(await frame.locator('#joinHint').textContent().then(text=>text.includes('@worldrush.live')),false);
       const prefix=width+'x'+height;
       await check(page,frame,prefix+'-start',width,height);
       if(resizeOnly){

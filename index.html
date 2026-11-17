@@ -183,12 +183,23 @@ html.stream-source,html.stream-source body{overflow:hidden}
 #app.stream-mode .giftBubble{padding:1px 4px;gap:2px}
 #app.stream-mode #soundUnlock{display:none!important}
 
+
+/* Large, original TikTok artwork with readable gift names and boost durations. */
+#app.portrait-layout #giftGuide{height:70px;gap:6px;overflow:visible}
+#app.portrait-layout .giftBubble{height:70px;flex:1;min-width:0;max-width:86px;display:flex;flex-direction:column;gap:1px;padding:4px;border-radius:9px}
+#app.portrait-layout .giftArt{width:36px;height:36px;flex:none}
+#app.portrait-layout .giftEmoji{font-size:32px;height:36px}
+.giftName{font-size:10px;line-height:12px;color:#fff;font-weight:800;white-space:nowrap}
+#app.portrait-layout .giftPower{font-size:11px;line-height:13px}
+#app.portrait-layout #giftMoment .giftArt{width:56px;height:56px}
+#app.portrait-layout #giftMoment .giftEmoji{font-size:46px}
+
 </style></head><body><main id="app" class="booting broadcast-safe portrait-layout"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN A TEAM · FREE</div>
-<div id="giftGuide" hidden aria-label="Hediye efektleri"><span class="giftBubble" data-gift-key="Rose"><span class="giftEmoji">🌹</span><img class="giftArt" hidden alt=""><span class="giftPower">.65s</span></span>
-<span class="giftBubble" data-gift-key="Doughnut"><span class="giftEmoji">🍩</span><img class="giftArt" hidden alt=""><span class="giftPower">1.2s</span></span>
-<span class="giftBubble" data-gift-key="Galaxy"><span class="giftEmoji">🌌</span><img class="giftArt" hidden alt=""><span class="giftPower">4s</span></span>
-<span class="giftBubble" data-gift-key="Sports Car"><span class="giftEmoji">🏎️</span><img class="giftArt" hidden alt=""><span class="giftPower">4s</span></span>
-<span class="giftBubble" data-gift-key="Lion"><span class="giftEmoji">🦁</span><img class="giftArt" hidden alt=""><span class="giftPower">6.5s</span></span></div>
+<div id="giftGuide" hidden aria-label="Hediye efektleri"><span class="giftBubble" data-gift-key="Rose"><span class="giftEmoji">🌹</span><img class="giftArt" hidden alt=""><span class="giftName">Rose</span><span class="giftPower">.65s</span></span>
+<span class="giftBubble" data-gift-key="Doughnut"><span class="giftEmoji">🍩</span><img class="giftArt" hidden alt=""><span class="giftName">Doughnut</span><span class="giftPower">1.2s</span></span>
+<span class="giftBubble" data-gift-key="Galaxy"><span class="giftEmoji">🌌</span><img class="giftArt" hidden alt=""><span class="giftName">Galaxy</span><span class="giftPower">4s</span></span>
+<span class="giftBubble" data-gift-key="Sports Car"><span class="giftEmoji">🏎️</span><img class="giftArt" hidden alt=""><span class="giftName">Sports Car</span><span class="giftPower">4s</span></span>
+<span class="giftBubble" data-gift-key="Lion"><span class="giftEmoji">🦁</span><img class="giftArt" hidden alt=""><span class="giftName">Lion</span><span class="giftPower">6.5s</span></span></div>
 <div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="event" aria-live="polite"></div><div id="startCountdown" aria-live="polite" hidden>3</div><div id="comeback" hidden></div><div id="teamToast" hidden aria-live="polite"></div><div id="giftMoment" hidden aria-live="polite"></div></div>
 <div id="quickControls"><button class="btn" data-action="join">💬 JOIN</button><button class="btn" data-action="rose">🌹 ROSE</button><button class="btn" data-action="turbo">⚡ TURBO</button><button class="btn" data-action="mega">🌟 MEGA</button><button class="btn" data-action="cam">🎥 CAMERA</button></div>
 <button id="soundUnlock" type="button">🔊 SESİ AÇ / TAP FOR SOUND</button>
@@ -255,10 +266,6 @@ for(let z=-85;z<=48;z+=12){
    const signLight=new THREE.Mesh(new THREE.BoxGeometry(.20,.13,3.2),goldGlow);signLight.position.set(side*8.98,4.5,z+4.5);arena.add(signLight);
  }
 }
-for(let z=-78;z<=40;z+=24){
- const bridge=box(18.9,.32,.36,0x162d4a,.7,.35);bridge.position.set(0,6,z);arena.add(bridge);
- const glow=new THREE.Mesh(new THREE.BoxGeometry(17.5,.08,.42),neonMat(0x18dfff));glow.position.set(0,5.79,z);arena.add(glow);dominationMaterials.push(glow.material);
-}
 for(let n=0;n<32;n++){
  const side=n%2?-1:1;const z=-95+n*4.6;const h=4+(n*13%11);
  const tower=box(2.2,h,2.3,n%3===0?0x182441:0x0d1930,.4,.6);tower.position.set(side*(14+(n%4)*2),h/2-1,z);arena.add(tower);
@@ -280,7 +287,7 @@ for(let z=-72;z<38;z+=18){
   beacon.position.set(side*7.9,1.64,z);accents.add(beacon);
  }
 }
-arena.visible=false;accents.visible=false;
+
 const effectParticles=[];
 const particleGeo=new THREE.SphereGeometry(.065,5,4);
 for(let i=0;i<4;i++){
@@ -786,9 +793,16 @@ function recordWorldResults(orderedCars){
 let connectedToLive=false,tiktokStreamOnline=false,liveSocket=null,liveReconnect=0;
 const pendingByCountry=Object.create(null);
 
-// Genuine TikTok artwork is supplied by the connected LIVE gift catalog/event.
-// Preview falls back to universally legible emoji; never invents gift receipts.
-const giftArtworkURLs=new Map();
+// Artwork is decorative. Gift receipts and boosts come from received events.
+// Public TikTok CDN artwork listed by StreamToEarn. LIVE metadata takes precedence.
+const giftArtworkURLs=new Map(Object.entries({
+  "Rose": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/eba3a9bb85c33e017f3648eaf88d7189~tplv-obj.webp",
+  "Doughnut": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/4e7ad6bdf0a1d860c538f38026d4e812~tplv-obj.webp",
+  "Galaxy": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/79a02148079526539f7599150da9fd28.png~tplv-obj.webp",
+  "Sports Car": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/201304005bf8f86b533b97ffa88f1abe.png~tplv-obj.webp",
+  "Lion": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/4fb89af2082a290b37d704e20f4fe729~tplv-obj.webp"
+}));
+
 const giftEmojiByName={'Rose':'🌹','Finger Heart':'🫰','Doughnut':'🍩',
  'Money Gun':'🔫','Galaxy':'🌌','Sports Car':'🏎️','Lion':'🦁','Universe':'🌠'};
 let giftMomentUntil=0;
@@ -838,6 +852,7 @@ function updateGiftGuideArt(){
   img.src=url;
  }
 }
+updateGiftGuideArt();
 function addGiftArtwork(giftName,url){
  const key=canonicalGiftKey(giftName),safe=safeGiftArtwork(url);
  if(key&&safe){giftArtworkURLs.set(key,safe);updateGiftGuideArt()}
@@ -1145,7 +1160,7 @@ function framePortraitRace(){
  }
  // Fit the pack between the score panel and TikTok's comment area.
  const bounds=streamMode
-  ?{left:22,right:474,top:476,bottom:758}
+  ?{left:22,right:474,top:476,bottom:710}
   :{left:24.3,right:515.7,top:408,bottom:801.6};
  const targetWidth=(bounds.right-bounds.left)/270*portraitArea.width;
  const targetHeight=(bounds.bottom-bounds.top)/480*portraitArea.height;
@@ -1250,7 +1265,7 @@ function loop(now){
    joinHint.hidden=showGiftGuide;
    joinHint.classList.toggle('following',showFollow);
    joinHint.textContent=showFollow
-    ?"FOLLOW @worldrush.live · NEXT COUNTRY LEAGUE"
+    ?"FOLLOW FOR THE NEXT COUNTRY LEAGUE"
     :'COMMENT '+codes.join(' / ')+' TO JOIN A TEAM · FREE';
   }
   const battleEl=document.getElementById('battle');

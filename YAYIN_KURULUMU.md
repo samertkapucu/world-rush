@@ -36,7 +36,7 @@ Sistem Chromium'u kullanmak için `WORLD_RUSH_CHROMIUM` ortam değişkenine çal
 **LIVE Studio erişimi olmadan telefon ekranını yayınlamak için:**
 
 1. PC'de WORLD RUSH sunucusu (`python -m http.server 8000`) açık kalmalı; iPhone Safari'de `http://192.168.1.187:8000/index.html` açılır.
-2. PC'de GitHub'daki son sürümü çek ve **START_TIKTOK_BRIDGE.cmd** dosyasını aç. TikTok kullanıcı adı `worldrush.live` için Enter'a bas. Bu sürüm, TikTok yorum ve hediye olaylarını **yalnızca PC'nin 192.168.1.187 özel Wi-Fi IP adresinde** de dinler.
+2. PC'de GitHub'daki son sürümü çek ve **START_TIKTOK_BRIDGE.cmd** dosyasını aç. Mevcut TikTok kullanıcı adını gir. Bu sürüm, TikTok yorum ve hediye olaylarını **yalnızca PC'nin 192.168.1.187 özel Wi-Fi IP adresinde** de dinler.
 3. Windows Güvenlik Duvarı izin isterse yalnızca **Özel ağlar (Private)** seç. Genel ağlara (Public) açma, port yönlendirme (port forwarding) yapma.
 4. TikTok'ta iPhone → LIVE → Mobile Gaming → Go LIVE, ardından Safari'deki WORLD RUSH ekranına dön.
 5. **Bağlantı testi:** iPhone'da önce `http://192.168.1.187:8000/index.html?debug=1` aç. LIVE başlamadan `BRIDGE ON · WAITING FOR TIKTOK`, LIVE başladıktan sonra `TIKTOK CONNECTED · TEST EVENTS` görünmesi beklenir. Yayına geçerken `?debug=1` parametresini kaldır; debug yazısı izleyicilere görünmesin.
@@ -87,3 +87,9 @@ Gerçek hediye kataloğunu LIVE Gift ekranından kontrol et. Oyunda normal sayfa
 - Yerel WebSocket `127.0.0.1:8765` yalnızca aynı bilgisayarda açılan localhost sayfasına hizmet eder. Başka sunucuya veya internete açılmamalı.
 - LIVE Studio Link kaynağının sesini tarayıcı otomatik oynatma politikası engelleyebilir. Ses çıkışını mobil önizlemede test et; gerekirse temiz Chrome uygulama penceresini kullan ve `M` ile sesi etkinleştir.
 - TikTok'un resmi etkileşimli oyun iş ortaklığı başvurusu: https://cp-game.tiktok.com/interactive-game-registration
+
+## Güncel hesap ve hediye görselleri
+
+Ekrandaki eski @kullanıcı adı kaldırıldı. Köprü başlatılırken mevcut TikTok kullanıcı adını gir. Boş bırakıldığında eski hesaba bağlanmayı denemez.
+
+Pist kenarlarındaki neon bariyerler, sütunlar ve dış yapılar geri açıldı. Büyük hediye kartları Rose, Doughnut, Galaxy, Sports Car ve Lion görsellerini doğrudan TikTok CDN'inden yükler. Kaynak ve 106 bölge karşılaştırması [hediye görsel raporunda](screenshots/gift-artwork-sources.md) bulunur.
