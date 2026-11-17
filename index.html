@@ -225,7 +225,7 @@ html.stream-source,html.stream-source body{overflow:hidden}
 #winnerCard{top:450px}
 .carLabel strong{font-size:11px}
 
-</style></head><body><main id="app" class="booting broadcast-safe portrait-layout"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div><div id="leagueBoard" aria-label="Current league points"></div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN A TEAM · FREE</div>
+</style></head><body><main id="app" class="booting broadcast-safe portrait-layout"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div><div id="leagueBoard" aria-label="Current league points"></div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN · FREE</div>
 <div id="giftGuide" hidden aria-label="Hediye efektleri"><span class="giftBubble" data-gift-key="Rose"><span class="giftEmoji">🌹</span><img class="giftArt" hidden alt=""><span class="giftName">Rose</span><span class="giftPower">.65s</span></span>
 <span class="giftBubble" data-gift-key="Doughnut"><span class="giftEmoji">🍩</span><img class="giftArt" hidden alt=""><span class="giftName">Doughnut</span><span class="giftPower">1.2s</span></span>
 <span class="giftBubble" data-gift-key="Galaxy"><span class="giftEmoji">🌌</span><img class="giftArt" hidden alt=""><span class="giftName">Galaxy</span><span class="giftPower">4s</span></span>
@@ -726,7 +726,7 @@ function applyLeagueRoster(){
  }
  selected=0;
  const joinHint=document.getElementById('joinHint');
- if(joinHint){joinHint.textContent='COMMENT '+codes.join(' / ')+' → JOIN YOUR TEAM · FREE';joinHint.hidden=false}
+ if(joinHint){joinHint.textContent='COMMENT '+codes.join(' / ')+' TO JOIN · FREE';joinHint.hidden=false}
  const label=document.getElementById('leagueStatus');
  if(label)label.textContent=leagueProfiles[leagueIndex].title+' · LOCAL TEST · NO REAL GIFT DATA';
 }
@@ -1383,7 +1383,7 @@ function loop(now){
   uiTick=0;updateRank();
   const joinHint=document.getElementById('joinHint');
   joinHint.hidden=false;
-  joinHint.textContent='COMMENT '+codes.join(' / ')+' → JOIN YOUR TEAM · FREE';
+  joinHint.textContent='COMMENT '+codes.join(' / ')+' TO JOIN · FREE';
   document.getElementById('giftGuide').hidden=false;
   leagueRows.forEach((node,i)=>{
    node.textContent=codes[i]+' '+season[i]+' PT';

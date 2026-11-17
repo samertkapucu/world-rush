@@ -61,7 +61,7 @@ async function check(page, frame, label, width, height) {
   assert.equal(state.soundVisible,false);
   assert.equal(state.laneColorsCorrect,true);
   assert.equal(await frame.locator('#joinHint').isVisible(),true);
-  assert.match(await frame.locator('#joinHint').textContent(),/COMMENT .*JOIN YOUR TEAM/);
+  assert.match(await frame.locator('#joinHint').textContent(),/COMMENT .*TO JOIN · FREE/);
   assert.equal(await frame.locator('.leagueTeam').count(),4);
   for (const row of state.hud) {
     assert.ok(row.left>=21 && row.right<=475, label+' HUD safe width '+JSON.stringify(row));
