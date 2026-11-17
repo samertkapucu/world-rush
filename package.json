@@ -2,7 +2,8 @@
   "name": "world-rush",
   "private": true,
   "scripts": {
-    "test:live": "node tests/live-layout.cjs"
+    "test:live": "node tests/live-layout.cjs",
+    "test:supporters": "node tests/supporters.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"

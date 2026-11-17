@@ -215,6 +215,7 @@ async def main(unique_id: str, lan_ip: str | None = None) -> None:
             "giftIconUrl": gift_icon_url(getattr(gift, "image", None) or getattr(gift, "icon", None)),
             "value": gift_points(gift),
             "quantity": count,
+            "diamondValue": gift_points(gift) * count if getattr(gift, "diamond_count", None) else 0,
         })
         LOG.info("Gift event: %s x%s (metadata points %s)",
                  bounded(getattr(gift, "name", None), 80), count, gift_points(gift))

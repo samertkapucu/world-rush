@@ -246,6 +246,7 @@ html.stream-source,html.stream-source body{overflow:hidden}
 #app.stream-mode .giftBubble .giftPower{font-size:10px;line-height:11px}
 #app.stream-mode #giftMoment{top:404px;height:42px}
 #app.stream-mode #giftMoment .giftArt{width:34px;height:34px}
+#giftGuide,#giftMoment{display:none!important}
 #app.stream-mode #teamToast,#app.stream-mode #event{top:404px}
 #app.stream-mode #event{font-size:18px}
 #app.stream-mode #startCountdown{top:404px;font-size:56px}
@@ -259,11 +260,11 @@ html.stream-source,html.stream-source body{overflow:hidden}
 <span class="giftBubble" data-gift-key="Sports Car"><span class="giftEmoji">🏎️</span><img class="giftArt" hidden alt=""><span class="giftName">Sports Car</span><span class="giftPower">4s</span></span>
 <span class="giftBubble" data-gift-key="Lion"><span class="giftEmoji">🦁</span><img class="giftArt" hidden alt=""><span class="giftName">Lion</span><span class="giftPower">6.5s</span></span></div>
 <div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="carLabels"></div><div id="winnerCard" hidden aria-live="polite"><strong></strong><span></span></div><div id="event" aria-live="polite"></div><div id="startCountdown" aria-live="polite" hidden>3</div><div id="comeback" hidden></div><div id="teamToast" hidden aria-live="polite"></div><div id="giftMoment" hidden aria-live="polite"></div></div>
-<div id="quickControls"><button class="btn" data-action="join">💬 JOIN</button><button class="btn" data-action="rose">🌹 ROSE</button><button class="btn" data-action="turbo">⚡ TURBO</button><button class="btn" data-action="mega">🌟 MEGA</button><button class="btn" data-action="cam">🎥 CAMERA</button></div>
+<div id="quickControls"><button class="btn" data-action="join">💬 JOIN</button><button class="btn" data-action="cam">🎥 CAMERA</button></div>
 <button id="soundUnlock" type="button">🔊 SESİ AÇ / TAP FOR SOUND</button>
 <div id="bridgeBadge" hidden>LIVE SYNC: WAITING</div>
 <div id="safePreview" hidden><div class="topSafe"><span>TIKTOK HEADER</span></div><div class="rightSafe"></div><div class="bottomSafe"><span>COMMENTS + GIFTS</span></div></div>
-<div id="operatorPanel" hidden><div class="operatorHead"><span>WORLD RUSH · OPERATOR</span><span class="hint">P: hide · B: broadcast safe · T: guide</span></div><div id="controls"><button class="btn" data-action="join">JOIN / TEAM</button><button class="btn" data-action="rose">ROSE</button><button class="btn" data-action="turbo">TURBO</button><button class="btn" data-action="mega">MEGA</button><button class="btn" data-action="cam">CAMERA</button><button class="btn" data-action="audio" id="audioButton">🔇 SOUND OFF</button><button class="btn" data-action="safe">SAFE ZONES</button><button class="btn" data-action="broadcast" id="broadcastButton">BROADCAST SAFE ON</button><button class="btn" data-action="league">NEXT LEAGUE</button><button class="btn" data-action="testJoin">TEST TEAM JOIN</button><button class="btn" data-action="testFollow">TEST FOLLOW</button><button class="btn" data-action="gift1">TEST ROSE</button><button class="btn" data-action="gift1000">TEST GALAXY</button><button class="btn" data-action="gift7000">TEST SPORTS CAR</button><button class="btn" data-action="gift30000">TEST LION</button></div><div class="hint" style="margin-top:7px">75-MIN LEAGUES · LOCAL SIMULATION, NOT REAL GIFTS · 1–4: teams · Q/W/E: boosts · C: camera · M: sound.</div><div class="hint" id="leagueStatus" style="margin-top:5px">GULF LEAGUE · Test mode</div><div class="hint" id="liveStatus" style="margin-top:4px">LIVE BRIDGE: OFFLINE · DEMO ONLY</div><div id="operatorStats">No verified team joins yet</div><div id="giftRules" class="hint" style="margin-top:8px;padding:8px;border:1px solid #315d83;border-radius:5px;line-height:1.6">
+<div id="operatorPanel" hidden><div class="operatorHead"><span>WORLD RUSH · OPERATOR</span><span class="hint">P: hide · B: broadcast safe · T: guide</span></div><div id="controls"><button class="btn" data-action="join">JOIN / TEAM</button><button class="btn" data-action="cam">CAMERA</button><button class="btn" data-action="audio" id="audioButton">🔇 SOUND OFF</button><button class="btn" data-action="safe">SAFE ZONES</button><button class="btn" data-action="broadcast" id="broadcastButton">BROADCAST SAFE ON</button><button class="btn" data-action="league">NEXT LEAGUE</button><button class="btn" data-action="testJoin">TEST TEAM JOIN</button><button class="btn" data-action="testFollow">TEST FOLLOW</button></div><div class="hint" style="margin-top:7px">75-MIN LEAGUES · LOCAL SIMULATION, NOT REAL GIFTS · 1–4: teams · C: camera · M: sound.</div><div class="hint" id="leagueStatus" style="margin-top:5px">GULF LEAGUE · Test mode</div><div class="hint" id="liveStatus" style="margin-top:4px">LIVE BRIDGE: OFFLINE · DEMO ONLY</div><div id="operatorStats">No verified team joins yet</div><div id="giftRules" class="hint" style="margin-top:8px;padding:8px;border:1px solid #315d83;border-radius:5px;line-height:1.6">
 <b>GIFT → RACE EFFECT (metadata points, not cash)</b>
 <div>Rose / Finger Heart (1–9): 0.65s spark</div>
 <div>Doughnut / small gift (10–99): 1.2s pulse</div>
@@ -349,15 +350,36 @@ for(let z=-72;z<38;z+=18){
 
 // Reuse geometry between rounds; only scenery colors and skyline heights change.
 const arenaThemes=[
- {name:'NEON CITY',sky:0x081120,left:0x18dfff,right:0x8a49ff,gold:0xffbd3a,ground:0x07121e},
- {name:'SUNSET CIRCUIT',sky:0x20101c,left:0xff8844,right:0xff3e91,gold:0xffdb78,ground:0x241626},
- {name:'ARCTIC RUN',sky:0x0c202b,left:0x64ffe0,right:0x599dff,gold:0xc4f4ff,ground:0x16313b},
- {name:'VIOLET NIGHT',sky:0x180c29,left:0xb875ff,right:0xff598c,gold:0x66e5ff,ground:0x1c1632}
+ {name:'NEON TOKYO',sky:0x081120,left:0x8a49ff,right:0x18dfff,gold:0xffbd3a,ground:0x07121e,fog:78,shape:0},
+ {name:'ARABIAN DESERT',sky:0x35201c,left:0xff9a47,right:0xe6b45c,gold:0xffdb78,ground:0x493324,fog:95,shape:1},
+ {name:'DUBAI SKYLINE',sky:0x14213a,left:0xffd473,right:0x5de8ff,gold:0xffdf8f,ground:0x182632,fog:110,shape:2},
+ {name:'RAINY CITY',sky:0x0a1825,left:0x6daeff,right:0xa98dff,gold:0xd4eaff,ground:0x10212f,fog:64,shape:3},
+ {name:'ALPINE MOUNTAINS',sky:0x526b83,left:0xc9e9ff,right:0x7bcddd,gold:0xffffff,ground:0x34475a,fog:120,shape:4},
+ {name:'TROPICAL COAST',sky:0x184956,left:0x48ffcf,right:0xffd772,gold:0xffe9a0,ground:0x25616a,fog:120,shape:5},
+ {name:'VOLCANIC NIGHT',sky:0x240c13,left:0xff6438,right:0xffae43,gold:0xffd582,ground:0x35141a,fog:65,shape:6},
+ {name:'CYBERPUNK CIRCUIT',sky:0x180c29,left:0xb875ff,right:0xff598c,gold:0x66e5ff,ground:0x1c1632,fog:75,shape:7}
 ];
+const themeDecor=new THREE.Group();scene.add(themeDecor);
+const decorMaterials=[];
+for(let theme=0;theme<8;theme++){
+ const group=new THREE.Group();themeDecor.add(group);
+ for(let n=0;n<16;n++){
+  const side=n%2?-1:1,z=-80+n*7.2,x=side*(10+n%3*2);
+  let mesh;
+  if(theme===4||theme===6){mesh=new THREE.Mesh(new THREE.ConeGeometry(theme===4?3.2:2.4,theme===4?8:11,5),new THREE.MeshStandardMaterial({color:theme===4?0xdceeff:0x3b1516}));}
+  else if(theme===5){mesh=new THREE.Mesh(new THREE.CylinderGeometry(.18,.35,6,5),new THREE.MeshStandardMaterial({color:0x755b39}));const crown=new THREE.Mesh(new THREE.ConeGeometry(2.2,3,6),new THREE.MeshStandardMaterial({color:0x23a073}));crown.position.y=4.2;mesh.add(crown);}
+  else if(theme===1){mesh=new THREE.Mesh(new THREE.ConeGeometry(4,3.5,6),new THREE.MeshStandardMaterial({color:0xae8056}));}
+  else{mesh=new THREE.Mesh(new THREE.BoxGeometry(theme===2?2.5:1.4,theme===2?12:6,2),new THREE.MeshStandardMaterial({color:theme===3?0x244263:0x223357,emissive:theme===7?0x45134f:0x000000,emissiveIntensity:.4}));}
+  mesh.position.set(x,theme===1?0:theme===4?3:theme===6?4:3,z);group.add(mesh);
+ }
+ group.visible=false;
+}
 let arenaIndex=0;
 function applyArenaTheme(){
  const theme=arenaThemes[arenaIndex];
- scene.background.setHex(theme.sky);scene.fog.color.setHex(theme.sky);
+ scene.background.setHex(theme.sky);scene.fog.color.setHex(theme.sky);scene.fog.far=theme.fog;
+ themeDecor.children.forEach((group,i)=>{group.visible=i===arenaIndex});
+ sun.color.setHex(theme.gold);fillLight.color.setHex(theme.right);
  ground.material.color.setHex(theme.ground);
  for(const [material,color] of [[cyanGlow,theme.left],[purpleGlow,theme.right],[goldGlow,theme.gold]]){
   material.color.setHex(color);material.emissive.setHex(color);
@@ -590,7 +612,8 @@ cars.forEach(car=>car.group.scale.setScalar(1.24));
  },undefined,(err)=>{if(!carAssetsFinalized){carAssetsFinalized=true;clearTimeout(assetTimeout);console.warn('GT model unavailable; using fallback',err);beginRace()}});
 
 // Fixed finish line at 86 metres from start, matching car progress in metres.
-const ROUND_SECONDS=210,RACE_METRES=260,METRES_PER_PERCENT=RACE_METRES/100,finish=new THREE.Group();
+let ROUND_SECONDS=210;const RACE_METRES=260,METRES_PER_PERCENT=RACE_METRES/100,finish=new THREE.Group();
+let roundPace=.52;
 for(let j=0;j<16;j++){const tile=box(.9,.055,.8,j%2?0xffffff:0x0b1019);tile.position.set((j-7.5)*.9,.055,-66);finish.add(tile)}
 const finishBeam=new THREE.Mesh(new THREE.BoxGeometry(15,.08,.16),goldGlow);finishBeam.position.set(0,.13,-66);finish.add(finishBeam);
 for(const side of [-1,1]){const support=box(.28,6.8,.4,0x31445d,.6,.25);support.position.set(side*7.1,3.25,-66);finish.add(support)}
@@ -803,7 +826,7 @@ function resetRound(){
  document.getElementById('winnerCard').hidden=true;
  if(queuedLeagueChange||Date.now()>=leagueEndsAt)advanceLeague();
  shuffleRaceLanes();arenaIndex=(arenaIndex+1)%arenaThemes.length;applyArenaTheme();
- round++;remaining=ROUND_SECONDS;roundState='countdown';countdownUntil=performance.now()+1500;shownStartDigit=0;winnerIndex=-1;leadIndex=-1;finishReason='';soundEngine.finalCued=false;
+ round++;ROUND_SECONDS=[195,210,225,205][round%4];roundPace=[.49,.52,.55,.51][round%4];remaining=ROUND_SECONDS;roundState='countdown';countdownUntil=performance.now()+1500;shownStartDigit=0;winnerIndex=-1;leadIndex=-1;finishReason='';soundEngine.finalCued=false;
  cars.forEach(car=>{
   car.progress=0;car.boost=0;car.pace=0;car.burst=0;
   car.group.position.set(car.laneX,0,20);car.group.rotation.set(0,0,0);
@@ -831,7 +854,8 @@ function finishRound(now,byTime){
 function effect(type){
  const c=cars[selected];
  if(type==='join'){flash(flags[selected]+' '+teams[selected]+' SELECTED');return}
- if(roundState!=='racing')return;
+ if(roundState!=='racing'||!['rose','turbo','mega'].includes(type))return;
+ return;
  const power={rose:2,turbo:5,mega:9}[type];
  localTestInputs[codes[selected]]=(localTestInputs[codes[selected]]||0)+1;
  const order=[...cars].sort((a,b)=>b.progress-a.progress);
@@ -1071,44 +1095,12 @@ function applyShare(msg){
  }
 }
 function applyGift(msg){
- const source=msg.source==='live'?'live':'test',eventId=String(msg.eventId||'').slice(0,160);
- if(eventId&&seenGiftIds.has(eventId))return;
- if(eventId){seenGiftIds.add(eventId);if(seenGiftIds.size>1200)seenGiftIds.delete(seenGiftIds.values().next().value)}
- const rawValue=Number(msg.value),quantity=Math.min(1000,Math.max(1,Math.floor(Number(msg.quantity)||1)));
- const points=Number.isFinite(rawValue)&&rawValue>0?Math.min(100000,rawValue):0;
- const userId=String(msg.userId||'').slice(0,100),nick=String(msg.nickname||'VIEWER').replace(/[<>&]/g,'').slice(0,18);
- const team=source==='test'?String(msg.teamCode||codes[selected]):liveFans.get(userId);
- // Never secretly assign paid gifts to a team; only a user's explicit team comment counts.
- if(!team||!codes.includes(team)||!points){
-  if(source==='live'&&userId&&points&&!team){
-   const old=pendingUnassignedGifts.get(userId);
-   const events=old&&old.expires>Date.now()?old.events:[];
-   if(events.length>=4)events.shift();
-   events.push({...msg,source:'live'});
-   pendingUnassignedGifts.set(userId,{events,expires:Date.now()+120000});
-   if(pendingUnassignedGifts.size>1000)pendingUnassignedGifts.delete(pendingUnassignedGifts.keys().next().value);
-   updateLastGift('LIVE '+nick+' · '+String(msg.giftName||'?')+' · '+points+' pts · WAITING FOR COUNTRY COMMENT');
-   flash(nick+' · GIFT RECEIVED · COMMENT COUNTRY TO APPLY');return
-  }
-  updateLastGift((source==='live'?'LIVE':'TEST')+' '+nick+' · '+String(msg.giftName||'?')+' · '+points+' pts · NO TEAM/POINTS');
-  flash(nick+' · THANK YOU! · COMMENT TEAM CODE');return
- }
- const i=codes.indexOf(team),car=cars[i],tier=giftPresentation(msg.giftName,giftTier(points)),order=[...cars].sort((a,b)=>b.progress-a.progress);
- const gap=(order[0].progress-car.progress)*METRES_PER_PERCENT;
- const comeback=gap>=12&&order[0].i!==i;
- const countFactor=Math.min(2,1+Math.log2(quantity)/4),boost=tier.boost*countFactor*(comeback?1.25:1);
- if(source==='live')giftTotals[team]=(giftTotals[team]||0)+Math.round(points*quantity);
- updateLastGift((source==='live'?'LIVE':'TEST')+' '+nick+' · '+String(msg.giftName||'?')+' ×'+quantity+' · '+points+' pts → '+team+' · '+tier.label+' ('+tier.boost+'s base)');
- if(roundState!=='racing'){pendingSupporters[team]=(source==='test'?'DEMO · ':'')+nick;pendingByCountry[team]=Math.min(10,(pendingByCountry[team]||0)+boost);showGiftMoment(msg,team,{...tier,label:'NEXT RACE'},source,nick);return}
- const added=Math.min(10-car.boost,boost);
- car.boost=Math.min(10,car.boost+boost);car.burst=performance.now()+2100;
- car.supporter=(source==='test'?'DEMO · ':'')+nick;
- car.supportAdded=added;
- if(tier.cinematic){
-  spotlightIndex=i;spotlightUntil=performance.now()+(tier.cameraDuration||3300);
- }
- showGiftMoment(msg,team,tier,source,nick);
- soundEngine.play(tier.sound);
+ // The game receives gift events for diagnostics only. Gifts never affect race state.
+ if(msg.source!=='live')return;
+ const id=String(msg.eventId||'').slice(0,160);
+ if(id&&seenGiftIds.has(id))return;
+ if(id){seenGiftIds.add(id);if(seenGiftIds.size>1200)seenGiftIds.delete(seenGiftIds.values().next().value)}
+ updateLastGift('LIVE GIFT RECEIVED · NO RACE EFFECT');
 }
 function updateBridgeStatus(){
  const badge=document.getElementById('bridgeBadge');
@@ -1314,7 +1306,7 @@ function framePortraitRace(){
  }
  // Fit the pack between the score panel and TikTok's comment area.
  const bounds=streamMode
-  ?{left:22,right:474,top:466,bottom:596}
+  ?{left:22,right:474,top:466,bottom:640}
   :{left:24.3,right:515.7,top:408,bottom:801.6};
  const targetWidth=(bounds.right-bounds.left)/270*portraitArea.width;
  const targetHeight=(bounds.bottom-bounds.top)/480*portraitArea.height;
@@ -1338,7 +1330,7 @@ function loop(now){
  if(roundState==='countdown'){
   const digit=Math.max(0,Math.ceil((countdownUntil-now)/1000));
   if(digit>0){countdownNode.hidden=false;countdownNode.textContent=String(Math.min(3,digit));if(shownStartDigit!==digit){shownStartDigit=digit;soundEngine.play('count')}}
-  else{countdownNode.hidden=true;roundState='racing';cars.forEach((car,i)=>{const saved=pendingByCountry[codes[i]]||0;if(saved){car.boost=Math.min(10,car.boost+saved);car.supportAdded=saved;car.supporter=pendingSupporters[codes[i]]||'';delete pendingSupporters[codes[i]];car.burst=performance.now()+1750;delete pendingByCountry[codes[i]]}});flash('GO!');soundEngine.play('go')}
+  else{countdownNode.hidden=true;roundState='racing';flash('GO!');soundEngine.play('go')}
  }else countdownNode.hidden=true;
  const racing=roundState==='racing';
  if(racing)remaining=Math.max(0,remaining-dt);
@@ -1347,7 +1339,7 @@ function loop(now){
   if(racing){
    const wave=Math.sin(t*.44+c.i*1.67)*.43+Math.sin(t*.19+c.i*2.8)*.28;
    const speed=Math.max(.32,1.05+wave+(c.boost>0?1.15:0));
-   c.progress=Math.min(100,c.progress+speed*dt*.52);
+   c.progress=Math.min(100,c.progress+speed*dt*roundPace);
    c.boost=Math.max(0,c.boost-dt);
    c.group.position.z=20-c.progress*.86;
    c.group.position.y=Math.sin(t*12+c.i)*.025;
@@ -1411,7 +1403,7 @@ function loop(now){
   const joinHint=document.getElementById('joinHint');
   joinHint.hidden=false;
   joinHint.textContent='COMMENT '+codes.join(' / ')+' TO JOIN · FREE';
-  document.getElementById('giftGuide').hidden=false;
+  document.getElementById('giftGuide').hidden=true;
   leagueRows.forEach((node,i)=>{
    node.textContent=codes[i]+' '+season[i]+' PT';
    node.classList.toggle('first',season[i]>0&&season[i]===Math.max(...season));
@@ -1485,7 +1477,7 @@ function beginRace(){
  if(!app.classList.contains('booting'))return;
  applyLeagueRoster();applyArenaTheme();cars.forEach(c=>c.group.position.z=20);updateRank();
  document.getElementById('countdown').textContent='260m RACE · READY TO START';
- document.getElementById('giftGuide').hidden=false;
+ document.getElementById('giftGuide').hidden=true;
  remaining=ROUND_SECONDS;roundState='countdown';countdownUntil=performance.now()+3500;
  last=performance.now();shownStartDigit=0;
  document.getElementById('bootScreen').hidden=true;app.classList.remove('booting');

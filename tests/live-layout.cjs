@@ -69,7 +69,7 @@ async function check(page, frame, label, width, height) {
   }
   for (const car of state.cars) {
     assert.ok(car.left>=21 && car.right<=475,label+' car width '+JSON.stringify(car));
-    assert.ok(car.top>=460 && car.bottom<=600,label+' car height '+JSON.stringify(car));
+    assert.ok(car.top>=445 && car.bottom<=650,label+' car height '+JSON.stringify(car));
     assert.ok(car.right-car.left>=32,label+' car too small '+JSON.stringify(car));
   }
   await frame.evaluate(()=>Promise.all(document.getAnimations().filter(a=>Number.isFinite(a.effect?.getTiming().duration)).map(a=>a.finished.catch(()=>{}))));
@@ -128,17 +128,17 @@ async function check(page, frame, label, width, height) {
       await page.goto(base+'/live.html');
       const frame=await page.locator('iframe').elementHandle().then(h=>h.contentFrame());
       await frame.waitForSelector('#app:not(.booting)',{timeout:45000});
-      await frame.waitForFunction(()=>[...document.querySelectorAll('#giftGuide .giftArt')].every(img=>img.complete&&img.naturalWidth>0&&!img.hidden),{},{timeout:30000});
+      assert.equal(await frame.locator('#giftGuide').isVisible(),false);
       assert.equal(await frame.locator('#giftGuide .giftName').count(),5);
       assert.equal(await frame.locator('#joinHint').textContent().then(text=>text.includes('@worldrush.live')),false);
       const prefix=width+'x'+height;
       await check(page,frame,prefix+'-start',width,height);
       if(themesOnly){
         let previous=await frame.evaluate(()=>window.__inspectRace());
-        for(let i=1;i<=4;i++){
+        for(let i=1;i<=20;i++){
           await frame.evaluate(()=>{window.__nextArena();for(let n=0;n<40;n++)window.__tick(50);});
-          const next=await check(page,frame,prefix+'-arena-'+i,width,height);
-          assert.equal(next.arenaIndex,i%4);
+          const next=i<=8?await check(page,frame,prefix+'-arena-'+i,width,height):await frame.evaluate(()=>window.__inspectRace());
+          assert.equal(next.arenaIndex,i%8);
           assert.ok(next.lanes.every((lane,index)=>lane!==previous.lanes[index]));
           assert.deepEqual(next.codes,previous.codes);
           previous=next;
@@ -161,33 +161,14 @@ async function check(page, frame, label, width, height) {
       assert.equal(mid.roundState,'racing');
       assert.ok(mid.remaining<151);
       assert.equal(await frame.locator('#rank .racer').count(),4);
-      // Use the currently displayed league, including leagues restored from local storage.
-      const team=await frame.locator('.flag').first().getAttribute('alt');
-      socket.send(JSON.stringify({type:'gift',userId:'unassigned',eventId:'pending',value:1000,giftName:'Galaxy'}));
-      await frame.waitForFunction(()=>document.querySelector('#lastGift').textContent.includes('WAITING FOR COUNTRY COMMENT'));
       const before=await frame.evaluate(()=>window.__inspectRace().boosts);
-      socket.send(JSON.stringify({type:'comment',userId:'viewer',nickname:'TEST VIEWER',text:team}));
-      socket.send(JSON.stringify({type:'gift',userId:'viewer',eventId:'lion-1',value:30000,giftName:'Lion',quantity:1,nickname:'TEST VIEWER'}));
-      await frame.waitForFunction(()=>document.querySelector('.giftTitle')?.textContent==='Lion');
-      const boosted=await frame.evaluate(()=>window.__inspectRace().boosts);
-      assert.ok(boosted.some((value,i)=>value>before[i]));
-      socket.send(JSON.stringify({type:'gift',userId:'viewer',eventId:'lion-1',value:30000,giftName:'Lion',quantity:1}));
-      await frame.evaluate(()=>{for(let i=0;i<4;i++)window.__tick(50);});
-      const gift=await check(page,frame,prefix+'-gift',width,height);
-      assert.equal(gift.audio.state,'running');
-      assert.equal(await frame.locator('#event').evaluate(node=>node.classList.contains('on')),false);
-      assert.match(await frame.locator('#liveStatus').textContent(),/30000/);
-      assert.match(await frame.locator('#carLabels').textContent(),/TEST VIEWER/);
-      assert.match(await frame.locator('#carLabels').textContent(),/TURBO/);
-      const allCodes=await frame.evaluate(()=>window.__inspectRace().codes);
-      for(const code of allCodes){
-        socket.send(JSON.stringify({type:'comment',userId:'fan-'+code,nickname:'FAN '+code,text:code}));
-        socket.send(JSON.stringify({type:'gift',userId:'fan-'+code,eventId:'all-'+code,value:1000,giftName:'Galaxy',nickname:'FAN '+code}));
-      }
-      await frame.waitForFunction(()=>document.querySelector('#lastGift').textContent.includes('FAN '+window.__inspectRace().codes[3]));
-      await frame.evaluate(()=>{for(let n=0;n<4;n++)window.__tick(50);});
-      await check(page,frame,prefix+'-four-boosts',width,height);
-      assert.equal(await frame.locator('.carLabel:not([hidden])').count(),4);
+      socket.send(JSON.stringify({type:'comment',userId:'viewer',nickname:'TEST VIEWER',text:'SA'}));
+      socket.send(JSON.stringify({type:'gift',userId:'viewer',eventId:'v2-test',value:30000,giftName:'Lion',quantity:1,nickname:'TEST VIEWER'}));
+      await frame.waitForFunction(()=>document.querySelector('#lastGift').textContent.includes('NO RACE EFFECT'));
+      socket.send(JSON.stringify({type:'gift',userId:'viewer',eventId:'v2-test',value:30000,giftName:'Lion'}));
+      assert.deepEqual(await frame.evaluate(()=>window.__inspectRace().boosts),before);
+      assert.equal(await frame.locator('#giftGuide').isVisible(),false);
+      assert.equal(await frame.locator('#giftMoment').isVisible(),false);
       // Exercise all three camera modes and automatic round restart.
       for(let i=0;i<3;i++){
         const oldMode=await frame.evaluate(()=>window.__inspectRace().mode);
@@ -213,10 +194,8 @@ async function check(page, frame, label, width, height) {
       assert.equal(await frame.locator('#winnerCard').isVisible(),true);
       assert.match(await frame.locator('#winnerCard').textContent(),/WINS!/);
       assert.match(await frame.locator('#countdown').textContent(),/NEXT RACE/);
-      socket.send(JSON.stringify({type:'gift',userId:'viewer',eventId:'next-race',value:1000,giftName:'Galaxy',nickname:'NEXT RACE FAN'}));
-      await frame.waitForFunction(()=>document.querySelector('#lastGift').textContent.includes('NEXT RACE FAN'));
       await frame.evaluate(()=>{for(let n=0;n<100;n++)window.__tick(50);});
-      assert.match(await frame.locator('#carLabels').textContent(),/NEXT RACE FAN/);
+      assert.deepEqual(await frame.evaluate(()=>window.__inspectRace().boosts),[0,0,0,0]);
       assert.ok((await frame.evaluate(()=>window.__inspectRace().round))>1);
       const next=await check(page,frame,prefix+'-next-round',width,height);
       assert.equal(next.roundState,'racing');

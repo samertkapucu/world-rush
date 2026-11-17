@@ -1,3 +1,7 @@
+# Archived pre-V2 validation
+
+The gift boost screenshots and claims below describe the backed-up version at `a3ea5a3`. For current behavior see [V2_RELEASE.md](../V2_RELEASE.md).
+
 # LIVE kaynak doğrulaması
 
 18 Kasım 2026 tarihinde Chromium ve gerçek WebGL çizimiyle kontrol edildi. Test ortamında yazılımsal GPU kullanıldı.

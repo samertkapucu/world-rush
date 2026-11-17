@@ -1,3 +1,7 @@
+# Archived pre-V2 gift artwork report
+
+The V2 game no longer shows a gift panel. This report documents the backed-up version.
+
 # Hediye görselleri ve bölge kontrolü
 
 18 Kasım 2026 tarihinde StreamToEarn sayfasındaki 106 bölge bağlantısı karşılaştırıldı. Rose, Doughnut, Galaxy, Sports Car ve Lion listelerin tamamında bulundu. Bu gözlem üçüncü taraf kataloğa dayanır. TikTok'un her hesap ve gelecekteki her yayın için aynı kataloğu sunacağını garanti etmez.
