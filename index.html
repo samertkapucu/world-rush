@@ -145,13 +145,51 @@ html.stream-source,html.stream-source body{overflow:hidden}
 #soundUnlock[hidden]{display:none!important}
 #app.stream-mode #soundUnlock{display:none!important}
 
-</style></head><body><main id="app" class="booting broadcast-safe"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN A TEAM · FREE</div>
+
+/* The original championship composition, shared by desktop and LIVE sources. */
+#app.portrait-layout{width:min(100vw,56.25dvh,560px);height:min(100dvh,177.77778vw,995.55556px);min-height:0}
+#app.portrait-layout.stream-mode{width:100vw;height:100dvh}
+#app.portrait-layout #hud{inset:50% auto auto 50%;width:540px;height:960px;padding:18px 15px 20px;
+ transform-origin:center;transform:translate(-50%,-50%) scale(var(--stream-scale));text-shadow:0 2px 10px #000}
+#app.portrait-layout #topStack{max-width:none;gap:12px}
+#app.portrait-layout header{height:106px;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:12px;
+ border:1px solid #7b9cbd66;border-radius:16px;background:linear-gradient(#081324f5,#081324d9);text-align:center}
+#app.portrait-layout header small{font-size:12px;letter-spacing:3px;color:#7bd9ff}
+#app.portrait-layout h1{font-size:34px;letter-spacing:3px;line-height:1.1;text-shadow:0 0 18px #2cc8ff}
+#app.portrait-layout h1 span{color:#fff}
+#app.portrait-layout #meta{margin:0;font-size:13px;color:#ffd979}
+#app.portrait-layout #rank{padding:10px 12px;gap:5px;border-radius:12px;background:#071326ed}
+#app.portrait-layout .racer{height:28px;display:grid;grid-template-columns:24px 24px minmax(0,1fr) auto auto;grid-template-rows:20px 4px;gap:2px 6px;padding:0}
+#app.portrait-layout .pos{grid-row:1/3;width:24px;font-size:15px;color:#ffcf67}
+#app.portrait-layout .flag{width:24px;height:16px}
+#app.portrait-layout .name{font-size:15px;font-weight:900;min-width:0}
+#app.portrait-layout .fans{font-size:11px}
+#app.portrait-layout .pct{font-size:15px;min-width:90px;color:#f8e8ba}
+#app.portrait-layout .miniBar{grid-row:2;grid-column:2/-1;height:4px;width:100%;background:#ffffff22}
+#app.portrait-layout #raceProgress,#app.portrait-layout #progressLabel{display:contents}
+#app.portrait-layout #battle{height:42px;display:flex;align-items:center;justify-content:center;flex:none;max-width:100%;
+ padding:8px;border:1px solid #e4bd6077;border-radius:12px;background:linear-gradient(90deg,#0d2037,#26331c,#0d2037);
+ color:#ffe09c;font-size:17px;font-weight:950;letter-spacing:1px}
+#app.portrait-layout #countdown{font-size:11px;letter-spacing:1.5px;text-align:center;color:#8ee5ff}
+#app.portrait-layout #distance,#app.portrait-layout #progressTrack{display:none}
+#app.portrait-layout #joinHint{position:absolute;bottom:70px;left:15px;right:15px;white-space:normal;font-size:12px;letter-spacing:0}
+#app.portrait-layout #giftGuide{position:absolute;bottom:70px;left:15px;right:15px}
+#app.portrait-layout #event{left:20px;right:20px;top:43%;font-size:25px}
+#app.portrait-layout #comeback{display:none}
+#quickControls{position:absolute;bottom:20px;left:15px;right:15px;display:flex;justify-content:center;gap:5px;pointer-events:auto}
+#quickControls .btn{padding:9px 10px;font-size:13px;background:linear-gradient(#22466b,#10233d);border-radius:9px}
+#app.stream-mode #quickControls{display:none}
+#app.stream-mode #joinHint,#app.stream-mode #giftGuide{bottom:128px}
+#app.portrait-layout #soundUnlock{bottom:12%}
+
+</style></head><body><main id="app" class="booting broadcast-safe portrait-layout"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN A TEAM · FREE</div>
 <div id="giftGuide" hidden aria-label="Hediye efektleri"><span class="giftBubble" data-gift-key="Rose"><span class="giftEmoji">🌹</span><img class="giftArt" hidden alt=""><span class="giftPower">.65s</span></span>
 <span class="giftBubble" data-gift-key="Doughnut"><span class="giftEmoji">🍩</span><img class="giftArt" hidden alt=""><span class="giftPower">1.2s</span></span>
 <span class="giftBubble" data-gift-key="Galaxy"><span class="giftEmoji">🌌</span><img class="giftArt" hidden alt=""><span class="giftPower">4s</span></span>
 <span class="giftBubble" data-gift-key="Sports Car"><span class="giftEmoji">🏎️</span><img class="giftArt" hidden alt=""><span class="giftPower">4s</span></span>
 <span class="giftBubble" data-gift-key="Lion"><span class="giftEmoji">🦁</span><img class="giftArt" hidden alt=""><span class="giftPower">6.5s</span></span></div>
 <div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="event" aria-live="polite"></div><div id="startCountdown" aria-live="polite" hidden>3</div><div id="comeback" hidden></div><div id="teamToast" hidden aria-live="polite"></div><div id="giftMoment" hidden aria-live="polite"></div></div>
+<div id="quickControls"><button class="btn" data-action="join">💬 JOIN</button><button class="btn" data-action="rose">🌹 ROSE</button><button class="btn" data-action="turbo">⚡ TURBO</button><button class="btn" data-action="mega">🌟 MEGA</button><button class="btn" data-action="cam">🎥 CAMERA</button></div>
 <button id="soundUnlock" type="button">🔊 SESİ AÇ / TAP FOR SOUND</button>
 <div id="bridgeBadge" hidden>LIVE SYNC: WAITING</div>
 <div id="safePreview" hidden><div class="topSafe"><span>TIKTOK HEADER</span></div><div class="rightSafe"></div><div class="bottomSafe"><span>COMMENTS + GIFTS</span></div></div>
@@ -174,12 +212,13 @@ import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 const el=document.getElementById('stage'),rank=document.getElementById('rank'),meta=document.getElementById('meta'),event=document.getElementById('event');
+document.getElementById('hud').appendChild(document.getElementById('quickControls'));
 const streamMode=new URLSearchParams(location.search).get('stream')==='1';
 if(streamMode){
  document.getElementById('app').classList.add('stream-mode');
  document.documentElement.classList.add('stream-source');
 }
-const W=560,H=900,scene=new THREE.Scene();scene.background=new THREE.Color('#070a22');scene.fog=new THREE.FogExp2('#080d25',.011);
+const W=560,H=900,scene=new THREE.Scene();scene.background=new THREE.Color('#081120');scene.fog=new THREE.Fog('#081120',22,90);
 const camera=new THREE.PerspectiveCamera(58,W/H,.1,160),renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(streamMode?1:Math.min(2,Math.max(1,devicePixelRatio||1)*2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;el.appendChild(renderer.domElement);
 // Real GPU post-processing pipeline: physically rendered scene -> HDR bloom -> display output.
 const composer=new EffectComposer(renderer);
@@ -240,6 +279,7 @@ for(let z=-72;z<38;z+=18){
   beacon.position.set(side*7.9,1.64,z);accents.add(beacon);
  }
 }
+arena.visible=false;accents.visible=false;
 const effectParticles=[];
 const particleGeo=new THREE.SphereGeometry(.065,5,4);
 for(let i=0;i<4;i++){
@@ -407,7 +447,7 @@ function createCar(i){
  return {group,laneX:(i-1.5)*3.6,progress:0,boost:0,score:0,color:colors[i],i,pace:0,previousRank:i,burst:0,flag,flagBacking,paintMaterials:[paint],model:null}
 }
 cars=teams.map((_,i)=>createCar(i));
-if(streamMode)cars.forEach(car=>car.group.scale.setScalar(1.24));
+cars.forEach(car=>car.group.scale.setScalar(1.24));
  // Optional community GLB; verify model and asset licences before public distribution.
  // Keep original cars as a safe fallback if the remote model cannot load.
  const gt3ModelUrl='https://raw.githubusercontent.com/JaronKBragg7337/spectral-gt-rs/main/spectral_gt_rs_game_ready.glb';
@@ -1054,7 +1094,7 @@ function updateRank(){
   node.setAttribute('aria-label','Select '+teams[c.i]);
   node.querySelector('.pct').textContent=roundState==='results'
    ?(k===0?'🏆 WIN #'+(worldRecords[codes[c.i]]?.wins||1):'P'+(k+1))
-   :(k===0?'LEADER':Math.round((sorted[0].progress-c.progress)*METRES_PER_PERCENT)+'m BACK');
+   :(k===0?Math.floor(c.progress)+'% 👑':Math.floor(c.progress)+'% · -'+Math.round((sorted[0].progress-c.progress)*METRES_PER_PERCENT)+'m');
   node.querySelector('.fill').style.width=Math.max(1,c.progress)+'%';
   node.querySelector('.fill').style.background='#'+c.color.toString(16).padStart(6,'0');
   rank.appendChild(node);
@@ -1062,7 +1102,7 @@ function updateRank(){
  updateLeagueStatus();updateBridgeStatus();
  meta.textContent=roundState==='results'
  ?leagueProfiles[leagueIndex].id+' · RESULTS'
- :leagueProfiles[leagueIndex].id+' · R'+String(round).padStart(2,'0')+' · '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(Math.floor(remaining%60)).padStart(2,'0');
+ :'ROUND '+String(round).padStart(2,'0')+' · '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(Math.floor(remaining%60)).padStart(2,'0');
 }
 const portraitArea={width:540,height:960};
 const carCorner=new THREE.Vector3();
@@ -1070,7 +1110,7 @@ function resize(){
  const {width,height}=el.getBoundingClientRect();
  if(!width||!height)return;
  camera.aspect=width/height;camera.updateProjectionMatrix();
- if(streamMode){
+ {
   const scale=Math.min(width/540,height/960);
   appRoot.style.setProperty('--stream-scale',scale);
   portraitArea.width=540*scale/width;
@@ -1201,7 +1241,7 @@ function loop(now){
   const battleEl=document.getElementById('battle');
   battleEl.textContent=roundState==='results'
    ?flags[winnerIndex]+' '+teams[winnerIndex]+' WINS'
-   :gap<1.6?'NECK & NECK':flags[leader.i]+' '+teams[leader.i]+' +'+Math.round(gap*METRES_PER_PERCENT)+'m';
+   :gap<1.6?'PHOTO FINISH BATTLE':flags[leader.i]+' '+teams[leader.i]+' +'+Math.round(gap*METRES_PER_PERCENT)+'m';
   const leaderHex='#'+dominationColor.getHexString();
   battleEl.style.borderColor=leaderHex;
   battleEl.style.boxShadow='0 0 16px '+leaderHex+'55';
@@ -1224,7 +1264,7 @@ function loop(now){
   countdown.textContent=roundState==='results'?'CHAMPION'
    :finalSprint?'FINAL 35m'
    :remaining<15?'LAST '+Math.ceil(remaining)+'s'
-   :'LIVE';
+   :'LIVE OVERTAKES · EVERY SECOND COUNTS';
   countdown.classList.toggle('urgent',roundState==='racing'&&(finalSprint||remaining<10));
  }
  const cameraTargets=[
@@ -1235,7 +1275,7 @@ function loop(now){
  const highlight=now<closeupUntil||now<spotlightUntil||now<duelFocusUntil;
  const target=cameraTargets[highlight?0:mode],dynamicPos=[...target.pos],dynamicAim=[...target.aim];
  if(highlight){dynamicPos[1]-=1.4;dynamicPos[2]-=2.6;dynamicAim[2]+=1.2}
- if(streamMode){
+ {
   const packCenterZ=(leader.group.position.z+lastCar.group.position.z)/2;
   dynamicPos[0]*=.55;
   dynamicPos[1]=Math.max(dynamicPos[1],23);
@@ -1246,7 +1286,7 @@ function loop(now){
  camera.position.lerp(new THREE.Vector3(...dynamicPos),smooth);
  cameraLook.lerp(new THREE.Vector3(...dynamicAim),smooth);
  camera.lookAt(cameraLook);
- if(streamMode)framePortraitRace();
+ framePortraitRace();
  if(now>flashUntil){event.classList.remove('on');event.classList.remove('prestige')}
  if(now>toastExpiresAt)document.getElementById('teamToast').hidden=true;
  if(now>giftMomentUntil){

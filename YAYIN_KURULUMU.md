@@ -4,6 +4,8 @@
 
 Bu URL, `index.html?stream=1` adresini açar. Gerçek 1080×1920 dikey yayında pist ve HUD o boyuta yeniden render edilir; Chrome adres çubuğunu veya geniş masaüstünü kırpmak gerekmez.
 
+Normal `index.html` ve yayın `live.html` aynı büyük şampiyona başlığını, dört satırlı skor tablosunu ve sade pist düzenini kullanır. Normal ekranda alt test/kamera düğmeleri görünür. Yayın kaynağı 1080×1920 alanını doldurur.
+
 ## Tek seferlik TikTok LIVE Studio kurulumu
 
 1. WORLD RUSH klasöründen **WORLD_RUSH_YAYIN_HAZIRLA.cmd** dosyasını aç. Sunucu yoksa başlatılır ve LIVE URL panoya kopyalanır. Mevcut Python sunucusu çalışıyorsa yenisi açılmaz.
