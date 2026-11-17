@@ -173,7 +173,7 @@ if(streamMode){
  document.getElementById('app').style.setProperty('--stream-scale',scale);
 }
 const W=560,H=900,scene=new THREE.Scene();scene.background=new THREE.Color('#070a22');scene.fog=new THREE.FogExp2('#080d25',.011);
-const camera=new THREE.PerspectiveCamera(58,W/H,.1,160),renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(streamMode?1:Math.min(devicePixelRatio,1.75));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;el.appendChild(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(58,W/H,.1,160),renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(streamMode?1:Math.min(2,Math.max(1,devicePixelRatio||1)*2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;el.appendChild(renderer.domElement);
 // Real GPU post-processing pipeline: physically rendered scene -> HDR bloom -> display output.
 const composer=new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene,camera));
