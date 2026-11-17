@@ -4,7 +4,7 @@
 
 Bu adres, oyunu `index.html?stream=1` üzerinden tek bir tam ekran çerçevede çalıştırır. Adres `live.html` olarak kalır. WebGL ve HUD kaynak boyutuna göre yeniden boyutlanır. 1080×1920 ve 540×960 boyutlarında oyun tüm alanı doldurur. Kare veya yatay kaynakta pist tüm alanı kaplar, skor ve araçlar ortadaki 9:16 alanında kalır. Yayın için kaynak çözünürlüğü yine 1080×1920 olmalıdır.
 
-Yayın yerleşimi 540×960 mantıksal ölçü kullanır. Önemli içerik soldan 22, sağdan 66, üstten 100 ve alttan 170 piksel içeride tutulur. 1080×1920 kaynakta bunlar iki katına çıkar. TikTok'un hedef ve sohbet katmanları hesap/Studio düzenine göre değişebilir. Kendi mobil önizlemende bu alanları kontrol et.
+Yayın yerleşimi 540×960 mantıksal ölçü kullanır. Önemli içerik soldan 22, sağdan 66, üstten 100 ve alttan 300 piksel içeride tutulur. 1080×1920 kaynakta bunlar iki katına çıkar. TikTok'un hedef ve sohbet katmanları hesap/Studio düzenine göre değişebilir. Kendi mobil önizlemende bu alanları kontrol et.
 
 ## Tek seferlik TikTok LIVE Studio kurulumu
 
@@ -103,3 +103,7 @@ Pist kenarlarındaki neon bariyerler, sütunlar ve dış yapılar geri açıldı
 - Lig puanları ilk üçe 3/2/1 olarak verilir ve lig değişiminde sıfırlanır. Sonuç ekranında gelen hediyeler aynı ülkenin sonraki yarışına aktarılır.
 
 Yeni yarışa geçiş toplam yaklaşık 4,5 saniyedir (3 saniye sonuç + 1,5 saniye başlangıç). İlk açılış geri sayımı 3,5 saniye kalır. Her tur bütün ülkeler farklı bir şeride geçer; ülke seçimi, hediyeler ve lig puanları ülkeye bağlı kalır. Arena görünümü NEON CITY, SUNSET CIRCUIT, ARCTIC RUN ve VIOLET NIGHT arasında döner; neon renkleri, zemin/arka plan ve dış bina yükseklikleri değişir.
+
+## Sohbet alanı
+
+LIVE kaynağında alt 300 mantıksal piksel TikTok sohbeti için ayrılır (1080×1920 çıktıda 600 piksel). Başlık ve skor alanı sıkılaştırıldı; katılım yazısı, araçlar ve hediye kartları y=660 sınırının üstündedir. `index.html` normal masaüstü düzeni değişmez. Bu sınır paylaşılan Studio ekranına göre seçildi; TikTok sohbetinin uzunluğu ve katmanları değişebilir. `*-chat-preview.jpg` test görüntülerindeki koyu kutu simülasyondur, oyunda görünmez.

@@ -65,11 +65,11 @@ async function check(page, frame, label, width, height) {
   assert.equal(await frame.locator('.leagueTeam').count(),4);
   for (const row of state.hud) {
     assert.ok(row.left>=21 && row.right<=475, label+' HUD safe width '+JSON.stringify(row));
-    assert.ok(row.top>=99 && row.bottom<=791, label+' HUD safe height '+JSON.stringify(row));
+    assert.ok(row.top>=99 && row.bottom<=660, label+' HUD safe height '+JSON.stringify(row));
   }
   for (const car of state.cars) {
     assert.ok(car.left>=21 && car.right<=475,label+' car width '+JSON.stringify(car));
-    assert.ok(car.top>=470 && car.bottom<=764,label+' car height '+JSON.stringify(car));
+    assert.ok(car.top>=460 && car.bottom<=600,label+' car height '+JSON.stringify(car));
     assert.ok(car.right-car.left>=32,label+' car too small '+JSON.stringify(car));
   }
   await frame.evaluate(()=>Promise.all(document.getAnimations().filter(a=>Number.isFinite(a.effect?.getTiming().duration)).map(a=>a.finished.catch(()=>{}))));
@@ -223,6 +223,13 @@ async function check(page, frame, label, width, height) {
       assert.notEqual(next.arenaIndex,result.arenaIndex);
       assert.equal(new Set(next.lanes).size,4);
       assert.ok(next.lanes.every((lane,i)=>lane!==result.lanes[i]));
+      await frame.evaluate(()=>{
+        const chat=document.createElement('div');chat.id='testChatOverlay';
+        chat.style.cssText='position:absolute;left:22px;right:66px;top:660px;height:260px;padding:16px;background:#10121ac9;color:white;font:14px/1.5 sans-serif;z-index:20';
+        chat.textContent='CHAT OVERLAY SIMULATION — TikTok LIVE welcome message / Viewer comments / Team comments. This shaded area is reserved for chat.';
+        document.querySelector('#hud').appendChild(chat);
+      });
+      await check(page,frame,prefix+'-chat-preview',width,height);
       assert.deepEqual(errors,[]);
       await page.close();
     }

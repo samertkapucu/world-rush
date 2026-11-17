@@ -4,7 +4,7 @@
 
 | Kontrol | Sonuç |
 | --- | --- |
-| 1080×1920, 540×960 ve 1080×1080 | Her boyutta 10 görüntü kontrolü geçti |
+| 1080×1920, 540×960 ve 1080×1080 | Her boyutta 11 görüntü kontrolü geçti |
 | Başlangıç ve ilerleyen yarış | Dört araç, bayraklar ve skor satırları görünür |
 | Üç kamera modu | Araç sınırları tanımlanan güvenli alan içinde |
 | Lion kartı | Simüle WebSocket hediyesi doğru takıma boost verdi |
@@ -18,7 +18,7 @@
 | Ses motoru | Otomatik oynatma izni verilen tarayıcıda AudioContext running |
 | JavaScript | Testlerde sayfa hatası oluşmadı |
 
-Görüntüler doğrudan tarayıcı ekran görüntüleridir. Çizim tamponu boyutu kaynak çözünürlüğüyle aynı ölçüldü. HUD ve araç kutuları mantıksal 540×960 koordinatlara dönüştürülüp sınır denetiminden geçirildi. Test edilen kamera ve yarış durumlarında araç genişlikleri yaklaşık 38–95 mantıksal piksel arasındaydı.
+Görüntüler doğrudan tarayıcı ekran görüntüleridir. Çizim tamponu boyutu kaynak çözünürlüğüyle aynı ölçüldü. HUD ve araç kutuları mantıksal 540×960 koordinatlara dönüştürülüp sınır denetiminden geçirildi. Test edilen kamera ve yarış durumlarında araç genişlikleri yaklaşık 32–87 mantıksal piksel arasındaydı.
 
 Test hızlandırılmış oyun adımlarıyla gerçek oyun mantığını çalıştırır. Ara karelerde GPU çizimi atlanır, kontrol karelerinde gerçek WebGL çıktısı kaydedilir. WebSocket olayları test tarafından üretilir.
 
@@ -39,7 +39,7 @@ Repo kökünde `npm ci`, `npx playwright install chromium`, `npm run test:live` 
 
 ## Windows üzerinde kalan kontroller
 
-Kullanıcının TikTok LIVE Studio sahnesine erişilmedi. Studio'nun gerçek dönüşümü, kişiye özel TikTok katmanları, gerçek yayın sesinin yakalanması ve gerçek TikTok hediye bağlantısı burada doğrulanamadı. Bu testler 60 FPS sonucunu ölçmez. Güvenli alanlar üstte 100, sağda 66, altta 170 mantıksal piksel varsayımıyla düzenlendi. Studio önizlemesiyle kontrol edilmelidir. Windows komut dosyaları Linux ortamında çalıştırılmadı.
+Kullanıcının TikTok LIVE Studio sahnesine erişilmedi. Studio'nun gerçek dönüşümü, kişiye özel TikTok katmanları, gerçek yayın sesinin yakalanması ve gerçek TikTok hediye bağlantısı burada doğrulanamadı. Bu testler 60 FPS sonucunu ölçmez. Güvenli alanlar üstte 100, sağda 66, altta 300 mantıksal piksel varsayımıyla düzenlendi. Studio önizlemesiyle kontrol edilmelidir. Windows komut dosyaları Linux ortamında çalıştırılmadı.
 
 Son görsel güncellemesinde özgün TikTok CDN resimlerinin beş kartta yüklenmesi de otomatik kontrol edildi. Neon yan süslemeleri ve büyütülmüş hediye kartlarıyla üç çözünürlükte testler tekrar çalıştırıldı.
 
@@ -50,3 +50,9 @@ Katılım açıklaması ve hediye kılavuzu sürekli görünür. Araç altındak
 Sonuç ekranı 3 saniye, sonraki başlangıç 1,5 saniyedir. Üç kaynak boyutundaki test, finişten 5 saniye sonra yeni yarışın başladığını, her ülkenin şerit değiştirdiğini ve bekleyen hediyenin doğru destekçiyle taşındığını denetler. `npm run test:live -- --themes-only` dört arena geçişini 1080×1920 boyutunda kontrol eder; ülke kimlikleri ve şerit renklerinin eşleşmesi de denetlenir.
 
 - [Sonraki yarış: yeni şeritler ve Sunset Circuit](live-next-arena-1080x1920.jpg)
+
+## TikTok sohbetine ayrılan alan
+
+Paylaşılan Studio önizlemesine göre kritik içeriklerin alt sınırı y=660 mantıksal piksele çekildi. Test artık tüm HUD kutuları için bu sınırı, araçlar için y=600 sınırını doğrular. Her çözünürlükte sonraki yarışa bir temsili sohbet katmanı eklenerek ekran görüntüsü alınır. Bu katman yalnızca testte bulunur; gerçek TikTok sohbetini kontrol etmez.
+
+- [1080×1920 temsili sohbet önizlemesi](live-chat-preview-1080x1920.jpg)

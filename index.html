@@ -156,7 +156,7 @@ h1 span{color:#75d4ff}
 
 
 /* LIVE capture fills any host viewport. Essential content uses a centered 9:16 area.
-   Safe bounds in logical pixels: x 22..474, y 100..790. */
+   Safe bounds in logical pixels: x 22..474, y 100..660. */
 html.stream-source,html.stream-source body{overflow:hidden}
 #app.portrait-layout.stream-mode{width:100vw;height:100dvh;min-height:0;box-shadow:none}
 #app.stream-mode #operatorPanel,#app.stream-mode #safePreview{display:none!important}
@@ -225,6 +225,33 @@ html.stream-source,html.stream-source body{overflow:hidden}
 #winnerCard{top:450px}
 .carLabel strong{font-size:11px}
 
+/* Keep essential LIVE content above the observed TikTok chat boundary (y=660). */
+#app.stream-mode #hud{padding:100px 66px 300px 22px}
+#app.stream-mode #topStack{gap:6px}
+#app.stream-mode header{height:48px;padding:4px;gap:2px}
+#app.stream-mode header small{display:none}
+#app.stream-mode h1{font-size:24px}
+#app.stream-mode #meta{font-size:11px}
+#app.stream-mode #rank{padding:6px;gap:3px}
+#app.stream-mode .racer{height:25px;grid-template-rows:19px 3px;row-gap:1px}
+#app.stream-mode .miniBar{height:3px}
+#app.stream-mode #battle{height:28px;padding:4px;font-size:14px}
+#app.stream-mode #countdown{font-size:13px}
+#app.stream-mode #joinHint{top:370px;bottom:auto;height:28px;font-size:11px}
+#app.stream-mode #giftGuide{top:602px;bottom:auto;height:50px;gap:6px}
+#app.stream-mode .giftBubble{height:50px;padding:2px;gap:0}
+#app.stream-mode .giftBubble .giftArt{width:24px;height:24px}
+#app.stream-mode .giftBubble .giftEmoji{font-size:22px;height:24px}
+#app.stream-mode .giftBubble .giftName{font-size:10px;line-height:11px}
+#app.stream-mode .giftBubble .giftPower{font-size:10px;line-height:11px}
+#app.stream-mode #giftMoment{top:404px;height:42px}
+#app.stream-mode #giftMoment .giftArt{width:34px;height:34px}
+#app.stream-mode #teamToast,#app.stream-mode #event{top:404px}
+#app.stream-mode #event{font-size:18px}
+#app.stream-mode #startCountdown{top:404px;font-size:56px}
+#app.stream-mode #winnerCard{top:404px;padding:6px}
+#app.stream-mode #winnerCard strong{font-size:19px}
+#app.stream-mode #winnerCard span{font-size:10px}
 </style></head><body><main id="app" class="booting broadcast-safe portrait-layout"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div><div id="leagueBoard" aria-label="Current league points"></div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN · FREE</div>
 <div id="giftGuide" hidden aria-label="Hediye efektleri"><span class="giftBubble" data-gift-key="Rose"><span class="giftEmoji">🌹</span><img class="giftArt" hidden alt=""><span class="giftName">Rose</span><span class="giftPower">.65s</span></span>
 <span class="giftBubble" data-gift-key="Doughnut"><span class="giftEmoji">🍩</span><img class="giftArt" hidden alt=""><span class="giftName">Doughnut</span><span class="giftPower">1.2s</span></span>
@@ -1243,7 +1270,7 @@ function updateCarPresentation(order,now){
   // Keep labels in lane order so simultaneous boosts remain readable.
   const column=22+(car.laneIndex+.5)*113;
   const x=THREE.MathUtils.clamp(270+labelPoint.x*width/(2*scale),column-6,column+6);
-  const y=THREE.MathUtils.clamp(480-labelPoint.y*height/(2*scale),540,665);
+  const y=THREE.MathUtils.clamp(480-labelPoint.y*height/(2*scale),streamMode?484:540,streamMode?590:665);
   node.title=boosting?car.boost.toFixed(1)+'s remaining':'';
   node.style.left=x+'px';node.style.top=y+'px';
   node.style.setProperty('--team-color','#'+car.color.toString(16).padStart(6,'0'));
@@ -1287,7 +1314,7 @@ function framePortraitRace(){
  }
  // Fit the pack between the score panel and TikTok's comment area.
  const bounds=streamMode
-  ?{left:22,right:474,top:516,bottom:670}
+  ?{left:22,right:474,top:466,bottom:596}
   :{left:24.3,right:515.7,top:408,bottom:801.6};
  const targetWidth=(bounds.right-bounds.left)/270*portraitArea.width;
  const targetHeight=(bounds.bottom-bounds.top)/480*portraitArea.height;
