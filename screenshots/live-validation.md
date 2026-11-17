@@ -4,18 +4,21 @@
 
 | Kontrol | Sonuç |
 | --- | --- |
-| 1080×1920, 540×960 ve 1080×1080 | Her boyutta 7 görüntü kontrolü geçti |
+| 1080×1920, 540×960 ve 1080×1080 | Her boyutta 10 görüntü kontrolü geçti |
 | Başlangıç ve ilerleyen yarış | Dört araç, bayraklar ve skor satırları görünür |
 | Üç kamera modu | Araç sınırları tanımlanan güvenli alan içinde |
 | Lion kartı | Simüle WebSocket hediyesi doğru takıma boost verdi |
 | Tekrarlanan hediye kimliği | Puan ikinci kez eklenmedi |
 | Takım seçmemiş izleyicinin hediyesi | Rastgele takıma atanmadı |
-| Yeni tur | Oyun otomatik olarak sonraki tura geçti |
+| Dört eşzamanlı hediye | Dört araçta ayrı destekçi ve turbo etiketi |
+| Son 50 metre | FINAL SPRINT ve kalan mesafe gösterildi |
+| Finiş ve lig | Kazanan kartı, 3/2/1 puan ve sonraki yarış sayacı doğrulandı |
+| Yeni tur | Sonuç ekranındaki hediye, doğru destekçi adıyla sonraki yarışa aktarıldı |
 | 540×960 → 1080×1080 → 1080×1920 → 540×960 | Aynı açık kaynakta yeniden boyutlandırma geçti |
 | Ses motoru | Otomatik oynatma izni verilen tarayıcıda AudioContext running |
 | JavaScript | Testlerde sayfa hatası oluşmadı |
 
-Görüntüler doğrudan tarayıcı ekran görüntüleridir. Çizim tamponu boyutu kaynak çözünürlüğüyle aynı ölçüldü. HUD ve araç kutuları mantıksal 540×960 koordinatlara dönüştürülüp sınır denetiminden geçirildi. Test edilen kamera ve yarış durumlarında araç genişlikleri yaklaşık 56–118 mantıksal piksel arasındaydı.
+Görüntüler doğrudan tarayıcı ekran görüntüleridir. Çizim tamponu boyutu kaynak çözünürlüğüyle aynı ölçüldü. HUD ve araç kutuları mantıksal 540×960 koordinatlara dönüştürülüp sınır denetiminden geçirildi. Test edilen kamera ve yarış durumlarında araç genişlikleri yaklaşık 38–95 mantıksal piksel arasındaydı.
 
 Test hızlandırılmış oyun adımlarıyla gerçek oyun mantığını çalıştırır. Ara karelerde GPU çizimi atlanır, kontrol karelerinde gerçek WebGL çıktısı kaydedilir. WebSocket olayları test tarafından üretilir.
 
@@ -24,6 +27,9 @@ Test hızlandırılmış oyun adımlarıyla gerçek oyun mantığını çalışt
 - [1080×1920 başlangıç](live-start-1080x1920.jpg)
 - [1080×1920 yarış](world-rush-1080x1920.jpg)
 - [1080×1920 simüle hediye](live-gift-1080x1920.jpg)
+- [1080×1920 dört turbo](live-four-boosts-1080x1920.jpg)
+- [1080×1920 son sprint](live-sprint-1080x1920.jpg)
+- [1080×1920 kazanan](live-winner-1080x1920.jpg)
 - [540×960 yarış](live-540x960.jpg)
 - [1080×1080 kaynak](live-square-1080x1080.jpg)
 
@@ -36,3 +42,5 @@ Repo kökünde `npm ci`, `npx playwright install chromium`, `npm run test:live` 
 Kullanıcının TikTok LIVE Studio sahnesine erişilmedi. Studio'nun gerçek dönüşümü, kişiye özel TikTok katmanları, gerçek yayın sesinin yakalanması ve gerçek TikTok hediye bağlantısı burada doğrulanamadı. Bu testler 60 FPS sonucunu ölçmez. Güvenli alanlar üstte 100, sağda 66, altta 170 mantıksal piksel varsayımıyla düzenlendi. Studio önizlemesiyle kontrol edilmelidir. Windows komut dosyaları Linux ortamında çalıştırılmadı.
 
 Son görsel güncellemesinde özgün TikTok CDN resimlerinin beş kartta yüklenmesi de otomatik kontrol edildi. Neon yan süslemeleri ve büyütülmüş hediye kartlarıyla üç çözünürlükte testler tekrar çalıştırıldı.
+
+Katılım açıklaması ve hediye kılavuzu sürekli görünür. Araç altındaki halka lideri veya aktif turboyu belirtir. Turbo etiketindeki süre son olayın gerçekten eklediği süredir; 10 saniyelik toplam sınırı uygulanır. Lig puanları mevcut lig boyunca birikir; lig değişiminde sıfırlanır. Yerel testlerin destekçi adı DEMO olarak işaretlenir.

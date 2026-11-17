@@ -27,7 +27,7 @@ npm run test:live
 npm run test:live -- --resize-only
 ```
 
-Test kendi yerel HTTP sunucusunu açar. 1080×1920, 540×960 ve 1080×1080 kaynaklarda başlangıcı, yarışın ilerleyen bölümünü, Lion efektini, üç kamera modunu ve sonraki turu çalıştırır. Dört aracın ve HUD'un görünür sınırlarını ölçer. Görüntüler ve ölçümler `work/live-check/` içine yazılır. Yerel WebSocket olayları simüle edilir. Test hızlandırılmış oyun adımları ve gerçek WebGL ekran görüntüleri kullanır, FPS ölçümü yapmaz.
+Test kendi yerel HTTP sunucusunu açar. 1080×1920, 540×960 ve 1080×1080 kaynaklarda başlangıcı, yarışın ilerleyen bölümünü, Lion efektini, dört eşzamanlı turboyu, üç kamera modunu, son sprinti, kazanan ekranını ve sonraki tura aktarılan hediyeyi çalıştırır. Dört aracın ve HUD'un görünür sınırlarını ölçer. Görüntüler ve ölçümler `work/live-check/` içine yazılır. Yerel WebSocket olayları simüle edilir. Test hızlandırılmış oyun adımları ve gerçek WebGL ekran görüntüleri kullanır, FPS ölçümü yapmaz.
 
 Sistem Chromium'u kullanmak için `WORLD_RUSH_CHROMIUM` ortam değişkenine çalıştırılabilir dosya yolunu ver. Kaynaklar Three.js CDN'inden yüklenir. Otomasyonun Web Audio durumunu kontrol etmesi, Studio'nun sesi yakaladığını veya gerçek TikTok hediyelerinin ulaştığını doğrulamaz.
 
@@ -77,7 +77,7 @@ Gerçek hediye kataloğunu LIVE Gift ekranından kontrol et. Oyunda normal sayfa
 
 - iPhone Safari'de WORLD RUSH açıldığında oyun üzerinde **🔊 SESİ AÇ / TAP FOR SOUND** düğmesine **bir kez dokun**. Ses başlamasının ardından düğme gizlenir. Sesin duyulup duyulmadığını kısa onay tonuyla kontrol et. iPhone'un medya sesini de aç.
 - TikTok Mobile Gaming'den Safari'ye dönerken iOS Web Audio'yu askıya alabilir. Ses kesilirse Safari'deki ses düğmesine yeniden dokun. Ekran paylaşımında oyun sesinin izleyicilere de gittiğini ikinci hesaptan mutlaka dinleyerek doğrula; iOS/TikTok yakalama davranışı değişebilir.
-- Hediye kılavuzu artık **🌹 🍩 🌌 🏎️ 🦁** ikonlarıyla kısa süreli görünür; sıralama paneli yukarı taşındı. Gerçek TikTok LIVE bağlantısı kurulduğunda oyun **TikTok'un kendi hediye kataloglarından gelen görsel URL'lerini** kullanmayı dener. Katalogda görsel yoksa veya CDN erişilemiyorsa emoji görünür. Bu görseller gerçek bir hediye alınana kadar gelen hediye sayısı veya geliri temsil etmez.
+- Hediye kılavuzu TikTok CDN görselleriyle sürekli görünür; sıralama paneli yukarı taşındı. Gerçek TikTok LIVE bağlantısı kurulduğunda oyun **TikTok'un kendi hediye kataloglarından gelen görsel URL'lerini** kullanmayı dener. Katalogda görsel yoksa veya CDN erişilemiyorsa emoji görünür. Bu görseller gerçek bir hediye alınana kadar gelen hediye sayısı veya geliri temsil etmez.
 - Gerçek hediye geldiğinde görsel kart ve kısa efekt çıkar; manuel **TEST** düğmeleri yalnızca simülasyondur.
 
 ## Önemli teknik sınırlar
@@ -93,3 +93,11 @@ Gerçek hediye kataloğunu LIVE Gift ekranından kontrol et. Oyunda normal sayfa
 Ekrandaki eski @kullanıcı adı kaldırıldı. Köprü başlatılırken mevcut TikTok kullanıcı adını gir. Boş bırakıldığında eski hesaba bağlanmayı denemez.
 
 Pist kenarlarındaki neon bariyerler, sütunlar ve dış yapılar geri açıldı. Büyük hediye kartları Rose, Doughnut, Galaxy, Sports Car ve Lion görsellerini doğrudan TikTok CDN'inden yükler. Kaynak ve 106 bölge karşılaştırması [hediye görsel raporunda](screenshots/gift-artwork-sources.md) bulunur.
+
+## Yarışın yeni izleyici akışı
+
+- Yorumla ülke seçme açıklaması sürekli görünür. Katılım ücretsizdir.
+- Hediye geldiğinde ilgili aracın üzerinde destekçi adı ve gerçekten eklenen turbo süresi görünür. Dört takımın aynı anda turbo alması desteklenir.
+- Altın halka lideri, takım rengindeki halka aktif turboyu gösterir. Geçiş bildirimi gerçek sıralama değişiminden gelir.
+- Son 50 metrede FINAL SPRINT görünür. Finişte kazanan kartı, lig puanı ve 8 saniyelik sonraki yarış sayacı gösterilir.
+- Lig puanları ilk üçe 3/2/1 olarak verilir ve lig değişiminde sıfırlanır. Sonuç ekranında gelen hediyeler aynı ülkenin sonraki yarışına aktarılır.

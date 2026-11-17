@@ -194,13 +194,44 @@ html.stream-source,html.stream-source body{overflow:hidden}
 #app.portrait-layout #giftMoment .giftArt{width:56px;height:56px}
 #app.portrait-layout #giftMoment .giftEmoji{font-size:46px}
 
-</style></head><body><main id="app" class="booting broadcast-safe portrait-layout"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN A TEAM · FREE</div>
+
+/* Keep joining instructions visible while gifts, race status and results change. */
+#app.portrait-layout #joinHint{bottom:18px;min-height:28px;display:flex;align-items:center;justify-content:center;
+ padding:5px 8px;background:#081526ed;border:1px solid #42647d;border-radius:7px;font-size:12px}
+#app.portrait-layout #giftGuide{bottom:58px}
+#app.stream-mode #joinHint{bottom:170px;left:22px;right:66px}
+#app.stream-mode #giftGuide{bottom:210px}
+#app:not(.stream-mode) #joinHint{bottom:67px}
+#app:not(.stream-mode) #giftGuide{bottom:106px}
+#leagueBoard{display:flex;gap:5px;align-items:center;font-size:11px;color:#d8e9f4}
+#leagueBoard strong{color:#f6d78b;font-size:10px;letter-spacing:.5px}
+.leagueTeam{flex:1;text-align:center;background:#0b1b2eee;border:1px solid #3b536e;border-radius:5px;padding:4px 2px;font-variant-numeric:tabular-nums}
+.leagueTeam.first{border-color:#edca73;color:#ffe5a3}
+#app.portrait-layout #countdown{font-size:14px;font-weight:850;letter-spacing:.4px;color:#cfecff}
+#app.portrait-layout #countdown.urgent{color:#ffcf69;text-shadow:0 0 14px #ff8d3544}
+#winnerCard{position:absolute;top:438px;left:22px;right:66px;z-index:8;text-align:center;background:#081526f5;border:2px solid #f3d181;border-radius:12px;padding:9px;box-shadow:0 0 30px #ffbc4433}
+#winnerCard strong{display:block;font-size:23px;color:#ffe5a3;line-height:1.2}
+#winnerCard span{display:block;font-size:12px;color:#d0eaff;margin-top:3px}
+#carLabels{position:absolute;inset:0;pointer-events:none}
+.carLabel{position:absolute;width:100px;transform:translate(-50%,-100%);padding:4px 3px;border:1px solid var(--team-color);border-radius:6px;background:#071321ee;text-align:center;font-size:11px;line-height:1.25;box-shadow:0 2px 10px #0009}
+.carLabel strong,.carLabel span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.carLabel strong{color:#fff;font-size:12px}
+.carLabel span{color:#b8e8ff;font-size:10px}
+.carLabel.leader{border-color:#edcb75;color:#ffe1a0}
+#app.stream-mode #event,#app.stream-mode #teamToast{top:46%}
+#app.stream-mode #giftMoment{top:450px;height:48px}
+#app.portrait-layout #giftMoment .giftArt{width:40px;height:40px}
+#app.stream-mode #teamToast{top:450px}
+#winnerCard{top:450px}
+.carLabel strong{font-size:11px}
+
+</style></head><body><main id="app" class="booting broadcast-safe portrait-layout"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div><div id="leagueBoard" aria-label="Current league points"></div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN A TEAM · FREE</div>
 <div id="giftGuide" hidden aria-label="Hediye efektleri"><span class="giftBubble" data-gift-key="Rose"><span class="giftEmoji">🌹</span><img class="giftArt" hidden alt=""><span class="giftName">Rose</span><span class="giftPower">.65s</span></span>
 <span class="giftBubble" data-gift-key="Doughnut"><span class="giftEmoji">🍩</span><img class="giftArt" hidden alt=""><span class="giftName">Doughnut</span><span class="giftPower">1.2s</span></span>
 <span class="giftBubble" data-gift-key="Galaxy"><span class="giftEmoji">🌌</span><img class="giftArt" hidden alt=""><span class="giftName">Galaxy</span><span class="giftPower">4s</span></span>
 <span class="giftBubble" data-gift-key="Sports Car"><span class="giftEmoji">🏎️</span><img class="giftArt" hidden alt=""><span class="giftName">Sports Car</span><span class="giftPower">4s</span></span>
 <span class="giftBubble" data-gift-key="Lion"><span class="giftEmoji">🦁</span><img class="giftArt" hidden alt=""><span class="giftName">Lion</span><span class="giftPower">6.5s</span></span></div>
-<div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="event" aria-live="polite"></div><div id="startCountdown" aria-live="polite" hidden>3</div><div id="comeback" hidden></div><div id="teamToast" hidden aria-live="polite"></div><div id="giftMoment" hidden aria-live="polite"></div></div>
+<div id="progressTrack"><div id="progressFill"></div><span class="trackCar" id="trackCar0" style="top:1px;background:#ff3656;color:#ff3656"></span><span class="trackCar" id="trackCar1" style="top:4px;background:#16cb77;color:#16cb77"></span><span class="trackCar" id="trackCar2" style="top:7px;background:#349aff;color:#349aff"></span><span class="trackCar" id="trackCar3" style="top:10px;background:#ffc12f;color:#ffc12f"></span><div id="finishMark"></div></div></div></div><div id="carLabels"></div><div id="winnerCard" hidden aria-live="polite"><strong></strong><span></span></div><div id="event" aria-live="polite"></div><div id="startCountdown" aria-live="polite" hidden>3</div><div id="comeback" hidden></div><div id="teamToast" hidden aria-live="polite"></div><div id="giftMoment" hidden aria-live="polite"></div></div>
 <div id="quickControls"><button class="btn" data-action="join">💬 JOIN</button><button class="btn" data-action="rose">🌹 ROSE</button><button class="btn" data-action="turbo">⚡ TURBO</button><button class="btn" data-action="mega">🌟 MEGA</button><button class="btn" data-action="cam">🎥 CAMERA</button></div>
 <button id="soundUnlock" type="button">🔊 SESİ AÇ / TAP FOR SOUND</button>
 <div id="bridgeBadge" hidden>LIVE SYNC: WAITING</div>
@@ -646,7 +677,7 @@ const soundEngine={
 };
 
 function flash(s){
- if(streamMode&&performance.now()<giftMomentUntil)return;
+ if(roundState==='results'||(streamMode&&performance.now()<giftMomentUntil))return;
  event.textContent=s;event.classList.add('on');event.classList.remove('prestige');
  flashUntil=performance.now()+1700;
 }
@@ -672,7 +703,7 @@ function applyLeagueRoster(){
  }
  selected=0;
  const joinHint=document.getElementById('joinHint');
- if(joinHint){joinHint.textContent='WHEN LIVE: COMMENT '+codes.join(' / ')+' TO JOIN · FREE';joinHint.classList.remove('following')}
+ if(joinHint){joinHint.textContent='COMMENT '+codes.join(' / ')+' → JOIN YOUR TEAM · FREE';joinHint.hidden=false}
  const label=document.getElementById('leagueStatus');
  if(label)label.textContent=leagueProfiles[leagueIndex].title+' · LOCAL TEST · NO REAL GIFT DATA';
 }
@@ -708,9 +739,14 @@ function updateLeagueStatus(){
 }
 
 function resetRound(){
+ document.getElementById('winnerCard').hidden=true;
  if(queuedLeagueChange||Date.now()>=leagueEndsAt)advanceLeague();
  round++;remaining=ROUND_SECONDS;roundState='countdown';countdownUntil=performance.now()+3500;shownStartDigit=0;winnerIndex=-1;leadIndex=-1;finishReason='';soundEngine.finalCued=false;
- cars.forEach(c=>{c.progress=0;c.boost=0;c.pace=0;c.burst=0;c.group.position.z=20;c.group.position.x=c.laneX;c.group.rotation.set(0,0,0)});
+ cars.forEach(car=>{
+  car.progress=0;car.boost=0;car.pace=0;car.burst=0;
+  car.group.position.set(car.laneX,0,20);car.group.rotation.set(0,0,0);
+  car.supporter='';car.supportAdded=0;car.overtakeUntil=0;
+ });
  previousRankOrder=[0,1,2,3];lastOvertakeMoment=performance.now();duelFocusUntil=0;duelFocusIndex=-1;
  flashUntil=0;event.classList.remove('on');
 }
@@ -720,9 +756,15 @@ function finishRound(now,byTime){
  winnerIndex=order[0].i;
  season[order[0].i]+=3;season[order[1].i]+=2;season[order[2].i]+=1;
  recordWorldResults(order);
- roundState='results';finishReason=byTime?'TIME LIMIT':'FINISH LINE';resultUntil=now+5200;
+ roundState='results';finishReason=byTime?'TIME LIMIT':'FINISH LINE';resultUntil=now+8000;
+ document.getElementById('giftMoment').hidden=true;giftMomentUntil=0;
+ document.getElementById('teamToast').hidden=true;
+ const winnerCard=document.getElementById('winnerCard');
+ winnerCard.querySelector('strong').textContent=codes[winnerIndex]+' · '+teams[winnerIndex]+' WINS!';
+ winnerCard.querySelector('span').textContent='+3 LEAGUE POINTS · '+season[winnerIndex]+' TOTAL · '+(worldRecords[codes[winnerIndex]]?.wins||1)+' WINS';
+ winnerCard.hidden=false;
  flash('🏆 '+flags[winnerIndex]+' '+teams[winnerIndex]+' WINS!');soundEngine.play('win');
- flashUntil=now+4200;
+ flashUntil=0;event.classList.remove('on');
 }
 function effect(type){
  const c=cars[selected];
@@ -734,6 +776,7 @@ function effect(type){
  const deficit=order[0].progress-c.progress;
  const comeback=deficit*METRES_PER_PERCENT>=12 && order[0].i!==selected;
  const boostTime=Math.min(10,c.boost+power*(comeback?1.25:1));
+ c.supportAdded=boostTime-c.boost;c.supporter='DEMO';
  c.boost=boostTime;c.burst=performance.now()+1800;
  flash(flags[selected]+' '+(comeback?'COMEBACK +25% BOOST!':({rose:'SPEED UP!',turbo:'TURBO ACTIVATED!',mega:'MEGA OVERDRIVE!'}[type])));soundEngine.play(type);
 }
@@ -757,6 +800,7 @@ const pendingUnassignedGifts=new Map();
 let liveFollowEvents=0,liveUniqueShares=0;
 let toastExpiresAt=0,lastJoinToastAt=0;
 function showTeamToast(message,teamCode){
+ if(roundState==='results')return;
  const node=document.getElementById('teamToast');if(!node)return;
  node.textContent=message;
  const c=countryLibrary[teamCode];node.style.borderColor='#'+(c?c.color:0x40d6ff).toString(16).padStart(6,'0');
@@ -791,7 +835,7 @@ function recordWorldResults(orderedCars){
  saveWorldRecords();
 }
 let connectedToLive=false,tiktokStreamOnline=false,liveSocket=null,liveReconnect=0;
-const pendingByCountry=Object.create(null);
+const pendingByCountry=Object.create(null),pendingSupporters=Object.create(null);
 
 // Artwork is decorative. Gift receipts and boosts come from received events.
 // Public TikTok CDN artwork listed by StreamToEarn. LIVE metadata takes precedence.
@@ -859,6 +903,7 @@ function addGiftArtwork(giftName,url){
 }
 function showGiftMoment(msg,team,tier,source,nick){
  const node=document.getElementById('giftMoment');if(!node)return;
+ if(roundState==='results'){addGiftArtwork(msg.giftName,msg.giftIconUrl);return}
  if(streamMode){
   event.classList.remove('on','prestige');
   document.getElementById('teamToast').hidden=true;
@@ -992,8 +1037,11 @@ function applyGift(msg){
  const countFactor=Math.min(2,1+Math.log2(quantity)/4),boost=tier.boost*countFactor*(comeback?1.25:1);
  if(source==='live')giftTotals[team]=(giftTotals[team]||0)+Math.round(points*quantity);
  updateLastGift((source==='live'?'LIVE':'TEST')+' '+nick+' · '+String(msg.giftName||'?')+' ×'+quantity+' · '+points+' pts → '+team+' · '+tier.label+' ('+tier.boost+'s base)');
- if(roundState!=='racing'){pendingByCountry[team]=Math.min(10,(pendingByCountry[team]||0)+boost);showGiftMoment(msg,team,{...tier,label:'NEXT RACE'},source,nick);return}
+ if(roundState!=='racing'){pendingSupporters[team]=(source==='test'?'DEMO · ':'')+nick;pendingByCountry[team]=Math.min(10,(pendingByCountry[team]||0)+boost);showGiftMoment(msg,team,{...tier,label:'NEXT RACE'},source,nick);return}
+ const added=Math.min(10-car.boost,boost);
  car.boost=Math.min(10,car.boost+boost);car.burst=performance.now()+2100;
+ car.supporter=(source==='test'?'DEMO · ':'')+nick;
+ car.supportAdded=added;
  if(tier.cinematic){
   spotlightIndex=i;spotlightUntil=performance.now()+(tier.cameraDuration||3300);
  }
@@ -1128,6 +1176,50 @@ function updateRank(){
  ?leagueProfiles[leagueIndex].id+' · RESULTS'
  :'ROUND '+String(round).padStart(2,'0')+' · '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(Math.floor(remaining%60)).padStart(2,'0');
 }
+const leagueBoard=document.getElementById('leagueBoard');
+const leagueTitle=document.createElement('strong');leagueTitle.textContent='LEAGUE';leagueBoard.appendChild(leagueTitle);
+const leagueRows=cars.map((car,i)=>{
+ const node=document.createElement('span');node.className='leagueTeam';node.textContent=codes[i]+' 0 PT';leagueBoard.appendChild(node);return node;
+});
+const carLabels=cars.map(()=>{
+ const node=document.createElement('div');node.className='carLabel';node.hidden=true;
+ node.append(document.createElement('strong'),document.createElement('span'));
+ document.getElementById('carLabels').appendChild(node);return node;
+});
+const raceRings=cars.map(()=>{
+ const ring=new THREE.Mesh(new THREE.RingGeometry(1.3,1.43,40),new THREE.MeshBasicMaterial({color:0xffdd88,transparent:true,opacity:.7,side:THREE.DoubleSide,depthWrite:false}));
+ ring.rotation.x=-Math.PI/2;ring.scale.y=1.8;ring.visible=false;scene.add(ring);return ring;
+});
+const labelPoint=new THREE.Vector3();
+function updateCarPresentation(order,now){
+ const width=el.clientWidth,height=el.clientHeight,scale=Math.min(width/540,height/960);
+ for(const car of cars){
+  const leading=order[0]===car,boosting=roundState==='racing'&&car.boost>0;
+  const passing=roundState==='racing'&&now<(car.overtakeUntil||0);
+  const ring=raceRings[car.i];
+  ring.position.set(car.group.position.x,.035,car.group.position.z);
+  ring.visible=roundState!=='countdown'&&(boosting||leading);
+  ring.material.color.setHex(boosting?car.color:0xffd778);
+  ring.material.opacity=boosting?.65+Math.sin(now*.012)*.2:.55;
+  const node=carLabels[car.i];
+  node.hidden=roundState!=='racing'||!(boosting||leading||passing);
+  if(node.hidden)continue;
+  labelPoint.set(car.group.position.x,2.6,car.group.position.z-2.4).project(camera);
+  // Keep labels in lane order so simultaneous boosts remain readable.
+  const column=22+(car.i+.5)*113;
+  const x=THREE.MathUtils.clamp(270+labelPoint.x*width/(2*scale),column-6,column+6);
+  const y=THREE.MathUtils.clamp(480-labelPoint.y*height/(2*scale),540,665);
+  node.title=boosting?car.boost.toFixed(1)+'s remaining':'';
+  node.style.left=x+'px';node.style.top=y+'px';
+  node.style.setProperty('--team-color','#'+car.color.toString(16).padStart(6,'0'));
+  node.classList.toggle('leader',leading&&!boosting);
+  node.querySelector('strong').textContent=boosting?'+'+(car.supportAdded||0).toFixed(1)+'s TURBO':codes[car.i]+(passing?' · OVERTAKE':' · LEADER');
+  node.querySelector('span').textContent=boosting
+   ?codes[car.i]+' · '+(car.supporter||'DEMO')
+   :passing?'P'+(order.indexOf(car)+1):'P1';
+ }
+}
+
 const portraitArea={width:1,height:1};
 const carCorner=new THREE.Vector3();
 function resize(){
@@ -1160,7 +1252,7 @@ function framePortraitRace(){
  }
  // Fit the pack between the score panel and TikTok's comment area.
  const bounds=streamMode
-  ?{left:22,right:474,top:476,bottom:710}
+  ?{left:22,right:474,top:516,bottom:670}
   :{left:24.3,right:515.7,top:408,bottom:801.6};
  const targetWidth=(bounds.right-bounds.left)/270*portraitArea.width;
  const targetHeight=(bounds.bottom-bounds.top)/480*portraitArea.height;
@@ -1184,7 +1276,7 @@ function loop(now){
  if(roundState==='countdown'){
   const digit=Math.max(0,Math.ceil((countdownUntil-now)/1000));
   if(digit>0){countdownNode.hidden=false;countdownNode.textContent=String(Math.min(3,digit));if(shownStartDigit!==digit){shownStartDigit=digit;soundEngine.play('count')}}
-  else{countdownNode.hidden=true;roundState='racing';cars.forEach((car,i)=>{const saved=pendingByCountry[codes[i]]||0;if(saved){car.boost=Math.min(10,car.boost+saved);car.burst=performance.now()+1750;delete pendingByCountry[codes[i]]}});flash('GO!');soundEngine.play('go')}
+  else{countdownNode.hidden=true;roundState='racing';cars.forEach((car,i)=>{const saved=pendingByCountry[codes[i]]||0;if(saved){car.boost=Math.min(10,car.boost+saved);car.supportAdded=saved;car.supporter=pendingSupporters[codes[i]]||'';delete pendingSupporters[codes[i]];car.burst=performance.now()+1750;delete pendingByCountry[codes[i]]}});flash('GO!');soundEngine.play('go')}
  }else countdownNode.hidden=true;
  const racing=roundState==='racing';
  if(racing)remaining=Math.max(0,remaining-dt);
@@ -1232,9 +1324,9 @@ function loop(now){
   const climber=currentRank.find((index,place)=>place<previousRankOrder.indexOf(index));
   if(climber!==undefined&&now-lastOvertakeMoment>5500&&now>=spotlightUntil){
    lastOvertakeMoment=now;duelFocusIndex=climber;duelFocusUntil=now+2400;
-   const passing=cars[climber];passing.burst=now+1900;
+   const passing=cars[climber];passing.burst=now+1900;passing.overtakeUntil=now+1900;
    if(climber!==leader.i){
-    flash(codes[climber]+' '+teams[climber]+' MAKES A MOVE!');
+    flash(codes[climber]+' OVERTAKES · P'+(currentRank.indexOf(climber)+1));
    }
    soundEngine.play('lead');
    nextCameraSwitch=Math.max(nextCameraSwitch,now+3500);
@@ -1254,20 +1346,14 @@ function loop(now){
  uiTick+=dt;
  if(uiTick>=.12){
   uiTick=0;updateRank();
-  // Follow reminder uses the existing caption row, never obscures the cars.
   const joinHint=document.getElementById('joinHint');
-  if(joinHint){
-   const phase=(now/1000)%37;
-   const showFollow=roundState==='results'||(roundState==='racing'&&phase>=28&&phase<34);
-   const showGiftGuide=roundState==='racing'&&phase>=16&&phase<27;
-   const giftGuide=document.getElementById('giftGuide');
-   if(giftGuide)giftGuide.hidden=!showGiftGuide;
-   joinHint.hidden=showGiftGuide;
-   joinHint.classList.toggle('following',showFollow);
-   joinHint.textContent=showFollow
-    ?"FOLLOW FOR THE NEXT COUNTRY LEAGUE"
-    :'COMMENT '+codes.join(' / ')+' TO JOIN A TEAM · FREE';
-  }
+  joinHint.hidden=false;
+  joinHint.textContent='COMMENT '+codes.join(' / ')+' → JOIN YOUR TEAM · FREE';
+  document.getElementById('giftGuide').hidden=false;
+  leagueRows.forEach((node,i)=>{
+   node.textContent=codes[i]+' '+season[i]+' PT';
+   node.classList.toggle('first',season[i]>0&&season[i]===Math.max(...season));
+  });
   const battleEl=document.getElementById('battle');
   battleEl.textContent=roundState==='results'
    ?flags[winnerIndex]+' '+teams[winnerIndex]+' WINS'
@@ -1288,13 +1374,15 @@ function loop(now){
    comebackEl.textContent=flags[underdog.i]+' '+teams[underdog.i]+' '+deficit+'m BACK  ·  COMEBACK ×1.25';
    comebackEl.style.borderColor='#'+colors[underdog.i].toString(16).padStart(6,'0');
   }
-  const finalSprint=remainingMetres<=35;
+  const finalSprint=remainingMetres<=50;
   if(roundState==='racing'&&finalSprint&&!soundEngine.finalCued){soundEngine.finalCued=true;soundEngine.play('final')}
   const countdown=document.getElementById('countdown');
-  countdown.textContent=roundState==='results'?'CHAMPION'
-   :finalSprint?'FINAL 35m'
-   :remaining<15?'LAST '+Math.ceil(remaining)+'s'
-   :'LIVE OVERTAKES · EVERY SECOND COUNTS';
+  countdown.textContent=roundState==='results'
+   ?'NEXT RACE IN '+Math.max(1,Math.ceil((resultUntil-now)/1000))+'s · PICK YOUR TEAM'
+   :roundState==='countdown'?'260m RACE · READY TO START'
+   :finalSprint?'FINAL SPRINT · '+remainingMetres+'m TO FINISH'
+   :remaining<15?'LAST '+Math.ceil(remaining)+'s · '+remainingMetres+'m LEFT'
+   :remainingMetres+'m TO FINISH · '+Math.ceil(remaining)+'s';
   countdown.classList.toggle('urgent',roundState==='racing'&&(finalSprint||remaining<10));
  }
  const cameraTargets=[
@@ -1317,13 +1405,14 @@ function loop(now){
  cameraLook.lerp(new THREE.Vector3(...dynamicAim),smooth);
  camera.lookAt(cameraLook);
  framePortraitRace();
+ updateCarPresentation(order,now);
  if(now>flashUntil){event.classList.remove('on');event.classList.remove('prestige')}
  if(now>toastExpiresAt)document.getElementById('teamToast').hidden=true;
  if(now>giftMomentUntil){
   const moment=document.getElementById('giftMoment');
   moment.classList.remove('on');moment.hidden=true;
  }
- soundEngine.update(roundState==='racing',Math.max(0,RACE_METRES-leader.progress*METRES_PER_PERCENT)<=35,leader.progress);
+ soundEngine.update(roundState==='racing',Math.max(0,RACE_METRES-leader.progress*METRES_PER_PERCENT)<=50,leader.progress);
  renderer.toneMappingExposure=1.07+Math.sin(t*.35)*.02;
  bloom.strength=.18+(racing&&cars.some(c=>c.boost>0)?.065:0);
  composer.render();
@@ -1333,6 +1422,8 @@ function beginRace(){
  const app=document.getElementById('app');
  if(!app.classList.contains('booting'))return;
  applyLeagueRoster();cars.forEach(c=>c.group.position.z=20);updateRank();
+ document.getElementById('countdown').textContent='260m RACE · READY TO START';
+ document.getElementById('giftGuide').hidden=false;
  remaining=ROUND_SECONDS;roundState='countdown';countdownUntil=performance.now()+3500;
  last=performance.now();shownStartDigit=0;
  document.getElementById('bootScreen').hidden=true;app.classList.remove('booting');

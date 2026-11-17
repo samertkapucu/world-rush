@@ -17,7 +17,7 @@ window.__inspectRace=()=>{
   return {x:(v.x*area.width/2)/scale+270,y:(-v.y*area.height/2)/scale+480};
  };
  return {
-  roundState,round,mode,remaining,boosts:cars.map(c=>c.boost),
+  roundState,round,mode,remaining,season:[...season],codes:[...codes],metres:Math.max(0,Math.ceil(RACE_METRES-Math.max(...cars.map(c=>c.progress))*METRES_PER_PERCENT)),boosts:cars.map(c=>c.boost),
   audio:{enabled:soundEngine.enabled,state:soundEngine.ctx?.state},
   cars:cars.map(car=>{
    const b=new THREE.Box3().setFromObject(car.group),p=[];
@@ -36,7 +36,7 @@ async function check(page, frame, label, width, height) {
       return {x:r.x,y:r.y,width:r.width,height:r.height};
     };
     const canvas=document.querySelector('canvas');
-    const visible=['header','#rank','#battle','#countdown','#joinHint','#giftGuide','#giftMoment','#event'];
+    const visible=['header','#rank','#battle','#countdown','#joinHint','#giftGuide','#giftMoment','#event','#leagueBoard','#winnerCard',...Array.from({length:4},(_,i)=>'.carLabel:nth-child('+(i+1)+')')];
     const hud=document.querySelector('#hud').getBoundingClientRect();
     const scale=hud.width/540;
     return {
@@ -57,6 +57,9 @@ async function check(page, frame, label, width, height) {
   assert.deepEqual(state.app,{x:0,y:0,width,height});
   assert.deepEqual(state.overflow,[width,height]);
   assert.equal(state.soundVisible,false);
+  assert.equal(await frame.locator('#joinHint').isVisible(),true);
+  assert.match(await frame.locator('#joinHint').textContent(),/COMMENT .*JOIN YOUR TEAM/);
+  assert.equal(await frame.locator('.leagueTeam').count(),4);
   for (const row of state.hud) {
     assert.ok(row.left>=21 && row.right<=475, label+' HUD safe width '+JSON.stringify(row));
     assert.ok(row.top>=99 && row.bottom<=791, label+' HUD safe height '+JSON.stringify(row));
@@ -158,6 +161,17 @@ async function check(page, frame, label, width, height) {
       assert.equal(gift.audio.state,'running');
       assert.equal(await frame.locator('#event').evaluate(node=>node.classList.contains('on')),false);
       assert.match(await frame.locator('#liveStatus').textContent(),/30000/);
+      assert.match(await frame.locator('#carLabels').textContent(),/TEST VIEWER/);
+      assert.match(await frame.locator('#carLabels').textContent(),/TURBO/);
+      const allCodes=await frame.evaluate(()=>window.__inspectRace().codes);
+      for(const code of allCodes){
+        socket.send(JSON.stringify({type:'comment',userId:'fan-'+code,nickname:'FAN '+code,text:code}));
+        socket.send(JSON.stringify({type:'gift',userId:'fan-'+code,eventId:'all-'+code,value:1000,giftName:'Galaxy',nickname:'FAN '+code}));
+      }
+      await frame.waitForFunction(()=>document.querySelector('#lastGift').textContent.includes('FAN '+window.__inspectRace().codes[3]));
+      await frame.evaluate(()=>{for(let n=0;n<4;n++)window.__tick(50);});
+      await check(page,frame,prefix+'-four-boosts',width,height);
+      assert.equal(await frame.locator('.carLabel:not([hidden])').count(),4);
       // Exercise all three camera modes and automatic round restart.
       for(let i=0;i<3;i++){
         const oldMode=await frame.evaluate(()=>window.__inspectRace().mode);
@@ -166,7 +180,27 @@ async function check(page, frame, label, width, height) {
         await frame.evaluate(()=>{for(let n=0;n<180;n++)window.__tick(50);});
         await check(page,frame,prefix+'-camera-'+i,width,height);
       }
-      await frame.evaluate(()=>{for(let n=0;n<4300;n++)window.__tick(50);});
+      await frame.evaluate(()=>{
+        for(let n=0;n<4500&&window.__inspectRace().roundState==='racing'&&window.__inspectRace().metres>50;n++)window.__tick(50);
+      });
+      await frame.evaluate(()=>{for(let n=0;n<4;n++)window.__tick(50);});
+      const sprint=await check(page,frame,prefix+'-sprint',width,height);
+      assert.equal(sprint.roundState,'racing');
+      assert.match(await frame.locator('#countdown').textContent(),/FINAL SPRINT/);
+      await frame.evaluate(()=>{
+        for(let n=0;n<4500&&window.__inspectRace().roundState==='racing';n++)window.__tick(50);
+      });
+      await frame.evaluate(()=>{for(let n=0;n<4;n++)window.__tick(50);});
+      const result=await check(page,frame,prefix+'-winner',width,height);
+      assert.equal(result.roundState,'results');
+      assert.equal(result.season.reduce((a,b)=>a+b,0),6);
+      assert.equal(await frame.locator('#winnerCard').isVisible(),true);
+      assert.match(await frame.locator('#winnerCard').textContent(),/WINS!/);
+      assert.match(await frame.locator('#countdown').textContent(),/NEXT RACE/);
+      socket.send(JSON.stringify({type:'gift',userId:'viewer',eventId:'next-race',value:1000,giftName:'Galaxy',nickname:'NEXT RACE FAN'}));
+      await frame.waitForFunction(()=>document.querySelector('#lastGift').textContent.includes('NEXT RACE FAN'));
+      await frame.evaluate(()=>{for(let n=0;n<240;n++)window.__tick(50);});
+      assert.match(await frame.locator('#carLabels').textContent(),/NEXT RACE FAN/);
       assert.ok((await frame.evaluate(()=>window.__inspectRace().round))>1);
       await check(page,frame,prefix+'-next-round',width,height);
       assert.deepEqual(errors,[]);
