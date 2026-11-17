@@ -8,7 +8,7 @@ Bu URL, `index.html?stream=1` adresini açar. Gerçek 1080×1920 dikey yayında 
 
 1. WORLD RUSH klasöründen **WORLD_RUSH_YAYIN_HAZIRLA.cmd** dosyasını aç. Sunucu yoksa başlatılır ve LIVE URL panoya kopyalanır. Mevcut Python sunucusu çalışıyorsa yenisi açılmaz.
 2. TikTok LIVE Studio → Kaynak ekle → **Bağlantı / Link / Web sayfası** (sürümüne göre adı değişebilir). **Ctrl+V** ile `http://localhost:8000/live.html` gir.
-3. **Özel çözünürlük / Custom resolution: genişlik 1080, yükseklik 1920** seç. Kaynağı dikey yayın sahnesine **Sığdır / Fit**. Masaüstü/Chrome penceresi yakalama kaynağını kaldır.
+3. **Özel çözünürlük / Custom resolution: genişlik 1080, yükseklik 1920** seç. 1080×1920 dikey sahnede kaynağın kırpma ve dönüşüm ayarlarını sıfırla, ardından **Sığdır / Fit** seç. Masaüstü/Chrome penceresi yakalama kaynağını kaldır.
 4. Sahneni TikTok LIVE Studio içinde **kaydet**. Artık her yayın için kırpma gerekmemeli. `http://localhost:8000` sunucusu açık kalmalı.
 5. Mobil önizleme ile üst profil/hedef ve alt yorum alanını kontrol et. Ses izni/kaynak sesini de ayrıca test et. Tarayıcı kaynakları otomatik sesi engelleyebilir.
 
