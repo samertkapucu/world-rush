@@ -1,5 +1,13 @@
 # Archived pre-V2 validation
 
+## Sade LIVE görünümü (güncel)
+
+18 Kasım 2026 tarihinde gerçek Chromium WebGL çizimiyle 1080×1920, 540×960 ve 1080×1080 boyutlarında `npm run test:live` geçti. 540×960 ile 1080×1920 arasında aynı açık kaynağı yeniden boyutlandırma testi de geçti. Dikey kaynakta yalnızca başlık, dört ülke ve ücretsiz yorum çağrısı görünür. Otomatik kamera değişimi yarış başına tam üç kez doğrulandı. Ses motoru ve hediye olayı testleri de geçti.
+
+- [Güncel 1080×1920 ekran görüntüsü](v2-calm-1080x1920.jpg)
+
+Gerçek TikTok LIVE Studio önizlemesi ve canlı TikTok hediye akışı bu Linux ortamında test edilmedi.
+
 The gift boost screenshots and claims below describe the backed-up version at `a3ea5a3`. For current behavior see [V2_RELEASE.md](../V2_RELEASE.md).
 
 # LIVE kaynak doğrulaması

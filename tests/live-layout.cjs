@@ -18,7 +18,7 @@ window.__inspectRace=()=>{
   return {x:(v.x*area.width/2)/scale+270,y:(-v.y*area.height/2)/scale+480};
  };
  return {
-  roundState,round,mode,remaining,arenaIndex,lanes:cars.map(c=>c.laneIndex),season:[...season],codes:[...codes],metres:Math.max(0,Math.ceil(RACE_METRES-Math.max(...cars.map(c=>c.progress))*METRES_PER_PERCENT)),boosts:cars.map(c=>c.boost),
+  roundState,round,mode,autoCameraChanges,remaining,arenaIndex,lanes:cars.map(c=>c.laneIndex),season:[...season],codes:[...codes],metres:Math.max(0,Math.ceil(RACE_METRES-Math.max(...cars.map(c=>c.progress))*METRES_PER_PERCENT)),boosts:cars.map(c=>c.boost),
   laneColorsCorrect:cars.every(c=>laneStrips[c.laneIndex].material.color.getHex()===c.color&&laneAccentMaterials[c.laneIndex].color.getHex()===c.color),
   audio:{enabled:soundEngine.enabled,state:soundEngine.ctx?.state},
   cars:cars.map(car=>{
@@ -46,7 +46,7 @@ async function check(page, frame, label, width, height) {
       canvas:[canvas.width,canvas.height],
       hud:visible.flatMap(selector=>{
         const node=document.querySelector(selector);
-        if(node.hidden||getComputedStyle(node).opacity==='0')return [];
+        if(node.hidden||!node.getClientRects().length||getComputedStyle(node).display==='none'||getComputedStyle(node).opacity==='0')return [];
         const r=rect(node);
         return [{selector,...r,left:(r.x-hud.x)/scale,right:(r.x+r.width-hud.x)/scale,
           top:(r.y-hud.y)/scale,bottom:(r.y+r.height-hud.y)/scale}];
@@ -69,7 +69,7 @@ async function check(page, frame, label, width, height) {
   }
   for (const car of state.cars) {
     assert.ok(car.left>=21 && car.right<=475,label+' car width '+JSON.stringify(car));
-    assert.ok(car.top>=445 && car.bottom<=650,label+' car height '+JSON.stringify(car));
+    assert.ok(car.top>=400 && car.bottom<=650,label+' car height '+JSON.stringify(car));
     assert.ok(car.right-car.left>=32,label+' car too small '+JSON.stringify(car));
   }
   await frame.evaluate(()=>Promise.all(document.getAnimations().filter(a=>Number.isFinite(a.effect?.getTiming().duration)).map(a=>a.finished.catch(()=>{}))));
@@ -99,7 +99,8 @@ async function check(page, frame, label, width, height) {
     const base='http://127.0.0.1:'+server.address().port;
     const resizeOnly=process.argv.includes('--resize-only');
     const themesOnly=process.argv.includes('--themes-only');
-    const viewports=themesOnly?[[1080,1920]]:resizeOnly?[[540,960]]:[[1080,1920],[540,960],[1080,1080]];
+    const cameraOnly=process.argv.includes('--camera-only');
+    const viewports=(themesOnly||cameraOnly)?[[1080,1920]]:resizeOnly?[[540,960]]:[[1080,1920],[540,960],[1080,1080]];
     for (const [width,height] of viewports) {
       const page=await browser.newPage({viewport:{width,height}});
       const errors=[];
@@ -133,6 +134,20 @@ async function check(page, frame, label, width, height) {
       assert.equal(await frame.locator('#joinHint').textContent().then(text=>text.includes('@worldrush.live')),false);
       const prefix=width+'x'+height;
       await check(page,frame,prefix+'-start',width,height);
+      if(cameraOnly){
+        await frame.evaluate(()=>{
+          for(let n=0;n<5000&&window.__inspectRace().roundState!=='results';n++)window.__tick(50);
+        });
+        const finish=await check(page,frame,prefix+'-calm-finish',width,height);
+        assert.equal(finish.roundState,'results');
+        assert.equal(finish.autoCameraChanges,3);
+        assert.equal(await frame.locator('#carLabels').isVisible(),false);
+        assert.equal(await frame.locator('#event').isVisible(),false);
+        assert.equal(await frame.locator('#leagueBoard').isVisible(),false);
+        assert.equal(await frame.locator('#joinHint').isVisible(),true);
+        assert.equal(await frame.locator('#rank .racer').count(),4);
+        assert.deepEqual(errors,[]);await page.close();continue;
+      }
       if(themesOnly){
         let previous=await frame.evaluate(()=>window.__inspectRace());
         for(let i=1;i<=20;i++){
@@ -193,8 +208,9 @@ async function check(page, frame, label, width, height) {
       await frame.evaluate(()=>{for(let n=0;n<4;n++)window.__tick(50);});
       const result=await check(page,frame,prefix+'-winner',width,height);
       assert.equal(result.roundState,'results');
+      assert.equal(result.autoCameraChanges,3);
       assert.equal(result.season.reduce((a,b)=>a+b,0),6);
-      assert.equal(await frame.locator('#winnerCard').isVisible(),true);
+      assert.equal(await frame.locator('#winnerCard').isVisible(),false);
       assert.match(await frame.locator('#winnerCard').textContent(),/WINS!/);
       assert.match(await frame.locator('#countdown').textContent(),/NEXT RACE/);
       await frame.evaluate(()=>{for(let n=0;n<100;n++)window.__tick(50);});

@@ -15,3 +15,5 @@ Verification: `npm run test:live -- --themes-only` simulates 20 arena transition
 Country comments accept uppercase/lowercase codes, punctuation and country names anywhere in a message. The same TikTok user ID counts once per team; changing teams moves the count. Ambiguous messages containing two active teams are ignored. League changes clear the mappings. Verify with `npm run test:comments`.
 
 The main `live.html` source now shows the three-second thank-you directly. A second Studio browser source is unnecessary; remove it from the scene. The standalone `supporters.html` remains optional for custom layouts and its default-hidden leaderboard.
+
+LIVE presentation now keeps only the title, four current countries and the free comment instruction. Rank percentages, leader/overtake popups, league points, countdown and result cards are hidden in the broadcast source. The camera automatically changes at 25%, 50% and 75% race progress, at most three times per race. The game logic, sound and real supporter thank-you remain.

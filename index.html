@@ -260,6 +260,22 @@ html.stream-source,html.stream-source body{overflow:hidden}
  pointer-events:none;animation:thankIn .26s ease-out}
 #supporterThanks[hidden]{display:none}
 @keyframes thankIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+/* Calm LIVE composition: country list and free comment instruction only. */
+#app.stream-mode #topStack{gap:6px}
+#app.stream-mode header{height:44px;padding:4px}
+#app.stream-mode header small,#app.stream-mode #meta{display:none}
+#app.stream-mode h1{font-size:24px;letter-spacing:3px}
+#app.stream-mode #rank{padding:7px 10px;gap:3px;background:#071526db}
+#app.stream-mode .racer{height:32px;display:grid;grid-template-columns:34px minmax(0,1fr);grid-template-rows:1fr;gap:6px;align-items:center}
+#app.stream-mode .flag{width:29px;height:20px;grid-column:1;grid-row:1}
+#app.stream-mode .name{font-size:19px;grid-column:2;grid-row:1}
+#app.stream-mode .pos,#app.stream-mode .fans,#app.stream-mode .pct,#app.stream-mode .miniBar{display:none}
+#app.stream-mode .racer.leading,#app.stream-mode .racer.selected{background:transparent!important}
+#app.stream-mode #battle,#app.stream-mode #countdown,#app.stream-mode #leagueBoard,
+#app.stream-mode #event,#app.stream-mode #teamToast,#app.stream-mode #carLabels,
+#app.stream-mode #winnerCard,#app.stream-mode #startCountdown{display:none!important}
+#app.stream-mode #joinHint{top:310px;bottom:auto;height:34px;font-size:13px;letter-spacing:.2px}
+#app.stream-mode #supporterThanks{top:354px;height:42px;font-size:15px}
 </style></head><body><main id="app" class="booting broadcast-safe portrait-layout"><div id="stage"></div><div id="bootScreen"><div class="bootLogo">WORLD <span>RUSH</span></div><div class="bootCaption">PREPARING THE START GRID</div></div><div id="overlay"></div><div id="hud"><div id="topStack"><header><small>GLOBAL LIVE CHAMPIONSHIP</small><h1>WORLD <span>RUSH</span></h1><div id="meta">R01 · 03:30</div></header><div id="rank"></div><div id="raceProgress"><div id="progressLabel"><strong id="distance">260m LEFT</strong><div id="battle">RACE STARTING</div><div id="countdown">LIVE RACE</div><div id="leagueBoard" aria-label="Current league points"></div></div><div id="joinHint">COMMENT SA / AE / KW / QA TO JOIN · FREE</div>
 <div id="giftGuide" hidden aria-label="Hediye efektleri"><span class="giftBubble" data-gift-key="Rose"><span class="giftEmoji">🌹</span><img class="giftArt" hidden alt=""><span class="giftName">Rose</span><span class="giftPower">.65s</span></span>
 <span class="giftBubble" data-gift-key="Doughnut"><span class="giftEmoji">🍩</span><img class="giftArt" hidden alt=""><span class="giftName">Doughnut</span><span class="giftPower">1.2s</span></span>
@@ -637,7 +653,7 @@ const cameraLook=new THREE.Vector3(0,.6,17);let spotlightUntil=0,spotlightIndex=
 // TV-director camera: gentle angle changes, with a wide shot between close perspectives.
 const cameraSequence=[0,1,0,2];
 let previousRankOrder=[0,1,2,3],lastOvertakeMoment=0,duelFocusUntil=0,duelFocusIndex=-1;
-let cameraSequenceStep=0,nextCameraSwitch=performance.now()+9500;
+let cameraSequenceStep=0,nextCameraSwitch=performance.now()+9500,autoCameraChanges=0;
 function changeCameraManually(){mode=(mode+1)%3;nextCameraSwitch=performance.now()+12000}
 const markerElements=cars.map(c=>document.getElementById('trackCar'+c.i));
 // Procedural, original SOUND ENGINE — no audio files or third-party music.
@@ -839,7 +855,7 @@ function resetRound(){
   car.group.position.set(car.laneX,0,20);car.group.rotation.set(0,0,0);
   car.supporter='';car.supportAdded=0;car.overtakeUntil=0;
  });
- previousRankOrder=[0,1,2,3];lastOvertakeMoment=performance.now();duelFocusUntil=0;duelFocusIndex=-1;
+ previousRankOrder=[0,1,2,3];lastOvertakeMoment=performance.now();duelFocusUntil=0;duelFocusIndex=-1;autoCameraChanges=0;mode=0;
  flashUntil=0;event.classList.remove('on');
 }
 function finishRound(now,byTime){
@@ -1239,7 +1255,7 @@ function updateRank(){
    :(k===0?Math.floor(c.progress)+'% 👑':Math.floor(c.progress)+'% · -'+Math.round((sorted[0].progress-c.progress)*METRES_PER_PERCENT)+'m');
   node.querySelector('.fill').style.width=Math.max(1,c.progress)+'%';
   node.querySelector('.fill').style.background='#'+c.color.toString(16).padStart(6,'0');
-  rank.appendChild(node);
+  if(!streamMode)rank.appendChild(node);
  });
  updateLeagueStatus();updateBridgeStatus();
  meta.textContent=roundState==='results'
@@ -1268,7 +1284,7 @@ function updateCarPresentation(order,now){
   const passing=roundState==='racing'&&now<(car.overtakeUntil||0);
   const ring=raceRings[car.i];
   ring.position.set(car.group.position.x,.035,car.group.position.z);
-  ring.visible=roundState!=='countdown'&&(boosting||leading);
+  ring.visible=!streamMode&&roundState!=='countdown'&&(boosting||leading);
   ring.material.color.setHex(boosting?car.color:0xffd778);
   ring.material.opacity=boosting?.65+Math.sin(now*.012)*.2:.55;
   const node=carLabels[car.i];
@@ -1322,7 +1338,7 @@ function framePortraitRace(){
  }
  // Fit the pack between the score panel and TikTok's comment area.
  const bounds=streamMode
-  ?{left:22,right:474,top:466,bottom:640}
+  ?{left:22,right:474,top:426,bottom:638}
   :{left:24.3,right:515.7,top:408,bottom:801.6};
  const targetWidth=(bounds.right-bounds.left)/270*portraitArea.width;
  const targetHeight=(bounds.bottom-bounds.top)/480*portraitArea.height;
@@ -1378,8 +1394,8 @@ function loop(now){
  const order=[...cars].sort((a,b)=>b.progress-a.progress);
  const leader=order[0],lastCar=order[3];
  const wideFocus=leader.group.position.z*.65+lastCar.group.position.z*.35;
- const focusZ=now<spotlightUntil&&spotlightIndex>=0?cars[spotlightIndex].group.position.z:
-   now<duelFocusUntil&&duelFocusIndex>=0?cars[duelFocusIndex].group.position.z:wideFocus;
+ const focusZ=!streamMode&&now<spotlightUntil&&spotlightIndex>=0?cars[spotlightIndex].group.position.z:
+   !streamMode&&now<duelFocusUntil&&duelFocusIndex>=0?cars[duelFocusIndex].group.position.z:wideFocus;
  const raceSpread=Math.abs(leader.group.position.z-lastCar.group.position.z);
  if(racing && (leader.progress>=100||remaining<=0))finishRound(now,remaining<=0);
  if(roundState==='racing'&&leadIndex!==leader.i){
@@ -1404,7 +1420,9 @@ function loop(now){
  }
  previousRankOrder=currentRank;
  // Auto-broadcast camera change every ~11s, but do not interrupt lead-change closeups.
- if(now>=nextCameraSwitch && roundState==='racing' && now>=closeupUntil){
+ if(streamMode&&roundState==='racing'&&autoCameraChanges<3&&leader.progress>=(autoCameraChanges+1)*25){
+  mode=[1,2,0][autoCameraChanges++];
+ }else if(!streamMode&&now>=nextCameraSwitch && roundState==='racing' && now>=closeupUntil){
   cameraSequenceStep=(cameraSequenceStep+1)%cameraSequence.length;
   mode=cameraSequence[cameraSequenceStep];
   nextCameraSwitch=now+9000+(cameraSequenceStep%3)*1300;
@@ -1460,7 +1478,7 @@ function loop(now){
   {pos:[-4.2,18+raceSpread*.15,focusZ+28+raceSpread*.32],aim:[0,.65,focusZ-3]},
   {pos:[0,24+raceSpread*.13,focusZ+20+raceSpread*.26],aim:[0,.5,focusZ-6]}
  ];
- const highlight=now<closeupUntil||now<spotlightUntil||now<duelFocusUntil;
+ const highlight=!streamMode&&(now<closeupUntil||now<spotlightUntil||now<duelFocusUntil);
  const target=cameraTargets[highlight?0:mode],dynamicPos=[...target.pos],dynamicAim=[...target.aim];
  if(highlight){dynamicPos[1]-=1.4;dynamicPos[2]-=2.6;dynamicAim[2]+=1.2}
  {

@@ -22,3 +22,5 @@ py tiktok_live_bridge.py --user "mevcut-tiktok-kullanici-adin"
 Şifre, çerez veya yayın anahtarı istenmez. Köprüde `TikTok LIVE connected` ve `WORLD RUSH browser connected` satırları bağlantıyı gösterir. Gerçek yorum ve hediye olaylarını ayrı bir hesapla, yalnızca yayın açıksa doğrula. Studio'nun önizlemesi tek başına canlı bağlantı testi değildir.
 
 Eski sürüm `backup/pre-world-rush-v2` branch'inde saklanır. Yeni sürüm bilgileri [V2_RELEASE.md](V2_RELEASE.md) dosyasındadır. TikTok kurallarına uygunluk ve LIVE Studio ses yakalaması otomatik testlerle garanti edilemez.
+
+LIVE görünümü sadeleştirildi: dört ülke ve ücretsiz yorum satırı görünür. Kamera her yarışta en fazla üç kez otomatik açı değiştirir.
