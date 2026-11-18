@@ -869,7 +869,7 @@ function finishRound(now,byTime){
  document.getElementById('teamToast').hidden=true;
  const winnerCard=document.getElementById('winnerCard');
  winnerCard.querySelector('strong').textContent=codes[winnerIndex]+' · '+teams[winnerIndex]+' KAZANDI!';
- winnerCard.querySelector('span').textContent='+3 LİG PUANI · '+season[winnerIndex]+' TOTAL · '+(worldRecords[codes[winnerIndex]]?.wins||1)+' KAZANDI';
+ winnerCard.querySelector('span').textContent='+3 LİG PUANI · TOPLAM '+season[winnerIndex]+' · '+(worldRecords[codes[winnerIndex]]?.wins||1)+' GALİBİYET';
  winnerCard.hidden=false;
  flash('🏆 '+flags[winnerIndex]+' '+teams[winnerIndex]+' KAZANDI!');soundEngine.play('win');
  flashUntil=0;event.classList.remove('on');
