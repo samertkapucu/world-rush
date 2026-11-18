@@ -2,9 +2,9 @@
 
 Oyun: `http://localhost:8000/live.html`
 
-İsteğe bağlı şeffaf teşekkür katmanı: `http://localhost:8000/supporters.html`
+Teşekkür yazısı artık ana oyunun içindedir.
 
-İkisini LIVE Studio'da ayrı Bağlantı kaynağı olarak 1080×1920 çözünürlükte ekle. Katılım ücretsizdir: izleyici ekrandaki ülke kodunu yorumlar. Oyun içinde hediye kartı ve hediye kaynaklı hız avantajı yoktur. Teşekkür katmanı varsayılan olarak sadece gerçek hediye geldiğinde yaklaşık üç saniye görünür. 10 dakikalık destekçi tablosu varsayılan olarak kapalıdır; istenirse `supporters.html?leaderboard=1` adresiyle açılır. Tabloda yalnızca TikTok olayında açıkça bildirilen diamond değeri kullanılır; para veya coin geliri sayılmaz.
+LIVE Studio'da yalnızca `live.html` Bağlantı kaynağını 1080×1920 çözünürlükte kullan. Eski `supporters.html` kaynağını sahneden kaldır. Katılım ücretsizdir: izleyici ekrandaki ülke kodunu yorumlar. Oyun içinde hediye kartı ve hediye kaynaklı hız avantajı yoktur. Ana oyun gerçek hediye geldiğinde yaklaşık üç saniye destekçinin adını gösterir. 10 dakikalık destekçi tablosu varsayılan olarak kapalıdır; istenirse `supporters.html?leaderboard=1` adresiyle açılır. Tabloda yalnızca TikTok olayında açıkça bildirilen diamond değeri kullanılır; para veya coin geliri sayılmaz.
 
 Windows'ta oyunun gerçek klasöründe `GUNCELLE.cmd` çalıştır. Aynı klasörde bir CMD açıp sunucuyu başlat:
 

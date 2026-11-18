@@ -13,3 +13,5 @@ Arena visuals use bounded reusable Three.js geometry. Eight themes change sky, f
 Verification: `npm run test:live -- --themes-only` simulates 20 arena transitions, `npm run test:live` checks 1080×1920, 540×960 and square viewports, and `node tests/supporters.cjs` checks transparency and event deduplication. These use mocked local TikTok events; a real TikTok account and LIVE Studio are not exercised here.
 
 Country comments accept uppercase/lowercase codes, punctuation and country names anywhere in a message. The same TikTok user ID counts once per team; changing teams moves the count. Ambiguous messages containing two active teams are ignored. League changes clear the mappings. Verify with `npm run test:comments`.
+
+The main `live.html` source now shows the three-second thank-you directly. A second Studio browser source is unnecessary; remove it from the scene. The standalone `supporters.html` remains optional for custom layouts and its default-hidden leaderboard.

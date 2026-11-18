@@ -38,7 +38,7 @@ async function check(page, frame, label, width, height) {
       return {x:r.x,y:r.y,width:r.width,height:r.height};
     };
     const canvas=document.querySelector('canvas');
-    const visible=['header','#rank','#battle','#countdown','#joinHint','#giftGuide','#giftMoment','#event','#leagueBoard','#winnerCard',...Array.from({length:4},(_,i)=>'.carLabel:nth-child('+(i+1)+')')];
+    const visible=['header','#rank','#battle','#countdown','#joinHint','#giftGuide','#giftMoment','#event','#leagueBoard','#winnerCard','#supporterThanks',...Array.from({length:4},(_,i)=>'.carLabel:nth-child('+(i+1)+')')];
     const hud=document.querySelector('#hud').getBoundingClientRect();
     const scale=hud.width/540;
     return {
@@ -167,6 +167,9 @@ async function check(page, frame, label, width, height) {
       await frame.waitForFunction(()=>document.querySelector('#lastGift').textContent.includes('NO RACE EFFECT'));
       socket.send(JSON.stringify({type:'gift',userId:'viewer',eventId:'v2-test',value:30000,giftName:'Lion'}));
       assert.deepEqual(await frame.evaluate(()=>window.__inspectRace().boosts),before);
+      assert.equal(await frame.locator('#supporterThanks').isVisible(),true);
+      assert.match(await frame.locator('#supporterThanks').textContent(),/TEST VIEWER/);
+      await check(page,frame,prefix+'-thanks',width,height);
       assert.equal(await frame.locator('#giftGuide').isVisible(),false);
       assert.equal(await frame.locator('#giftMoment').isVisible(),false);
       // Exercise all three camera modes and automatic round restart.
