@@ -430,17 +430,21 @@ const countryLibrary={
  KW:{name:'KUVEYT',code:'KW',flag:'🇰🇼',color:0x36c6df},
  QA:{name:'KATAR',code:'QA',flag:'🇶🇦',color:0xc04c8c},
  TR:{name:'TÜRKİYE',code:'TR',flag:'🇹🇷',color:0xff3656},
+ AZ:{name:'AZERBAYCAN',code:'AZ',flag:'🇦🇿',color:0x14aaf5},
+ KZ:{name:'KAZAKİSTAN',code:'KZ',flag:'🇰🇿',color:0x42c8f4},
+ UZ:{name:'ÖZBEKİSTAN',code:'UZ',flag:'🇺🇿',color:0x30b87f},
  BR:{name:'BREZİLYA',code:'BR',flag:'🇧🇷',color:0x16cb77},
  US:{name:'ABD',code:'US',flag:'🇺🇸',color:0x349aff},
  DE:{name:'ALMANYA',code:'DE',flag:'🇩🇪',color:0xffc12f}
 };
 const leagueProfiles=[
+ {id:'TURKIC',title:'TÜRK DEVLETLERİ KUPASI',countries:['TR','AZ','KZ','UZ']},
  {id:'GULF',title:'KÖRFEZ ŞAMPİYONASI',countries:['SA','AE','KW','QA']},
  {id:'CROSSOVER',title:'KÖRFEZ x DÜNYA',countries:['SA','AE','US','BR']},
  {id:'GLOBAL',title:'DÜNYA ŞAMPİYONASI',countries:['TR','BR','US','DE']},
  {id:'BRIDGE',title:'DÜNYA x KÖRFEZ',countries:['US','DE','SA','AE']}
 ];
-const LEAGUE_LENGTH_MS=75*60*1000,LEAGUE_STORE_KEY='world-rush-league-v7';
+const LEAGUE_LENGTH_MS=75*60*1000,LEAGUE_STORE_KEY='world-rush-league-turkic-v1';
 let leagueIndex=0,leagueEndsAt=Date.now()+LEAGUE_LENGTH_MS,queuedLeagueChange=false;
 try{
  const cached=JSON.parse(localStorage.getItem(LEAGUE_STORE_KEY)||'null');
@@ -489,6 +493,24 @@ function makeFlagTexture(code){
    const x=331+Math.cos(angle)*r,y=160+Math.sin(angle)*r;
    j?c.lineTo(x,y):c.moveTo(x,y);
   }c.closePath();c.fill();
+ }else if(code==='AZ'){
+  fill('#00b5e2',0,0,w,h/3);fill('#ed2939',0,h/3,w,h/3);fill('#00a86b',0,2*h/3,w,h/3);
+  c.fillStyle='#fff';c.beginPath();c.arc(236,160,45,0,Math.PI*2);c.fill();
+  c.fillStyle='#ed2939';c.beginPath();c.arc(249,160,35,0,Math.PI*2);c.fill();
+  c.fillStyle='#fff';c.beginPath();
+  for(let j=0;j<16;j++){const a=-Math.PI/2+j*Math.PI/8,r=j%2?13:25;if(j)c.lineTo(313+Math.cos(a)*r,160+Math.sin(a)*r);else c.moveTo(313+Math.cos(a)*r,160+Math.sin(a)*r)}
+  c.closePath();c.fill();
+ }else if(code==='KZ'){
+  fill('#00afca');c.fillStyle='#f6ca35';c.beginPath();c.arc(255,135,43,0,Math.PI*2);c.fill();
+  c.strokeStyle='#f6ca35';c.lineWidth=6;
+  for(let j=0;j<16;j++){const a=j*Math.PI/8;c.beginPath();c.moveTo(255+Math.cos(a)*49,135+Math.sin(a)*49);c.lineTo(255+Math.cos(a)*66,135+Math.sin(a)*66);c.stroke()}
+  c.beginPath();c.ellipse(256,208,95,18,0,0,Math.PI);c.lineWidth=12;c.stroke();
+ }else if(code==='UZ'){
+  fill('#159bd8',0,0,w,101);fill('#ffffff',0,101,w,118);fill('#1eb36b',0,219,w,101);
+  fill('#ce2636',0,99,w,5);fill('#ce2636',0,216,w,5);
+  c.fillStyle='#fff';c.beginPath();c.arc(93,55,33,0,Math.PI*2);c.fill();
+  c.fillStyle='#159bd8';c.beginPath();c.arc(104,50,28,0,Math.PI*2);c.fill();
+  c.fillStyle='#fff';for(let j=0;j<12;j++){const xx=151+(j%4)*24,yy=20+Math.floor(j/4)*23;c.beginPath();c.arc(xx,yy,3,0,Math.PI*2);c.fill()}
  }else if(code==='BR'){
   fill('#009b3a');c.fillStyle='#ffdf00';c.beginPath();
   c.moveTo(256,24);c.lineTo(476,160);c.lineTo(256,296);c.lineTo(36,160);c.closePath();c.fill();
@@ -791,6 +813,7 @@ function applyLeagueRoster(){
    car.flag.material.needsUpdate=true;
    if(prevTexture)prevTexture.dispose();
   }
+  if(effectParticles[i]?.[0])effectParticles[i][0].material.color.setHex(country.color);
   if(laneStrips[car.laneIndex])laneStrips[car.laneIndex].material.color.setHex(country.color);
   if(laneAccentMaterials[car.laneIndex]){
    laneAccentMaterials[car.laneIndex].color.setHex(country.color);
@@ -1064,7 +1087,7 @@ function teamCommand(text){
  // Match complete words anywhere in the comment; never infer a team from a substring.
  const normalized=String(text||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
  const words=normalized.match(/[A-Z0-9]+/g)||[];
- const aliases={SA:['SA','SAUDI','ARABIA','SUUDI','ARABISTAN'],AE:['AE','UAE','EMIRATES','BAE'],KW:['KW','KUWAIT','KUVEYT'],QA:['QA','QATAR','KATAR'],TR:['TR','TURKEY','TURKIYE'],BR:['BR','BRAZIL','BRASIL','BREZILYA'],US:['US','USA','AMERICA','ABD'],DE:['DE','GERMANY','DEUTSCHLAND','ALMANYA']};
+ const aliases={SA:['SA','SAUDI','ARABIA','SUUDI','ARABISTAN'],AE:['AE','UAE','EMIRATES','BAE'],KW:['KW','KUWAIT','KUVEYT'],QA:['QA','QATAR','KATAR'],TR:['TR','TURKEY','TURKIYE'],AZ:['AZ','AZERBAYCAN','AZERBAIJAN'],KZ:['KZ','KAZAKISTAN','KAZAKHSTAN'],UZ:['UZ','OZBEKISTAN','UZBEKISTAN'],BR:['BR','BRAZIL','BRASIL','BREZILYA'],US:['US','USA','AMERICA','ABD'],DE:['DE','GERMANY','DEUTSCHLAND','ALMANYA']};
  const matches=codes.filter(code=>(aliases[code]||[code]).some(alias=>words.includes(alias)));
  return matches.length===1?matches[0]:null;
 }
@@ -1105,7 +1128,7 @@ function applyFollow(msg){
  const name=String(msg.nickname||userId).replace(/[\r\n<>]/g,'').slice(0,20);
  if(team&&codes.includes(team)){
   const car=cars[codes.indexOf(team)];
-  if(car)car.burst=performance.now()+1500; // cosmetic only, no paid/free speed advantage
+  // Takip olayi turbo egzozu olusturmaz.
   showTeamToast('TEŞEKKÜRLER '+name+' · '+team+' TAKİPÇİSİ',team);
  }else showTeamToast('TAKİP İÇİN TEŞEKKÜRLER · '+name,null);
  soundEngine.play('rose');
@@ -1121,19 +1144,36 @@ function applyShare(msg){
   showTeamToast('PAYLAŞIM İÇİN TEŞEKKÜRLER · '+name,null);
  }
 }
+// LIVE Studio metinleri olay gondermez; hediye icin yerel TikTok bridge gereklidir.
+// Hediyeyle yaris avantaji, platformun interaktif oyun kurallarina uygunluk gerektirebilir.
+const LIVE_GIFT_BOOST_ENABLED=true;
 let supporterThanksUntil=0;
 function applyGift(msg){
- // A genuine gift receives a short thank-you; it never affects race state.
  if(msg.source!=='live')return;
  const id=String(msg.eventId||'').slice(0,160);
- if(id&&seenGiftIds.has(id))return;
- if(id){seenGiftIds.add(id);if(seenGiftIds.size>1200)seenGiftIds.delete(seenGiftIds.values().next().value)}
- const name=String(msg.nickname||msg.userId||'VIEWER').replace(/[\r\n]/g,' ').slice(0,26);
+ if(!id||seenGiftIds.has(id))return;
+ seenGiftIds.add(id);if(seenGiftIds.size>1200)seenGiftIds.delete(seenGiftIds.values().next().value);
+ const userId=String(msg.userId||'').slice(0,100);
+ const name=String(msg.nickname||userId||'İZLEYİCİ').replace(/[\r\n]/g,' ').slice(0,26);
+ const teamCode=liveFans.get(userId);
+ const teamIndex=teamCode?codes.indexOf(teamCode):-1;
  const thanks=document.getElementById('supporterThanks');
- thanks.textContent='TEŞEKKÜRLER · '+name;thanks.hidden=false;
- supporterThanksUntil=performance.now()+3000;
- updateLastGift('LIVE GIFT RECEIVED · NO RACE EFFECT');
+ thanks.textContent='TEŞEKKÜRLER · '+name;
+ thanks.hidden=false;supporterThanksUntil=performance.now()+3000;
+ if(!LIVE_GIFT_BOOST_ENABLED||roundState!=='racing'||teamIndex<0){
+  updateLastGift('HEDİYE ALINDI · BOOST UYGULANMADI');return;
+ }
+ const points=Math.max(0,Number(msg.value)||0);
+ const quantity=Math.max(1,Math.min(1000,Number(msg.quantity)||1));
+ if(!points){updateLastGift('HEDİYE DEĞERİ BİLİNMİYOR');return;}
+ const boost=giftTier(points).boost;
+ const car=cars[teamIndex];
+ car.boost=Math.min(10,car.boost+boost*Math.min(quantity,3));
+ car.supportAdded=boost;car.supporter=name;
+ soundEngine.play(points>=1000?'turbo':'rose');
+ updateLastGift('CANLI HEDİYE · '+teamCode+' BOOST '+car.boost.toFixed(1)+' sn');
 }
+
 function updateBridgeStatus(){
  const badge=document.getElementById('bridgeBadge');
  if(badge&&new URLSearchParams(location.search).get('debug')==='1'){
@@ -1284,7 +1324,7 @@ function updateCarPresentation(order,now){
   const passing=roundState==='racing'&&now<(car.overtakeUntil||0);
   const ring=raceRings[car.i];
   ring.position.set(car.group.position.x,.035,car.group.position.z);
-  ring.visible=!streamMode&&roundState!=='countdown'&&(boosting||leading);
+  ring.visible=!streamMode&&boosting;
   ring.material.color.setHex(boosting?car.color:0xffd778);
   ring.material.opacity=boosting?.65+Math.sin(now*.012)*.2:.55;
   const node=carLabels[car.i];
@@ -1382,7 +1422,7 @@ function loop(now){
    c.group.rotation.y=Math.sin(t*1.1+c.i)*.025-(c.group.position.x-c.laneX)*.065;
    c.group.rotation.z=(c.group.position.x-c.laneX)*.025;
   }
-  const active=racing&&(c.boost>0||now<c.burst);
+  const active=racing&&c.boost>0;
   effectParticles[c.i].forEach((spark,j)=>{
    spark.visible=active;
    if(!active)return;
